@@ -1,7 +1,7 @@
 {
-	"name": "ybluesky/H2O",
-    "description": "H2O framework is a lightweight framework",
-    "keywords": ["H2O","h2o", "framework", "ybluesky"],
+	"name": "ybluesky/h2o",
+    "description": "h2o framework is a lightweight framework",
+    "keywords": ["h2o", "framework", "ybluesky"],
     "homepage": "http://h2o.mx-8.com/",
     "type": "project",
     "license": "BSD-3-Clause",
