@@ -4,13 +4,14 @@
     "keywords": ["h2o", "framework", "ybluesky"],
     "homepage": "http://h2o.mx-8.com/",
     "type": "project",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "support": {
         "issues": "http://h2o.mx-8.com",
         "forum": "http://h2o.mx-8.com",
         "wiki": "http://h2o.mx-8.com/wiki/",
         "source": "http://h2o.mx-8.com/h2o"
     },
+    "minimum-stability": "dev",
     "require": {
     	"php": ">=5.4.0"
     },
