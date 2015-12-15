@@ -17,3 +17,5 @@ git push -u h2o master
 …or import code from another repository
 
 You can initialize this repository with code from a Subversion, Mercurial, or TFS project.
+
+composer require "ybluesky/h2o":"0.1.*@dev"
