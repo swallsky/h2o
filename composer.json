@@ -1,0 +1,20 @@
+{
+	"name": "ybluesky/H2O",
+    "description": "H2O framework is a lightweight framework",
+    "keywords": ["H2O","h2o", "framework", "ybluesky"],
+    "homepage": "http://h2o.mx-8.com/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "http://h2o.mx-8.com",
+        "forum": "http://h2o.mx-8.com",
+        "wiki": "http://h2o.mx-8.com/wiki/",
+        "source": "http://h2o.mx-8.com/h2o"
+    },
+    "require": {
+    	"php": ">=5.4.0"
+    },
+    "autoload": {
+    	"psr-4": {"h2o\\": ""}
+    }
+}
