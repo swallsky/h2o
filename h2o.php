@@ -10,6 +10,10 @@ namespace h2o;
 abstract class H2O
 {
 	/**
+	 * @var array 全局缓存类容器
+	 */
+	public static $container = [];
+	/**
 	 * 配置初始化
 	 * @param object $object 初始对象
 	 * @param array $properties 初始化性属
