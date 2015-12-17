@@ -1,5 +1,14 @@
 <?php
 /**
- * 应用主体
- * 每个应用系统只能包含一个应用主体
+ * 所有应用的基类
+ * @category   H2O
+ * @package    base
+ * @author     Xujinzhang <xjz1688@163.com>
+ * @version    0.1.0
  */
+namespace H2O\base;
+use H2O;
+abstract class Application
+{
+	
+}

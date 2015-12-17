@@ -1,14 +1,14 @@
 <?php
 /**
- * @link http://h2o.mx-8.com
+ * 所有控制器的基类
+ * @category   H2O
+ * @package    base
+ * @author     Xujinzhang <xjz1688@163.com>
+ * @version    0.1.0
  */
-
-namespace h2o\base;
-use H2o;
-/**
- * 控制器逻辑基类
- */
-class Controller
+namespace H2O\base;
+use H2O;
+abstract class Controller
 {
 	
 }
