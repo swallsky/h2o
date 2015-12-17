@@ -6,7 +6,6 @@
  * @author     Xujinzhang <xjz1688@163.com>
  * @version    0.1.0
  */
-namespace h2o;
 abstract class H2O
 {
 	/**
