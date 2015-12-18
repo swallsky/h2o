@@ -8,11 +8,18 @@
  */
 namespace H2O\web;
 use H2O;
-abstract class Application extends H2O\base\Application
+class Application extends H2O\base\Application
 {
 	/**
 	 * @var string 默认路由
 	 */
 	public $defaultRoute = 'site.index';
-	
+	/**
+	 * 执行方法
+	 * @param Request $request
+	 */
+	public function handleRequest($request)
+	{
+		echo $request;
+	}
 }

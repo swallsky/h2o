@@ -7,8 +7,19 @@
  * @version    0.1.0
  */
 namespace H2O\base;
-use H2O;
+
 abstract class Application
 {
-	
+	/**
+	 * 运行实例
+	 */
+	public function run()
+	{
+		$this->handleRequest('-----');
+	}
+	/**
+	 * 继承类必须实现的方法
+	 * @param Request $request
+	 */
+	abstract public function handleRequest($request);
 }
