@@ -26,4 +26,14 @@ abstract class H2O
 	
 		return $object;
 	}
+
+	/**
+	 * 框架初始化
+	 */
+	public static function init()
+	{
+		(new H2O\base\ErrorHandler())->register(); //注册自定义错误和异常信息
+	}
 }
+
+H2O::init();
