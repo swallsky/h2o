@@ -26,7 +26,6 @@ abstract class H2O
 	
 		return $object;
 	}
-
 	/**
 	 * 框架初始化
 	 */
@@ -35,5 +34,4 @@ abstract class H2O
 		(new H2O\base\ErrorHandler())->register(); //注册自定义错误和异常信息
 	}
 }
-
 H2O::init();

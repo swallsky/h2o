@@ -10,7 +10,20 @@ namespace H2O\base;
 
 abstract class Application
 {
-	public function __construct()
+	/**
+	 * 初始化应用
+	 * @param array $config
+	 */
+	public function __construct($config = [])
+	{
+		\H2O::configure($this, $config);
+		$this->preInit($config);
+	}
+	/**
+	 * 预加载组件
+	 * @param array $config
+	 */
+	private function preInit($config)
 	{
 		
 	}
