@@ -10,6 +10,10 @@ namespace H2O\base;
 
 abstract class Application
 {
+	public function __construct()
+	{
+		
+	}
 	/**
 	 * 运行实例
 	 */
