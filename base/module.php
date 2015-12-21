@@ -59,8 +59,7 @@ class Module
     public function getBasePath()
     {
         if ($this->_basePath === null) {
-            $class = new \ReflectionClass($this); //输出类的有关信息
-            $this->_basePath = dirname($class->getFileName());
+            $this->_basePath = __DIR__;
         }
 
         return $this->_basePath;
