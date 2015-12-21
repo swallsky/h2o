@@ -21,102 +21,45 @@ class Module
      * @var string 默认路由控制器
      */
     public $defaultRoute = 'default';
-
     /**
-     * @var string the root directory of the module.
+     * @var Module 父模块
+     */
+    public $module;
+    /**
+     * @var string 模块根目录
      */
     private $_basePath;
     /**
-     * @var string the root directory that contains view files for this module
+     * @var string 模块模板目录
      */
     private $_viewPath;
     /**
-     * @var string the root directory that contains layout view files for this module.
+     * @var string 模块布局模板目录
      */
     private $_layoutPath;
     /**
-     * @var array child modules of this module
+     * @var array 子模板缓存
      */
     private $_modules = [];
-
-
     /**
-     * Constructor.
-     * @param string $id the ID of this module
-     * @param Module $parent the parent module (if any)
-     * @param array $config name-value pairs that will be used to initialize the object properties
+     * 构造函数
+     * @param array $config 初始化配置
+     * @param Module $parent 父模块
      */
-    public function __construct($id, $parent = null, $config = [])
+    public function __construct($config = [],$parent = null)
     {
-        $this->id = $id;
         $this->module = $parent;
-        parent::__construct($config);
+        \H2O::configure($this, $config);
     }
-
     /**
-     * Returns the currently requested instance of this module class.
-     * If the module class is not currently requested, null will be returned.
-     * This method is provided so that you access the module instance from anywhere within the module.
-     * @return static|null the currently requested instance of this module class, or null if the module class is not requested.
-     */
-    public static function getInstance()
-    {
-        $class = get_called_class();
-        return isset(Yii::$app->loadedModules[$class]) ? Yii::$app->loadedModules[$class] : null;
-    }
-
-    /**
-     * Sets the currently requested instance of this module class.
-     * @param Module|null $instance the currently requested instance of this module class.
-     * If it is null, the instance of the calling class will be removed, if any.
-     */
-    public static function setInstance($instance)
-    {
-        if ($instance === null) {
-            unset(Yii::$app->loadedModules[get_called_class()]);
-        } else {
-            Yii::$app->loadedModules[get_class($instance)] = $instance;
-        }
-    }
-
-    /**
-     * Initializes the module.
-     *
-     * This method is called after the module is created and initialized with property values
-     * given in configuration. The default implementation will initialize [[controllerNamespace]]
-     * if it is not set.
-     *
-     * If you override this method, please make sure you call the parent implementation.
-     */
-    public function init()
-    {
-        if ($this->controllerNamespace === null) {
-            $class = get_class($this);
-            if (($pos = strrpos($class, '\\')) !== false) {
-                $this->controllerNamespace = substr($class, 0, $pos) . '\\controllers';
-            }
-        }
-    }
-
-    /**
-     * Returns an ID that uniquely identifies this module among all modules within the current application.
-     * Note that if the module is an application, an empty string will be returned.
-     * @return string the unique ID of the module.
-     */
-    public function getUniqueId()
-    {
-        return $this->module ? ltrim($this->module->getUniqueId() . '/' . $this->id, '/') : $this->id;
-    }
-
-    /**
-     * Returns the root directory of the module.
-     * It defaults to the directory containing the module class file.
-     * @return string the root directory of the module.
+     * 返回模块根目录
+     * 默认为包含模块类文件的目录
+     * @return string 模块根目录
      */
     public function getBasePath()
     {
         if ($this->_basePath === null) {
-            $class = new \ReflectionClass($this);
+            $class = new \ReflectionClass($this); //输出类的有关信息
             $this->_basePath = dirname($class->getFileName());
         }
 
@@ -124,8 +67,8 @@ class Module
     }
 
     /**
-     * Sets the root directory of the module.
-     * This method can only be invoked at the beginning of the constructor.
+     * 设置模块根目录
+     * 此方法只能在构造函数开始时调用
      * @param string $path the root directory of the module. This can be either a directory name or a path alias.
      * @throws InvalidParamException if the directory does not exist.
      */
