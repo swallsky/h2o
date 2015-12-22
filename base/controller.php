@@ -11,6 +11,10 @@ use H2O;
 abstract class Controller
 {
 	/**
+	 * @var string 默认action
+	 */
+	public $defaultAction = 'index';
+	/**
 	 * 查找运行对应的Action方法
 	 * @param string $action
 	 */
