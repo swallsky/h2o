@@ -11,6 +11,14 @@ namespace H2O\base;
 abstract class Application
 {
 	/**
+	 * @event ActionEvent 前置事件
+	 */
+	const EVENT_BEFORE_ACTION = 'beforeAction';
+	/**
+	 * @event ActionEvent 后置事件
+	 */
+	const EVENT_AFTER_ACTION = 'afterAction';
+	/**
 	 * 初始化应用
 	 * @param array $config
 	 */
@@ -25,14 +33,16 @@ abstract class Application
 	 */
 	private function preInit($config)
 	{
-		
+		//TODO
 	}
 	/**
 	 * 运行实例
 	 */
 	public function run()
 	{
-		$this->handleRequest('-----');
+		Event::trigger(self::EVENT_BEFORE_ACTION);
+		$this->handleRequest();
+		Event::trigger(self::EVENT_AFTER_ACTION);
 	}
 	/**
 	 * 继承类必须实现的方法

@@ -16,10 +16,9 @@ class Application extends H2O\base\Application
 	public $defaultRoute = 'site.index';
 	/**
 	 * 执行方法
-	 * @param Request $request
 	 */
-	public function handleRequest($request)
+	public function handleRequest()
 	{
-		echo $request;
+		echo '---';
 	}
 }
