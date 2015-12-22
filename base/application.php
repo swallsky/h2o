@@ -41,12 +41,19 @@ abstract class Application
 	public function run()
 	{
 		Event::trigger(self::EVENT_BEFORE_ACTION);
-		$this->handleRequest();
+		$request = $this->handleRequest();
+		if(empty($request['controller'])){
+			throw new Exception('Application::run','lost controller');
+		}
+		if(empty($request['action'])){
+			throw new Exception('Application::run','lost action');
+		}
+		
 		Event::trigger(self::EVENT_AFTER_ACTION);
 	}
 	/**
 	 * 继承类必须实现的方法
 	 * @param Request $request
 	 */
-	abstract public function handleRequest($request);
+	abstract public function handleRequest();
 }
