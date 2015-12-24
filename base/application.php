@@ -24,7 +24,6 @@ abstract class Application
 	 */
 	public function __construct($config = [])
 	{
-		\H2O::configure($this, $config);
 		$this->preInit($config);
 	}
 	/**
@@ -42,13 +41,6 @@ abstract class Application
 	{
 		Event::trigger(self::EVENT_BEFORE_ACTION);
 		$request = $this->handleRequest();
-		if(empty($request['controller'])){
-			throw new Exception('Application::run','lost controller');
-		}
-		if(empty($request['action'])){
-			throw new Exception('Application::run','lost action');
-		}
-		
 		Event::trigger(self::EVENT_AFTER_ACTION);
 	}
 	/**
