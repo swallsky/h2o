@@ -30,7 +30,7 @@ class Application extends H2O\base\Application
 	public function handleRequest()
 	{
 		$request = new Request(isset($this->_config['url'])?$this->_config['url']:[]); //初始请求
-		$dd = $request->getHeaders();
+		$dd = $request->getRoute();
 		print_r($dd);
 	}
 }

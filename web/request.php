@@ -14,6 +14,14 @@ class Request
 	 */
 	private $routeKey = 'r';
 	/**
+	 * @var string 默认Controller名称
+	 */
+	private $defaultController = 'index';
+	/**
+	 * @var string 默认Action名称
+	 */
+	private $defaultAction = 'index';
+	/**
 	 * @var string url模式 默认为空时普通模式 当值为route时则为路由模式
 	 */
 	private $urlMode = '';
@@ -60,20 +68,59 @@ class Request
 	 */
 	public function getRoute()
 	{
-		return $_GET;
+		$routepath = $this->_getRoutePath();
+		if(empty($routepath)){//默认路由规则
+			$data = [
+				'controller'	=>	$this->defaultController,
+				'action'			=>	$this->defaultAction,
+				'postdata'		=>	[]
+			];
+		}else{//其他路由
+			$pointcnt = substr_count($routepath,'.');
+			if($pointcnt==1){
+				$ep = explode('.',$routepath);
+				$data = [
+					'controller'	=>	$ep[0],
+					'action'			=>	$ep[1],
+					'postdata'		=>	isset($_GET)?$_GET:[]
+				];
+			}else{
+				throw new \H2O\base\Exception('H2O\web\request','check your router!');
+			}
+		}
+		unset($_GET);
+		return $data;
 	}
 	/**
-	 * 获取URL参数
+	 * 获取路由信息
 	 */
-	public function getParams()
+	private function _getRoutePath()
 	{
-		
+		$inPath = dirname($this->_getScriptUrl());
+		$requesturi = $_SERVER['REQUEST_URI'];
+		$wpos = strpos($requesturi,'?');
+		$tcapath = $wpos===false?$requesturi:substr($requesturi,0,$wpos);
+		$capath = str_replace($inPath,'',$tcapath);
+		return trim($capath,'/');
 	}
 	/**
-	 * 获取提交数据
+	 * 查找对应的脚本URL
 	 */
-	public function getPostData()
+	private function _getScriptUrl()
 	{
-		
+		$scriptName = basename($_SERVER['SCRIPT_FILENAME']);
+		if(basename($_SERVER['SCRIPT_NAME'])===$scriptName)
+			$scriptUrl = $_SERVER['SCRIPT_NAME'];
+		elseif(basename($_SERVER['PHP_SELF'])===$scriptName)
+			$scriptUrl = $_SERVER['PHP_SELF'];
+		elseif(isset($_SERVER['ORIG_SCRIPT_NAME']) && basename($_SERVER['ORIG_SCRIPT_NAME'])===$scriptName)
+			$scriptUrl = $_SERVER['ORIG_SCRIPT_NAME'];
+		elseif(($pos=strpos($_SERVER['PHP_SELF'],'/'.$scriptName))!==false)
+			$scriptUrl = substr($_SERVER['SCRIPT_NAME'],0,$pos).'/'.$scriptName;
+		elseif(isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'],$_SERVER['DOCUMENT_ROOT'])===0)
+			$scriptUrl = str_replace('\\','/',str_replace($_SERVER['DOCUMENT_ROOT'],'',$_SERVER['SCRIPT_FILENAME']));
+		else
+			throw new \H2O\base\Exception('H2O\web\request','It is unable to determine the entry script URL.');
+		return $scriptUrl;
 	}
 }
