@@ -12,26 +12,26 @@ class Request
 	/**
 	 * @var string 默认Controller名称
 	 */
-	public $defaultController = 'index';
+	private $_defaultController = 'index';
 	/**
 	 * @var string 默认Action名称
 	 */
-	public $defaultAction = 'index';
+	private $_defaultAction = 'index';
 	/**
 	 * @var 路由配置表
 	 */
-	public $routeTable = [];
+	private $_routeTable = [];
 	/**
 	 * @var array GET参数
 	 */
-	private $getParams = [];
+	private $_getParams = [];
 	/**
 	 * 路由配置
 	 * @param array $config 路由规则
 	 */
 	public function __construct($config = [])
 	{
-		\H2O::configure($this, $config);
+		$this->_routeTable = isset($config['route'])?$config['route']:[];
 	}
 	/**
 	 * 返回header头信息
@@ -58,13 +58,13 @@ class Request
 	public function getRoute()
 	{
 		$routepath = $this->getRoutePath();
-		$this->getParams = $_GET;
+		$this->_getParams = $_GET;
 		$postdata = isset($_POST)?$_POST:[];
 		if(empty($routepath)){//默认路由规则
 			$data = [
-				'controller'	=>	$this->defaultController,
-				'action'		=>	$this->defaultAction,
-				'get'			=>	$this->getParams,
+				'controller'	=>	$this->_defaultController,
+				'action'		=>	$this->_defaultAction,
+				'get'			=>	$this->_getParams,
 				'post'			=>	$postdata
 			];
 		}else{//其他路由
@@ -75,7 +75,7 @@ class Request
 				$data = [
 					'controller'	=>	$ep[0],
 					'action'		=>	$ep[1],
-					'get'			=>	$this->getParams,
+					'get'			=>	$this->_getParams,
 					'post'			=>	$postdata
 				];
 			}else{
@@ -91,17 +91,17 @@ class Request
 	 */
 	private function getRealPath($curoute)
 	{
-		if(empty($this->routeTable)){
+		if(empty($this->_routeTable)){
 			return $curoute;
 		}else{
 			$ecur = explode('/',$curoute);
 			$lecur = count($ecur);
-			if(isset($this->routeTable[$ecur[0]])){
-				$rpath = $this->routeTable[$ecur[0]];
+			if(isset($this->_routeTable[$ecur[0]])){
+				$rpath = $this->_routeTable[$ecur[0]];
 				if(is_array($rpath)){
 					for($i=1;$i<$lecur;$i++){
 						if(isset($rpath[$i]))
-							$this->getParams[$rpath[$i]] = $ecur[$i];
+							$this->_getParams[$rpath[$i]] = $ecur[$i];
 					}
 					return $rpath[0];
 				}else{

@@ -17,20 +17,6 @@ abstract class H2O
 	 */
 	public static $aliases = ['@h2o' => __DIR__];
 	/**
-	 * 配置初始化
-	 * @param object $object 初始对象
-	 * @param array $properties 初始化性属
-	 * @return object 初始化后的对象
-	 */
-	public static function configure($object, $properties)
-	{
-		foreach ($properties as $name => $value) {
-			$object->$name = $value;
-		}
-	
-		return $object;
-	}
-	/**
 	 * 获取路径别名，如果不包含@，直接返回，如果存在@返回别名真实路径
 	 * @param string $alias
 	 * @param bool $throwException 是否抛弃异常

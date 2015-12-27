@@ -3,7 +3,7 @@
  * 路由配置信息
  */
 return [
-    'routeTable'    =>  [
+    'route'    =>  [
         'test'  =>  ['test.do','id','t','sky'],
         'top'  =>  'top.in'
     ]

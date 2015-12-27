@@ -20,7 +20,6 @@ class Application extends H2O\base\Application
 	 */
 	public function __construct($config = [])
 	{
-		\H2O::configure($this, $config);
 		parent::__construct($config);
 		$this->_config = $config;
 	}
@@ -32,5 +31,6 @@ class Application extends H2O\base\Application
 		$request = new Request(isset($this->_config['request'])?$this->_config['request']:[]); //初始请求
 		$dd = $request->getRoute();
 		print_r($dd);
+		echo $this->getBasePath();
 	}
 }

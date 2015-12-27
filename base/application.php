@@ -8,7 +8,7 @@
  */
 namespace H2O\base;
 
-abstract class Application
+abstract class Application extends Module
 {
 	/**
 	 * @event ActionEvent 前置事件
@@ -24,6 +24,7 @@ abstract class Application
 	 */
 	public function __construct($config = [])
 	{
+		parent::__construct($config);
 		$this->preInit($config);
 	}
 	/**
@@ -40,7 +41,7 @@ abstract class Application
 	public function run()
 	{
 		Event::trigger(self::EVENT_BEFORE_ACTION);
-		$request = $this->handleRequest();
+		$this->handleRequest();
 		Event::trigger(self::EVENT_AFTER_ACTION);
 	}
 	/**
