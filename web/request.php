@@ -10,25 +10,21 @@ namespace H2O\web;
 class Request
 {
 	/**
-	 * @var string 路由器控制器关键字
-	 */
-	private $routeKey = 'r';
-	/**
 	 * @var string 默认Controller名称
 	 */
-	private $defaultController = 'index';
+	public $defaultController = 'index';
 	/**
 	 * @var string 默认Action名称
 	 */
-	private $defaultAction = 'index';
+	public $defaultAction = 'index';
 	/**
-	 * @var string url模式 默认为空时普通模式 当值为route时则为路由模式
+	 * @var 路由配置表
 	 */
-	private $urlMode = '';
+	public $routeTable = [];
 	/**
-	 * @var string 真实的URL路径 路由模式会被转换为真实的URL路径
+	 * @var array GET参数
 	 */
-	private $realUrl = '';
+	private $getParams = [];
 	/**
 	 * 路由配置
 	 * @param array $config 路由规则
@@ -36,13 +32,6 @@ class Request
 	public function __construct($config = [])
 	{
 		\H2O::configure($this, $config);
-	}
-	/**
-	 * 将虚拟的路径转换为真实路径
-	 */
-	private function transRealUrl()
-	{
-		
 	}
 	/**
 	 * 返回header头信息
@@ -68,35 +57,67 @@ class Request
 	 */
 	public function getRoute()
 	{
-		$routepath = $this->_getRoutePath();
+		$routepath = $this->getRoutePath();
+		$this->getParams = $_GET;
+		$postdata = isset($_POST)?$_POST:[];
 		if(empty($routepath)){//默认路由规则
 			$data = [
 				'controller'	=>	$this->defaultController,
-				'action'			=>	$this->defaultAction,
-				'postdata'		=>	[]
+				'action'		=>	$this->defaultAction,
+				'get'			=>	$this->getParams,
+				'post'			=>	$postdata
 			];
 		}else{//其他路由
+			$routepath = $this->getRealPath($routepath);
 			$pointcnt = substr_count($routepath,'.');
 			if($pointcnt==1){
 				$ep = explode('.',$routepath);
 				$data = [
 					'controller'	=>	$ep[0],
-					'action'			=>	$ep[1],
-					'postdata'		=>	isset($_GET)?$_GET:[]
+					'action'		=>	$ep[1],
+					'get'			=>	$this->getParams,
+					'post'			=>	$postdata
 				];
 			}else{
 				throw new \H2O\base\Exception('H2O\web\request','check your router!');
 			}
 		}
-		unset($_GET);
+		unset($_GET,$_POST);
 		return $data;
+	}
+
+	/**
+	 * @param $curoute 当前路由名称
+	 */
+	private function getRealPath($curoute)
+	{
+		if(empty($this->routeTable)){
+			return $curoute;
+		}else{
+			$ecur = explode('/',$curoute);
+			$lecur = count($ecur);
+			if(isset($this->routeTable[$ecur[0]])){
+				$rpath = $this->routeTable[$ecur[0]];
+				if(is_array($rpath)){
+					for($i=1;$i<$lecur;$i++){
+						if(isset($rpath[$i]))
+							$this->getParams[$rpath[$i]] = $ecur[$i];
+					}
+					return $rpath[0];
+				}else{
+					return $rpath;
+				}
+			}else{
+				return $curoute;
+			}
+		}
 	}
 	/**
 	 * 获取路由信息
 	 */
-	private function _getRoutePath()
+	private function getRoutePath()
 	{
-		$inPath = dirname($this->_getScriptUrl());
+		$inPath = dirname($this->getScriptUrl());
 		$requesturi = $_SERVER['REQUEST_URI'];
 		$wpos = strpos($requesturi,'?');
 		$tcapath = $wpos===false?$requesturi:substr($requesturi,0,$wpos);
@@ -106,7 +127,7 @@ class Request
 	/**
 	 * 查找对应的脚本URL
 	 */
-	private function _getScriptUrl()
+	private function getScriptUrl()
 	{
 		$scriptName = basename($_SERVER['SCRIPT_FILENAME']);
 		if(basename($_SERVER['SCRIPT_NAME'])===$scriptName)
