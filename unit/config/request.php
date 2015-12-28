@@ -4,7 +4,7 @@
  */
 return [
     'route'    =>  [
-        'test'  =>  ['test.do','id','t','sky'],
+        'test'  =>  ['test.hello','id','t','sky'],
         'top'  =>  'top.in'
     ]
 ];

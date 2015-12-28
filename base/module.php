@@ -16,14 +16,15 @@ class Module
 	/**
 	 * @var string 控制器命名空间
 	 */
-	public $controllerNamespace;
+	private $_ctrnSpace;
 	/**
 	 * 初始化
 	 * @param array $config
 	 */
 	public function __construct($config = [])
 	{
-		if(isset($config['basePath'])) $this->setBasePath($config['basePath']);
+		if(isset($config['basePath']))
+			$this->setBasePath($config['basePath']);
 		$this->init();
 	}
 	/**
@@ -31,11 +32,9 @@ class Module
 	 */
 	private function init()
 	{
-		if ($this->controllerNamespace === null) {
-			$class = get_class($this);
-			if (($pos = strrpos($class, '\\')) !== false) {
-				$this->controllerNamespace = substr($class, 0, $pos) . '\\controllers';
-			}
+		if ($this->_ctrnSpace === null) {
+			$trn = str_replace(APP_PATH,'',$this->_basePath);
+			$this->_ctrnSpace = str_replace('/','\\',$trn).'\\controllers';
 		}
 	}
 	/**
@@ -63,5 +62,22 @@ class Module
 		}else{
 			throw new Exception('Module::setBasePath',$path.' is error!');
 		}
+	}
+	/**
+	 * 返回控制器的命名空间
+	 */
+	public function getCtrNameSpace()
+	{
+		return $this->_ctrnSpace;
+	}
+	/**
+	 * 执行控制器
+	 * @param array $route 路由规则
+	 */
+	public function runController($route)
+	{
+		$stro = $this->_ctrnSpace.'\\'.$route['controller'];
+		$o = new $stro();
+		return $o->runAction($route['action']);
 	}
 }
