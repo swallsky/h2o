@@ -77,7 +77,12 @@ class Module
 	public function runController($route)
 	{
 		$stro = $this->_ctrnSpace.'\\'.$route['controller'];
-		$o = new $stro();
-		return $o->runAction($route['action']);
+		$file = APP_PATH.str_replace('\\',DIRECTORY_SEPARATOR,$stro).'.php';
+		if(file_exists($file)){
+			$o = new $stro();
+			return $o->runAction($route['action']);
+		}else{
+			throw new Exception('Module::runController',$file.' is not found!');
+		}
 	}
 }
