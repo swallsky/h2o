@@ -11,15 +11,26 @@ use H2O;
 class Application extends H2O\base\Application
 {
 	/**
-	 * @var string 默认路由
+	 * @var 配置信息参数
 	 */
-	public $defaultRoute = 'site.index';
+	private $_config;
+	/**
+	 * Web应用初始化
+	 * @param array $config 初始化参数
+	 */
+	public function __construct($config = [])
+	{
+		parent::__construct($config);
+		$this->_config = $config;
+	}
 	/**
 	 * 执行方法
-	 * @param Request $request
 	 */
-	public function handleRequest($request)
+	public function handleRequest()
 	{
-		echo $request;
+		$request = new Request(isset($this->_config['request'])?$this->_config['request']:[]); //初始请求
+		$dd = $request->getRoute();
+		print_r($dd);
+		$this->runController($dd);
 	}
 }
