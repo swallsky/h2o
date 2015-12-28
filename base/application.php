@@ -34,7 +34,6 @@ abstract class Application extends Module
 	private function preInit($config)
 	{
 		//TODO
-		print_r($_SERVER);
 	}
 	/**
 	 * 运行实例
