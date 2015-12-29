@@ -12,7 +12,7 @@ class Request
 	/**
 	 * @var string 默认Controller名称
 	 */
-	private $_defaultController = 'index';
+	private $_defaultController = 'site';
 	/**
 	 * @var string 默认Action名称
 	 */
@@ -26,12 +26,19 @@ class Request
 	 */
 	private $_getParams = [];
 	/**
+	 * @var array POST数据
+	 */
+	private $_postData = [];
+	/**
 	 * 路由配置
 	 * @param array $config 路由规则
 	 */
 	public function __construct($config = [])
 	{
 		$this->_routeTable = isset($config['route'])?$config['route']:[];
+		$this->_getParams = $_GET;
+		$this->_postData = isset($_POST)?$_POST:[];
+		unset($_GET,$_POST);
 	}
 	/**
 	 * 返回header头信息
@@ -58,14 +65,10 @@ class Request
 	public function getRoute()
 	{
 		$routepath = $this->getRoutePath();
-		$this->_getParams = $_GET;
-		$postdata = isset($_POST)?$_POST:[];
 		if(empty($routepath)){//默认路由规则
 			$data = [
 				'controller'	=>	$this->_defaultController,
-				'action'		=>	$this->_defaultAction,
-				'get'			=>	$this->_getParams,
-				'post'			=>	$postdata
+				'action'		=>	$this->_defaultAction
 			];
 		}else{//其他路由
 			$routepath = $this->getRealPath($routepath);
@@ -74,18 +77,40 @@ class Request
 				$ep = explode('.',$routepath);
 				$data = [
 					'controller'	=>	$ep[0],
-					'action'		=>	$ep[1],
-					'get'			=>	$this->_getParams,
-					'post'			=>	$postdata
+					'action'		=>	$ep[1]
 				];
 			}else{
 				throw new \H2O\base\Exception('H2O\web\request','check your router!');
 			}
 		}
-		unset($_GET,$_POST);
 		return $data;
 	}
-
+	/**
+	 * 返回url参数
+	 * @param string $name GET参数key值
+	 * @return 返回GET数据，如果不存在返回为空
+	 */
+	public function get($name = '')
+	{
+		if($name == ''){
+			return $this->_getParams;
+		}else{
+			return isset($this->_getParams[$name])?$this->_getParams[$name]:'';
+		}
+	}
+	/**
+	 * 返回post数据
+	 * @param string $name POST数据名称
+	 * @return 返回POST数据，如果不存在返回为空
+	 */
+	public function post($name = '')
+	{
+		if($name == ''){//如果为空返回所有数据
+			return $this->_postData;
+		}else{
+			return isset($this->_postData[$name])?$this->_postData[$name]:'';
+		}
+	}
 	/**
 	 * @param $curoute 当前路由名称
 	 */
@@ -123,6 +148,13 @@ class Request
 		$tcapath = $wpos===false?$requesturi:substr($requesturi,0,$wpos);
 		$capath = str_replace($inPath,'',$tcapath);
 		return trim($capath,'/');
+	}
+	/**
+	 * 返回当前的家目录
+	 */
+	public function getHomeUrl()
+	{
+		return rtrim(dirname($this->getScriptUrl()), '\\/');
 	}
 	/**
 	 * 查找对应的脚本URL
