@@ -22,14 +22,6 @@ defined('APP_PATH') or define('APP_PATH', dirname(dirname(dirname(__DIR__))));
 abstract class H2O
 {
 	/**
-	 * @var array 加载器类名缓存
-	 */
-	public static $classMap = [];
-	/**
-	 * @var array 全局缓存类容器
-	 */
-	public static $container = [];
-	/**
 	 * @var array 路径别名
 	 */
 	public static $aliases = ['@h2o' => __DIR__];
@@ -60,38 +52,10 @@ abstract class H2O
 				}
 			}
 		}
-	
 		if ($throwException) {
 			throw new H2O\base\Exception("Alias","Invalid path alias: $alias");
 		} else {
 			return false;
-		}
-	}
-	/**
-	 * 类加载器 以@开头则为框架目录类
-	 * @param string $className 类名
-	 * @throws 抛弃异常
-	 */
-	public static function autoload($className)
-	{
-		if (isset(static::$classMap[$className])) {
-			$classFile = static::$classMap[$className];
-			if ($classFile[0] === '@') {
-				$classFile = static::getAlias($classFile);
-			}
-		} elseif (strpos($className, '\\') !== false) {
-			$classFile = static::getAlias('@' . str_replace('\\', '/', $className) . '.php', false);
-			if ($classFile === false || !is_file($classFile)) {
-				return;
-			}
-		} else {
-			return;
-		}
-	
-		include($classFile);
-	
-		if (!class_exists($className, false) && !interface_exists($className, false) && !trait_exists($className, false)) {
-			throw new H2O\base\Exception("H2O::autoload","Unable to find '$className' in file: $classFile. Namespace missing?");
 		}
 	}
 	/**
@@ -103,4 +67,3 @@ abstract class H2O
 	}
 }
 H2O::init();
-spl_autoload_register(['H2O', 'autoload'], true, true); //类加载器

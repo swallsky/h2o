@@ -34,7 +34,7 @@ class Module
 	{
 		if ($this->_ctrnSpace === null) {
 			$trn = str_replace(APP_PATH,'',$this->_basePath);
-			$this->_ctrnSpace = str_replace('/','\\',$trn).'\\controllers';
+			$this->_ctrnSpace = '\app'.str_replace('/','\\',$trn).'\\controllers';
 		}
 	}
 	/**
@@ -77,12 +77,7 @@ class Module
 	public function runController($route)
 	{
 		$stro = $this->_ctrnSpace.'\\'.$route['controller'];
-		$file = APP_PATH.str_replace('\\',DIRECTORY_SEPARATOR,$stro).'.php';
-		if(file_exists($file)){
-			$o = new $stro();
-			return $o->runAction($route['action']);
-		}else{
-			throw new Exception('Module::runController',$file.' is not found!');
-		}
+		$o = new $stro();
+		return $o->runAction($route['action']);
 	}
 }
