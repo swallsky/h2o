@@ -55,7 +55,7 @@ class ErrorHandler
     public function handleError($code, $message, $file, $line)
     {
         if (error_reporting() & $code) {
-            echo $code;
+            echo $message;
         }
     }
 
