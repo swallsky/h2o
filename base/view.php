@@ -31,7 +31,7 @@ class View
 	 */
 	public function getPath()
 	{
-		return rtrim($this->_templatePath,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'views';
+		return rtrim($this->_templatePath,DIRECTORY_SEPARATOR);
 	}
 	/**
 	 * 设置模板目录
