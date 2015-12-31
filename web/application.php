@@ -30,6 +30,6 @@ class Application extends H2O\base\Application
 	{
 		$request = new Request(isset($this->_config['request'])?$this->_config['request']:[]); //初始请求
 		$dd = $request->getRoute();
-		return $this->runController($dd);
+		$this->runAction($dd);
 	}
 }

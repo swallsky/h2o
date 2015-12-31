@@ -19,20 +19,25 @@ abstract class Controller
 	 */
 	private $_viewPath;
 	/**
-	 * @var array 布局路由
-	 *  [
-			'controller'	=>	'layout',
-			'action'			=>	'index'
-		]
-	 */
-	private $_layoutRoute = [];
-	/**
 	 * 初始化控制器
 	 */
 	public function __construct()
 	{
 		$class = get_called_class();
 		$this->_name = substr($class, strrpos($class,'\\'));
+	}
+	/**
+	 * 执行对应的操作
+	 * @param $act 操作名称
+	 */
+	public function runAction($act)
+	{
+		$action = 'act'.$act;
+		if(method_exists($this,$action)){
+			return call_user_func([$this,$action]);
+		}else{
+			throw new Exception('Module::runController',get_called_class().' no method:'.$action);
+		}
 	}
 	/**
 	 * 返回视图目录
@@ -50,24 +55,42 @@ abstract class Controller
 		$this->_viewPath = $path;
 	}
 	/**
-	 * 返回布局信息
+	 * 获取当前布局信息
+	 * @return array 布局信息
 	 */
 	public function getLayout()
 	{
-		$m = new Module();
-		return $m->runController($this->_layoutRoute);
+		return Module::getLayout();
 	}
 	/**
 	 * 设置布局信息
 	 * @param array $route
-	 * [
+	 * 例如：[
 			'controller'	=>	'layout',
 			'action'			=>	'index'
 		]
 	 */
 	public function setLayout($route)
 	{
-		$this->_layoutRoute = $route;
+		Module::setLayout($route);
+	}
+	/**
+	 * 显示子模块信息
+	 * @param string $name 子模块名称
+	 * @return array
+	 */
+	public function getSonModules($name = '')
+	{
+		return Module::getSonModules($name);
+	}
+	/**
+	 * 设置子模块
+	 * @param string $name 子模块名称
+	 * @param array $route 路由
+	 */
+	public function setSonModules($name,$route)
+	{
+		Module::setSonModules($name,$route);
 	}
 	/**
 	 * 返回模板渲染后的字符串

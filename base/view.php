@@ -62,6 +62,23 @@ class View
 		return $this->getPath().DIRECTORY_SEPARATOR.$this->_templateFile.'.php';
 	}
 	/**
+	 * 布局页面中显示主内容区
+	 * @return string
+	 */
+	public function content()
+	{
+		return Module::getContent();
+	}
+	/**
+	 * 显示子模块
+	 * @param string $name 模块名称
+	 * @return string
+	 */
+	public function includeModule($name)
+	{
+		return Module::getSonModules($name);
+	}
+	/**
 	 * 模板解析和渲染
 	 * @param array $vars 控制层需要传递给模板的变量
 	 */

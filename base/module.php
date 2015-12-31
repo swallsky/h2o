@@ -26,6 +26,18 @@ class Module
 	 */
 	public static $config = [];
 	/**
+	 * @var array 布局模块
+	 */
+	public static $layout = [];
+	/**
+	 * @var array 模块组 默认存在layout模块,但是为空
+	 */
+	public static $modules = [
+		'layout'		=>	'',
+		'content'		=>	'',
+		'sonModules'	=>	[]
+	];
+	/**
 	 * 初始化
 	 * @param array $config
 	 */
@@ -102,19 +114,101 @@ class Module
 		return $this->_ctrnSpace;
 	}
 	/**
-	 * 执行控制器
-	 * @param array $route 路由规则
+	 * 设置子模块
+	 * @param string $name 子模块名
+	 * @param array $route
 	 */
-	public function runController($route)
+	public static function setSonModules($name,$route)
+	{
+		self::$modules['sonModules'][$name] = $route;
+	}
+	/**
+	 * 返回子模块的路由信息
+	 * @param string $name 子模块名称
+	 * @return array 所有子路由信息
+	 */
+	public static function getSonModules($name = '')
+	{
+		if(empty($name)){
+			return self::$modules['sonModules'];
+		}else{
+			return isset(self::$modules['sonModules'][$name])?self::$modules['sonModules'][$name]:'';
+		}
+	}
+	/**
+	 * 执行所有的子模块
+	 */
+	public function runSonModules()
+	{
+		$sons = self::$modules['sonModules'];
+		if(!empty($sons)){
+			foreach($sons as $n=>$m){
+				self::$modules['sonModules'][$n] = $this->runSingleModules($m);
+			}
+		}
+	}
+	/**
+	 * 执行单个模块
+	 * @param array $route 路由
+	 * @return string 解析后的模块
+	 */
+	public function runSingleModules($route)
 	{
 		$stro = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
 		$o = new $stro();
 		$o->setViewPath($this->getViewPath());
-		$action = 'act'.ucfirst(strtolower($route['action']));//动作
-		if(method_exists($o,$action)){
-			return call_user_func([$o,$action]);
-		}else{
-			throw new Exception('Module::runController',$stro.' no method:'.$action);
+		return $o->runAction(ucfirst(strtolower($route['action'])));
+	}
+	/**
+	 * 获取布局信息
+	 * @return array
+	 */
+	public static function getLayout()
+	{
+		return Module::$layout;
+	}
+	/**
+	 * 设置布局信息
+	 * @param array $route
+	 * 例如：[
+		'controller'	=>	'layout',
+		'action'		=>	'index'
+		]
+	 */
+	public static function setLayout($route)
+	{
+		Module::$layout = $route;
+	}
+	/**
+	 * 显示主内容信息
+	 * @return string 主内容
+	 */
+	public static function getContent()
+	{
+		return self::$modules['content'];
+	}
+	/**
+	 * 执行动作
+	 * @param array $route 路由
+	 * @param bool $content 是否是主内容
+	 */
+	public function runAction($route,$content = true)
+	{
+		$this->runSonModules();//执行子模块
+		$context = $this->runSingleModules($route);
+		if($content) self::$modules['content'] = $context;
+		return $context;
+	}
+	/**
+	 * 执行模块
+	 */
+	public function runModules()
+	{
+		if(empty(self::$layout)){//不存在布局，直接返回内容
+			return self::$modules['content'];
+		}else{//存在布局模块时返回布局
+			$layout = self::$layout;
+			return $this->runAction($layout,false);
 		}
 	}
 }

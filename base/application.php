@@ -45,9 +45,9 @@ abstract class Application extends Module
 	public function run()
 	{
 		Event::trigger(self::EVENT_BEFORE_ACTION);
-		$request = $this->handleRequest();
+		$this->handleRequest();
 		Event::trigger(self::EVENT_AFTER_ACTION);
-		echo $request;
+		echo $this->runModules();
 	}
 	/**
 	 * 继承类必须实现的方法
