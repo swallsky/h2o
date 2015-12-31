@@ -11,6 +11,10 @@ namespace H2O\base;
 abstract class Application extends Module
 {
 	/**
+	 * @var string 应用程序的根空间
+	 */
+	const APP_ROOT_NAME = '\app';
+	/**
 	 * @event ActionEvent 前置事件
 	 */
 	const EVENT_BEFORE_ACTION = 'beforeAction';

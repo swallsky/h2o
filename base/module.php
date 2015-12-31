@@ -18,10 +18,6 @@ class Module
 	 */
 	private $_viewPath;
 	/**
-	 * @var string 布局文件目录
-	 */
-	private $_layoutPath;
-	/**
 	 * @var string 控制器命名空间
 	 */
 	private $_ctrnSpace;
@@ -42,7 +38,7 @@ class Module
 	{
 		if ($this->_ctrnSpace === null) {
 			$trn = str_replace(APP_PATH,'',$this->_basePath);
-			$this->_ctrnSpace = '\app'.str_replace('/','\\',$trn).'\\controllers';
+			$this->_ctrnSpace = Application::APP_ROOT_NAME.str_replace('/','\\',$trn).'\\controllers';
 		}
 	}
 	/**
@@ -106,10 +102,10 @@ class Module
 	 */
 	public function runController($route)
 	{
-		$stro = $this->_ctrnSpace.'\\'.$route['controller'];
+		$stro = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
 		$o = new $stro();
 		$o->setViewPath($this->getViewPath());
-		$action = 'act'.ucfirst($route['action']);
+		$action = 'act'.ucfirst(strtolower($route['action']));//动作
 		if(method_exists($o,$action)){
 			return call_user_func([$o,$action]);
 		}else{

@@ -59,7 +59,7 @@ class View
 	 */
 	public function getFile()
 	{
-		return $this->getPath().DIRECTORY_SEPARATOR.$this->_templateFile;
+		return $this->getPath().DIRECTORY_SEPARATOR.$this->_templateFile.'.php';
 	}
 	/**
 	 * 模板解析和渲染

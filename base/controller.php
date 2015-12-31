@@ -11,9 +11,21 @@ use H2O;
 abstract class Controller
 {
 	/**
+	 * @var string 控制器名称
+	 */
+	private $_name = '';
+	/**
 	 * @var string 视图目录
 	 */
 	private $_viewPath;
+	/**
+	 * 初始化控制器
+	 */
+	public function __construct()
+	{
+		$class = get_called_class();
+		$this->_name = substr($class, strrpos($class,'\\'));
+	}
 	/**
 	 * 返回视图目录
 	 */
