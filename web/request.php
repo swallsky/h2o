@@ -90,7 +90,7 @@ class Request
 	 * @param string $name GET参数key值
 	 * @return 返回GET数据，如果不存在返回为空
 	 */
-	public function get($name = '')
+	public static function get($name = '')
 	{
 		if($name == ''){
 			return $this->_getParams;
@@ -103,7 +103,7 @@ class Request
 	 * @param string $name POST数据名称
 	 * @return 返回POST数据，如果不存在返回为空
 	 */
-	public function post($name = '')
+	public static function post($name = '')
 	{
 		if($name == ''){//如果为空返回所有数据
 			return $this->_postData;
