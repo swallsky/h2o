@@ -22,13 +22,18 @@ class Module
 	 */
 	private $_ctrnSpace;
 	/**
+	 * @var string 缓存的配置信息
+	 */
+	public static $config = [];
+	/**
 	 * 初始化
 	 * @param array $config
 	 */
 	public function __construct($config = [])
 	{
-		if(isset($config['basePath']))
-			$this->setBasePath($config['basePath']);
+		$conf = empty($config)?self::$config:$config;
+		if(isset($conf['basePath']))
+			$this->setBasePath($conf['basePath']);
 		$this->init();
 	}
 	/**
