@@ -24,11 +24,11 @@ class Request
 	/**
 	 * @var array GET参数
 	 */
-	private $_getParams = [];
+	public static $getParams = [];
 	/**
 	 * @var array POST数据
 	 */
-	private $_postData = [];
+	public static $postData = [];
 	/**
 	 * 路由配置
 	 * @param array $config 路由规则
@@ -36,8 +36,8 @@ class Request
 	public function __construct($config = [])
 	{
 		$this->_routeTable = isset($config['route'])?$config['route']:[];
-		$this->_getParams = $_GET;
-		$this->_postData = isset($_POST)?$_POST:[];
+		self::$getParams = $_GET;
+		self::$postData = isset($_POST)?$_POST:[];
 		unset($_GET,$_POST);
 	}
 	/**
@@ -93,9 +93,9 @@ class Request
 	public static function get($name = '')
 	{
 		if($name == ''){
-			return $this->_getParams;
+			return self::$getParams;
 		}else{
-			return isset($this->_getParams[$name])?$this->_getParams[$name]:'';
+			return isset(self::$getParams[$name])?self::$getParams[$name]:'';
 		}
 	}
 	/**
@@ -106,9 +106,9 @@ class Request
 	public static function post($name = '')
 	{
 		if($name == ''){//如果为空返回所有数据
-			return $this->_postData;
+			return self::$postData;
 		}else{
-			return isset($this->_postData[$name])?$this->_postData[$name]:'';
+			return isset(self::$postData[$name])?self::$postData[$name]:'';
 		}
 	}
 	/**
@@ -126,7 +126,7 @@ class Request
 				if(is_array($rpath)){
 					for($i=1;$i<$lecur;$i++){
 						if(isset($rpath[$i]))
-							$this->_getParams[$rpath[$i]] = $ecur[$i];
+							self::$getParams[$rpath[$i]] = $ecur[$i];
 					}
 					return $rpath[0];
 				}else{

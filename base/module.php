@@ -14,6 +14,14 @@ class Module
 	 */
 	private $_basePath;
 	/**
+	 * @var string 视图文件目录
+	 */
+	private $_viewPath;
+	/**
+	 * @var string 布局文件目录
+	 */
+	private $_layoutPath;
+	/**
 	 * @var string 控制器命名空间
 	 */
 	private $_ctrnSpace;
@@ -64,6 +72,28 @@ class Module
 		}
 	}
 	/**
+	 * 返回这个模块的模板目录
+	 * @return string 模板目录
+	 */
+	public function getViewPath()
+	{
+		if ($this->_viewPath !== null) {
+			return $this->_viewPath;
+		} else {
+			return $this->_viewPath = $this->_basePath . DIRECTORY_SEPARATOR . 'views';
+		}
+	}
+	
+	/**
+	 * 设置这个模块的模板目录
+	 * @param string 模板目录
+	 * @throws 如果不存在，则抛弃异常
+	 */
+	public function setViewPath($path)
+	{
+		$this->_viewPath = \H2O::getAlias($path);
+	}
+	/**
 	 * 返回控制器的命名空间
 	 */
 	public function getCtrNameSpace()
@@ -78,6 +108,7 @@ class Module
 	{
 		$stro = $this->_ctrnSpace.'\\'.$route['controller'];
 		$o = new $stro();
+		$o->setViewPath($this->getViewPath());
 		return $o->runAction($route['action']);
 	}
 }

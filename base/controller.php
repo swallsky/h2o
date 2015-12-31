@@ -11,9 +11,35 @@ use H2O;
 abstract class Controller
 {
 	/**
-	 * @var string 默认action
+	 * @var string 视图目录
 	 */
-	public $defaultAction = 'index';
+	private $_viewPath;
+	/**
+	 * 返回视图目录
+	 */
+	public function getViewPath()
+	{
+		return $this->_viewPath;
+	}
+	/**
+	 * @param string $path 设置视图目录
+	 */
+	public function setViewPath($path)
+	{
+		$path = \H2O::getAlias($path);
+		$this->_viewPath = $path;
+	}
+	/**
+	 * 返回模板渲染后的字符串
+	 * @param string $tpl 模板文件
+	 * @param array $vars 需要传入模板的数据参数
+	 */
+	public function render($tpl,$vars = [])
+	{
+		$ov = new View($tpl);
+		$ov->setPath($this->getViewPath());
+		return $ov->render($vars);
+	}
 	/**
 	 * 查找运行对应的Action方法
 	 * @param string $action
@@ -23,9 +49,9 @@ abstract class Controller
 		$action = 'act'.ucfirst($action);
 		$o = new static(); //初始化对应的类
 		if(method_exists($o,$action)){
-			call_user_func([$o,$action]); //执行对应的方法
+			return call_user_func([$o,$action]); //执行对应的方法
 		}else{
-			throw new Exception('No action method!',get_class($o).'->'.$action);
+			throw new Exception('Controller::runAction',get_class($o).'->'.$action.' is not exist!');
 		}
 	}
 }

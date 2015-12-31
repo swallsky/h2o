@@ -25,13 +25,13 @@ abstract class Application extends Module
 	public function __construct($config = [])
 	{
 		parent::__construct($config);
-		$this->preInit($config);
+		$this->_preInit($config);
 	}
 	/**
 	 * 预加载组件
 	 * @param array $config
 	 */
-	private function preInit($config)
+	private function _preInit($config)
 	{
 		//TODO
 	}
