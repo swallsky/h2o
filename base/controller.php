@@ -40,18 +40,4 @@ abstract class Controller
 		$ov->setPath($this->getViewPath());
 		return $ov->render($vars);
 	}
-	/**
-	 * 查找运行对应的Action方法
-	 * @param string $action
-	 */
-	public function runAction($action)
-	{
-		$action = 'act'.ucfirst($action);
-		$o = new static(); //初始化对应的类
-		if(method_exists($o,$action)){
-			return call_user_func([$o,$action]); //执行对应的方法
-		}else{
-			throw new Exception('Controller::runAction',get_class($o).'->'.$action.' is not exist!');
-		}
-	}
 }

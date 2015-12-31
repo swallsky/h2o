@@ -109,6 +109,11 @@ class Module
 		$stro = $this->_ctrnSpace.'\\'.$route['controller'];
 		$o = new $stro();
 		$o->setViewPath($this->getViewPath());
-		return $o->runAction($route['action']);
+		$action = 'act'.ucfirst($route['action']);
+		if(method_exists($o,$action)){
+			return call_user_func([$o,$action]);
+		}else{
+			throw new Exception('Module::runController',$stro.' no method:'.$action);
+		}
 	}
 }
