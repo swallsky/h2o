@@ -26,7 +26,7 @@ class Controller extends H2O\base\Controller
         parent::setLayout($url);
     }
     /**
-     * 设置子模块
+     * 设置包含子模块
      * @param string $name 子模块名称
      * @param string $url 路由URL 例如：main.pub
      */
