@@ -28,7 +28,7 @@ abstract class Application
 	public function __construct($config = [])
 	{
 		$this->_preInit($config);
-		\H2O::getContainer('\H2O\base\module',new Module($config));
+		\H2O::setContainer('\H2O\base\module',new Module($config));
 	}
 	/**
 	 * 预加载组件

@@ -41,6 +41,8 @@ class Module
 	{
 		if(isset($config['basePath']))
 			$this->setBasePath($config['basePath']);
+		if(isset($config['defaultLayout']))
+			$this->setLayout($config['defaultLayout']);
 		$this->init();
 	}
 	/**
