@@ -65,18 +65,9 @@ class View
 	 * 布局页面中显示主内容区
 	 * @return string
 	 */
-	public function content()
+	public function getContent()
 	{
-		return Module::getContent();
-	}
-	/**
-	 * 显示子模块
-	 * @param string $name 模块名称
-	 * @return string
-	 */
-	public function includeModule($name)
-	{
-		return Module::getSonModules($name);
+		echo Module::getContent();
 	}
 	/**
 	 * 模板解析和渲染

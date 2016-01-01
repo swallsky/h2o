@@ -26,6 +26,10 @@ abstract class H2O
 	 */
 	public static $aliases = ['@h2o' => __DIR__];
 	/**
+	 * @var array 全局容器类，缓存全局类
+	 */
+	private static $container = [];
+	/**
 	 * 获取路径别名，如果不包含@，直接返回，如果存在@返回别名真实路径
 	 * @param string $alias
 	 * @param bool $throwException 是否抛弃异常
@@ -57,6 +61,24 @@ abstract class H2O
 		} else {
 			return false;
 		}
+	}
+	/**
+	 * 设置容器缓存
+	 * @param string $name 缓存名称
+	 * @param mixed $value 缓存信息
+	 */
+	public static function setContainer($name,$value)
+	{
+		self::$container[$name] = $value;
+	}
+	/**
+	 * 返回缓存信息
+	 * @param $name
+	 * @return mixed
+	 */
+	public static function getContainer($name)
+	{
+		return self::$container[$name];
 	}
 	/**
 	 * 框架初始化

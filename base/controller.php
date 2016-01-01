@@ -23,8 +23,8 @@ abstract class Controller
 	 */
 	public function __construct()
 	{
-		$class = get_called_class();
-		$this->_name = substr($class, strrpos($class,'\\'));
+		$class = strtolower(get_called_class());
+		$this->_name = substr($class, strrpos($class,'\\')+1);
 	}
 	/**
 	 * 执行对应的操作
@@ -64,33 +64,19 @@ abstract class Controller
 	}
 	/**
 	 * 设置布局信息
-	 * @param array $route
-	 * 例如：[
-			'controller'	=>	'layout',
-			'action'			=>	'index'
-		]
+	 * @param string $url 路由URL 例如layout.index
 	 */
-	public function setLayout($route)
+	public function setLayout($url)
 	{
-		Module::setLayout($route);
+		Module::setLayout($url);
 	}
 	/**
-	 * 显示子模块信息
-	 * @param string $name 子模块名称
-	 * @return array
+	 * 返回包含模板
+	 * @param string $url 例如 message.list
 	 */
-	public function getSonModules($name = '')
+	public function loadModule($url)
 	{
-		return Module::getSonModules($name);
-	}
-	/**
-	 * 设置子模块
-	 * @param string $name 子模块名称
-	 * @param array $route 路由
-	 */
-	public function setSonModules($name,$route)
-	{
-		Module::setSonModules($name,$route);
+		return \H2O::getContainer('\H2O\base\module')->loadModule($url);
 	}
 	/**
 	 * 返回模板渲染后的字符串

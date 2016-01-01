@@ -7,8 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\base;
-
-abstract class Application extends Module
+abstract class Application
 {
 	/**
 	 * @var string 应用程序的根空间
@@ -28,8 +27,8 @@ abstract class Application extends Module
 	 */
 	public function __construct($config = [])
 	{
-		parent::__construct($config);
 		$this->_preInit($config);
+		\H2O::getContainer('\H2O\base\module',new Module($config));
 	}
 	/**
 	 * 预加载组件
@@ -47,7 +46,7 @@ abstract class Application extends Module
 		Event::trigger(self::EVENT_BEFORE_ACTION);
 		$this->handleRequest();
 		Event::trigger(self::EVENT_AFTER_ACTION);
-		echo $this->runModules();
+		echo \H2O::getContainer('\H2O\base\module')->runModules();
 	}
 	/**
 	 * 继承类必须实现的方法

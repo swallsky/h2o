@@ -60,25 +60,6 @@ class Request
 		return $headers;
 	}
 	/**
-	 * 解析路由URL
-	 * @param $routepath 路由URL 例如：main.index
-	 * @return array 路由
-	 * @throws 如果路由设置错误，抛弃异常
-	 */
-	public static function parseRoute($routepath)
-	{
-		$pointcnt = substr_count($routepath,'.');
-		if($pointcnt==1){
-			$ep = explode('.',$routepath);
-			return [
-				'controller'	=>	$ep[0],
-				'action'		=>	$ep[1]
-			];
-		}else{
-			throw new \H2O\base\Exception('H2O\web\request','routeUrl:'.$routepath.' is error.');
-		}
-	}
-	/**
 	 * 获取路由控制器和动作
 	 */
 	public function getRoute()
@@ -91,7 +72,7 @@ class Request
 			];
 		}else{//其他路由
 			$routepath = $this->getRealPath($routepath);
-			$data = self::parseRoute($routepath);
+			$data = \H2O\base\Module::parseRoute($routepath);
 		}
 		return $data;
 	}

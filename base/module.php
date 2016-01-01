@@ -7,6 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\base;
+use H2O;
 class Module
 {
 	/**
@@ -22,10 +23,6 @@ class Module
 	 */
 	private $_ctrnSpace;
 	/**
-	 * @var string 缓存的配置信息
-	 */
-	public static $config = [];
-	/**
 	 * @var array 布局模块
 	 */
 	public static $layout = [];
@@ -34,8 +31,7 @@ class Module
 	 */
 	public static $modules = [
 		'layout'		=>	'',
-		'content'		=>	'',
-		'sonModules'	=>	[]
+		'content'		=>	''
 	];
 	/**
 	 * 初始化
@@ -43,9 +39,8 @@ class Module
 	 */
 	public function __construct($config = [])
 	{
-		$conf = empty($config)?self::$config:$config;
-		if(isset($conf['basePath']))
-			$this->setBasePath($conf['basePath']);
+		if(isset($config['basePath']))
+			$this->setBasePath($config['basePath']);
 		$this->init();
 	}
 	/**
@@ -56,6 +51,25 @@ class Module
 		if ($this->_ctrnSpace === null) {
 			$trn = str_replace(APP_PATH,'',$this->_basePath);
 			$this->_ctrnSpace = Application::APP_ROOT_NAME.str_replace('/','\\',$trn).'\\controllers';
+		}
+	}
+	/**
+	 * 将URL转换为标准的路由数组
+	 * @param $routepath 路由URL 例如：main.index
+	 * @return array 路由
+	 * @throws 如果路由设置错误，抛弃异常
+	 */
+	public static function parseRoute($routepath)
+	{
+		$pointcnt = substr_count($routepath,'.');
+		if($pointcnt==1){
+			$ep = explode('.',$routepath);
+			return [
+				'controller'	=>	$ep[0],
+				'action'		=>	$ep[1]
+			];
+		}else{
+			throw new Exception('H2O\base\Module','routeUrl:'.$routepath.' is error.');
 		}
 	}
 	/**
@@ -76,7 +90,7 @@ class Module
 	 */
 	public function setBasePath($path)
 	{
-		$path = \H2O::getAlias($path);
+		$path = H2O::getAlias($path);
 		$p = realpath($path);
 		if($p !== false && is_dir($p)){
 			$this->_basePath = $p;
@@ -96,7 +110,6 @@ class Module
 			return $this->_viewPath = $this->_basePath . DIRECTORY_SEPARATOR . 'views';
 		}
 	}
-	
 	/**
 	 * 设置这个模块的模板目录
 	 * @param string 模板目录
@@ -114,45 +127,22 @@ class Module
 		return $this->_ctrnSpace;
 	}
 	/**
-	 * 设置子模块
-	 * @param string $name 子模块名
-	 * @param array $route
+	 * 返回包含模块
+	 * @param $url
+	 * @return string
+	 * @throws Exception
 	 */
-	public static function setSonModules($name,$route)
+	public function loadModule($url)
 	{
-		self::$modules['sonModules'][$name] = $route;
-	}
-	/**
-	 * 返回子模块的路由信息
-	 * @param string $name 子模块名称
-	 * @return array 所有子路由信息
-	 */
-	public static function getSonModules($name = '')
-	{
-		if(empty($name)){
-			return self::$modules['sonModules'];
-		}else{
-			return isset(self::$modules['sonModules'][$name])?self::$modules['sonModules'][$name]:'';
-		}
-	}
-	/**
-	 * 执行所有的子模块
-	 */
-	public function runSonModules()
-	{
-		$sons = self::$modules['sonModules'];
-		if(!empty($sons)){
-			foreach($sons as $n=>$m){
-				self::$modules['sonModules'][$n] = $this->runSingleModules($m);
-			}
-		}
+		$route = self::parseRoute($url);
+		return $this->runSingleModules($route);
 	}
 	/**
 	 * 执行单个模块
 	 * @param array $route 路由
 	 * @return string 解析后的模块
 	 */
-	public function runSingleModules($route)
+	private function runSingleModules($route)
 	{
 		$stro = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
 		$o = new $stro();
@@ -169,23 +159,12 @@ class Module
 	}
 	/**
 	 * 设置布局信息
-	 * @param array $route
-	 * 例如：[
-		'controller'	=>	'layout',
-		'action'		=>	'index'
-		]
+	 * @param string $url 例如 layout.index
 	 */
-	public static function setLayout($route)
+	public static function setLayout($url)
 	{
+		$route = self::parseRoute($url);
 		Module::$layout = $route;
-	}
-	/**
-	 * 显示主内容信息
-	 * @return string 主内容
-	 */
-	public static function getContent()
-	{
-		return self::$modules['content'];
 	}
 	/**
 	 * 执行动作
@@ -194,10 +173,17 @@ class Module
 	 */
 	public function runAction($route,$content = true)
 	{
-		$this->runSonModules();//执行子模块
 		$context = $this->runSingleModules($route);
 		if($content) self::$modules['content'] = $context;
 		return $context;
+	}
+	/**
+	 * 返回主操作区信息
+	 * @return string
+	 */
+	public static function getContent()
+	{
+		return self::$modules['content'];
 	}
 	/**
 	 * 执行模块
@@ -207,8 +193,7 @@ class Module
 		if(empty(self::$layout)){//不存在布局，直接返回内容
 			return self::$modules['content'];
 		}else{//存在布局模块时返回布局
-			$layout = self::$layout;
-			return $this->runAction($layout,false);
+			return $this->runAction(self::$layout,false);
 		}
 	}
 }
