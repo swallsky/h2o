@@ -79,7 +79,7 @@ abstract class H2O
 		if(empty($name)){
 			return self::$_appconfigs;
 		}else{
-			return isset(self::$_appconfigs[$name])?self::$_appconfigs[$name]:'';
+			return isset(self::$_appconfigs[$name])?self::$_appconfigs[$name]:[];
 		}
 	}
 	/**

@@ -25,8 +25,8 @@ class Application extends H2O\base\Application
 	public function setPreObject()
 	{
 		return [
-		'module'		=>		'\H2O\base\module', //默认的模块类
-		'view'				=>		'\H2O\web\view', //渲染层类
+			'module'		=>		'\H2O\base\module', //默认的模块类
+			'view'				=>		'\H2O\web\view', //渲染层类
 		];
 	}
 	/**
@@ -34,8 +34,13 @@ class Application extends H2O\base\Application
 	 */
 	public function handleRequest()
 	{
-		$request = new Request(isset($this->_config['request'])?$this->_config['request']:[]); //初始请求
+		$config = \H2O::getAppConfigs('request'); //请求配置信息
+		$request = new Request($config); //初始请求
 		$dd = $request->getRoute();
-		\H2O::getContainer('module')->runAction($dd);
+		$module = \H2O::getContainer('module');
+		if(isset($config['defaultLayout'])){//默认布局
+			$module->setLayout($config['defaultLayout']);
+		}
+		$module->runAction($dd);
 	}
 }

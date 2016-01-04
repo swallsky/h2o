@@ -71,6 +71,13 @@ abstract class Controller
 		Module::setLayout($url);
 	}
 	/**
+	 * 清空布局
+	 */
+	public function clearLayout()
+	{
+		Module::clearLayout();
+	}
+	/**
 	 * 返回包含模板
 	 * @param string $url 例如 message.list
 	 */

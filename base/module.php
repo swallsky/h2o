@@ -41,8 +41,6 @@ class Module
 		$config = \H2O::getAppConfigs(); //获取应用配置信息
 		if(isset($config['basePath']))
 			$this->setBasePath($config['basePath']);
-		if(isset($config['defaultLayout']))
-			$this->setLayout($config['defaultLayout']);
 		$this->init();
 	}
 	/**
@@ -54,6 +52,13 @@ class Module
 			$trn = str_replace(APP_PATH,'',$this->_basePath);
 			$this->_ctrnSpace = Application::APP_ROOT_NAME.str_replace('/','\\',$trn).'\\controllers';
 		}
+	}
+	/**
+	 * 返回当前模块的命名空间
+	 */
+	public function getNameSpace()
+	{
+		return str_replace('\\controllers','',$this->_ctrnSpace);
 	}
 	/**
 	 * 将URL转换为标准的路由数组
@@ -85,7 +90,6 @@ class Module
 		}
 		return $this->_basePath;
 	}
-
 	/**
 	 * @param string $path 设置模块根目录
 	 * @throws Exception 如果不存在，则出现异常
@@ -167,6 +171,13 @@ class Module
 	{
 		$route = self::parseRoute($url);
 		self::$layout = $route;
+	}
+	/**
+	 * 清空布局
+	 */
+	public static function clearLayout()
+	{
+		self::$layout = [];
 	}
 	/**
 	 * 执行动作
