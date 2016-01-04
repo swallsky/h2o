@@ -20,9 +20,15 @@ class View
 	private $_templateFile;
 	/**
 	 * 初始化
-	 * @param string $tpl 模板文件
 	 */
-	public function __construct($tpl)
+	public function __construct()
+	{
+	}
+	/**
+	 * 设置模板文件
+	 * @param string $tpl 文件名，注意不用写文件后缀名，默认后缀名为.php
+	 */
+	public function setFile($tpl)
 	{
 		$this->_templateFile = $tpl;
 	}

@@ -11,17 +11,23 @@ use H2O;
 class Application extends H2O\base\Application
 {
 	/**
-	 * @var 配置信息参数
-	 */
-	private $_config;
-	/**
 	 * Web应用初始化
 	 * @param array $config 初始化参数
 	 */
 	public function __construct($config = [])
 	{
 		parent::__construct($config);
-		$this->_config = $config;
+	}
+	/**
+	 * 设置预加载对象 缓存全局的类和对象 例如：module,view等
+	 * 方便更多应用扩展现在类和对象
+	 */
+	public function setPreObject()
+	{
+		return [
+		'module'		=>		'\H2O\base\module', //默认的模块类
+		'view'				=>		'\H2O\web\view', //渲染层类
+		];
 	}
 	/**
 	 * 执行方法
@@ -30,6 +36,6 @@ class Application extends H2O\base\Application
 	{
 		$request = new Request(isset($this->_config['request'])?$this->_config['request']:[]); //初始请求
 		$dd = $request->getRoute();
-		\H2O::getContainer('\H2O\base\module')->runAction($dd);
+		\H2O::getContainer('module')->runAction($dd);
 	}
 }

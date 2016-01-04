@@ -79,27 +79,37 @@ class Request
 	/**
 	 * 返回url参数
 	 * @param string $name GET参数key值
+	 * @param string $value 给GET参数设置值
 	 * @return 返回GET数据，如果不存在返回为空
 	 */
-	public static function get($name = '')
+	public static function get($name = '',$value = '')
 	{
 		if($name == ''){
 			return self::$getParams;
 		}else{
-			return isset(self::$getParams[$name])?self::$getParams[$name]:'';
+			if(empty($value)){
+				self::$getParams[$name] = $value;
+			}else{
+				return isset(self::$getParams[$name])?self::$getParams[$name]:'';
+			}
 		}
 	}
 	/**
 	 * 返回post数据
 	 * @param string $name POST数据名称
+	 * @param mixed $value 给POST参数赋值
 	 * @return 返回POST数据，如果不存在返回为空
 	 */
-	public static function post($name = '')
+	public static function post($name = '',$value = '')
 	{
 		if($name == ''){//如果为空返回所有数据
 			return self::$postData;
 		}else{
-			return isset(self::$postData[$name])?self::$postData[$name]:'';
+			if(empty($value)){
+				self::$postData[$name] = $value;
+			}else{
+				return isset(self::$postData[$name])?self::$postData[$name]:'';
+			}
 		}
 	}
 	/**

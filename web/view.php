@@ -10,5 +10,8 @@ namespace H2O\web;
 use H2O;
 class View extends H2O\base\View
 {
-	
+	public function __construct()
+	{
+		parent::__construct();
+	}
 }

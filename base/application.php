@@ -27,16 +27,29 @@ abstract class Application
 	 */
 	public function __construct($config = [])
 	{
-		$this->_preInit($config);
-		\H2O::setContainer('\H2O\base\module',new Module($config));
+		\H2O::setAppConfigs($config);
+		$this->_preInit();
+	}
+	/**
+	 * 设置预加载对象 缓存全局的类和对象 例如：module,view等
+	 * 方便更多应用扩展现在类和对象
+	 */
+	public function setPreObject()
+	{
+		return [
+			'module'		=>		'\H2O\base\module', //默认的模块类
+			'view'				=>		'\H2O\base\view', //默认的渲染层类
+		];
 	}
 	/**
 	 * 预加载组件
-	 * @param array $config
 	 */
-	private function _preInit($config)
+	private function _preInit()
 	{
-		//TODO
+		$pre = $this->setPreObject();
+		foreach($pre as $n=>$o){
+			\H2O::setContainer($n,new $o());
+		}
 	}
 	/**
 	 * 运行实例
@@ -46,7 +59,7 @@ abstract class Application
 		Event::trigger(self::EVENT_BEFORE_ACTION);
 		$this->handleRequest();
 		Event::trigger(self::EVENT_AFTER_ACTION);
-		echo \H2O::getContainer('\H2O\base\module')->runModules();
+		echo \H2O::getContainer('module')->runModules();
 	}
 	/**
 	 * 继承类必须实现的方法

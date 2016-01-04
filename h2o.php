@@ -26,10 +26,6 @@ abstract class H2O
 	 */
 	public static $aliases = ['@h2o' => __DIR__];
 	/**
-	 * @var array 全局容器类，缓存全局类
-	 */
-	private static $container = [];
-	/**
 	 * 获取路径别名，如果不包含@，直接返回，如果存在@返回别名真实路径
 	 * @param string $alias
 	 * @param bool $throwException 是否抛弃异常
@@ -63,13 +59,41 @@ abstract class H2O
 		}
 	}
 	/**
+	 * @var array 缓存应用配置信息
+	 */
+	private static $_appconfigs = [];
+	/**
+	 * 应用初始化时的配置信息缓存
+	 * @param array $configs 应用配置信息
+	 */
+	public static function setAppConfigs($configs)
+	{
+		self::$_appconfigs = $configs;
+	}
+	/**
+	 * 返回应用配置信息
+	 * @param string $name 配置选项名称 为空时，返回所有配置信息
+	 */
+	public static function getAppConfigs($name = '')
+	{
+		if(empty($name)){
+			return self::$_appconfigs;
+		}else{
+			return isset(self::$_appconfigs[$name])?self::$_appconfigs[$name]:'';
+		}
+	}
+	/**
+	 * @var array 全局容器类，缓存全局类
+	 */
+	private static $_container = [];
+	/**
 	 * 设置容器缓存
 	 * @param string $name 缓存名称
 	 * @param mixed $value 缓存信息
 	 */
 	public static function setContainer($name,$value)
 	{
-		self::$container[$name] = $value;
+		self::$_container[$name] = $value;
 	}
 	/**
 	 * 返回缓存信息
@@ -78,7 +102,7 @@ abstract class H2O
 	 */
 	public static function getContainer($name)
 	{
-		return self::$container[$name];
+		return self::$_container[$name];
 	}
 	/**
 	 * 框架初始化

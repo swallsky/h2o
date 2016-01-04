@@ -35,10 +35,10 @@ class Module
 	];
 	/**
 	 * 初始化
-	 * @param array $config
 	 */
-	public function __construct($config = [])
+	public function __construct()
 	{
+		$config = \H2O::getAppConfigs(); //获取应用配置信息
 		if(isset($config['basePath']))
 			$this->setBasePath($config['basePath']);
 		if(isset($config['defaultLayout']))
@@ -157,7 +157,7 @@ class Module
 	 */
 	public static function getLayout()
 	{
-		return Module::$layout;
+		return self::$layout;
 	}
 	/**
 	 * 设置布局信息
@@ -166,7 +166,7 @@ class Module
 	public static function setLayout($url)
 	{
 		$route = self::parseRoute($url);
-		Module::$layout = $route;
+		self::$layout = $route;
 	}
 	/**
 	 * 执行动作

@@ -76,7 +76,7 @@ abstract class Controller
 	 */
 	public function loadModule($url)
 	{
-		return \H2O::getContainer('\H2O\base\module')->loadModule($url);
+		return \H2O::getContainer('module')->loadModule($url);
 	}
 	/**
 	 * 返回模板渲染后的字符串
@@ -85,7 +85,8 @@ abstract class Controller
 	 */
 	public function render($tpl,$vars = [])
 	{
-		$ov = new View($tpl);
+		$ov = \H2O::getContainer('view');
+		$ov->setFile($tpl);
 		$viewpath = $this->getViewPath().DIRECTORY_SEPARATOR.$this->_name;
 		$ov->setPath($viewpath);
 		return $ov->render($vars);
