@@ -13,63 +13,13 @@ use ReflectionClass,ReflectionProperty;
 class Model  implements IteratorAggregate,ArrayAccess
 {
 	/**
-	 * @var string 当前场景，默认为default
+	 * 返回表单名称
+	 * @return string the form name of this model class.
 	 */
-	private $_scenario = 'default';
-	/**
-	 * This method is invoked when an unsafe attribute is being massively assigned.
-	 * The default implementation will log a warning message if YII_DEBUG is on.
-	 * It does nothing otherwise.
-	 * @param string $name the unsafe attribute name
-	 * @param mixed $value the attribute value
-	 */
-	public function onUnsafeAttribute($name, $value)
+	public function formName()
 	{
-		Exception('Model::onUnsafeAttribute',"Failed to set unsafe attribute '$name' in '" . get_class($this) . "'.", __METHOD__);
-	}
-	
-	/**
-	 * Returns the scenario that this model is used in.
-	 *
-	 * Scenario affects how validation is performed and which attributes can
-	 * be massively assigned.
-	 *
-	 * @return string the scenario that this model is in. Defaults to [[SCENARIO_DEFAULT]].
-	 */
-	public function getScenario()
-	{
-		return $this->_scenario;
-	}
-	
-	/**
-	 * Sets the scenario for the model.
-	 * Note that this method does not check if the scenario exists or not.
-	 * The method [[validate()]] will perform this check.
-	 * @param string $value the scenario that this model is in.
-	 */
-	public function setScenario($value)
-	{
-		$this->_scenario = $value;
-	}
-	/**
-	 * Returns the attribute names that are safe to be massively assigned in the current scenario.
-	 * @return string[] safe attribute names
-	 */
-	public function safeAttributes()
-	{
-		$scenario = $this->getScenario();
-		$scenarios = $this->scenarios();
-		if (!isset($scenarios[$scenario])) {
-			return [];
-		}
-		$attributes = [];
-		foreach ($scenarios[$scenario] as $attribute) {
-			if ($attribute[0] !== '!') {
-				$attributes[] = $attribute;
-			}
-		}
-	
-		return $attributes;
+		$reflector = new ReflectionClass($this);
+		return $reflector->getShortName();
 	}
 	/**
 	 * 返回属性名称的列表
@@ -87,6 +37,14 @@ class Model  implements IteratorAggregate,ArrayAccess
 			}
 		}
 		return $names;
+	}
+	/**
+	 *  返回所有字段标签列表
+	 * @return array attribute labels
+	 */
+	public function attributeLabels()
+	{
+		return [];
 	}
 	/**
 	 * 返回属性值
@@ -110,21 +68,35 @@ class Model  implements IteratorAggregate,ArrayAccess
 		return $values;
 	}
 	/**
-	 * 批量设置属性信息
-	 * @param array $values attribute values (name => value)  例如[['name'=>'test','title'=>'content']]
-	 * @param boolean $safeOnly 是否开启安全验证模式
+	 * 设置字段值
+	 * @param array $values attribute values (name => value) to be assigned to the model.
 	 */
-	public function setAttributes($values, $safeOnly = true)
+	public function setAttributes($values)
 	{
-		if (is_array($values)){
-			$attributes = array_flip($safeOnly ? $this->safeAttributes() : $this->attributes());
+		if (is_array($values)) {
+			$attributes = $this->attributes();
 			foreach ($values as $name => $value) {
-				if (isset($attributes[$name])) {
-					$this->$name = $value;
-				} elseif ($safeOnly) {
-					$this->onUnsafeAttribute($name, $value);
-				}
+				$this->$name = $value;
 			}
+		}
+	}
+	/**
+	 * 加载数据
+	 * @param array $data the data array. 数据
+	 * @param string $formName 表单名称
+	 * @return boolean 是否加载成功
+	 */
+	public function load($data, $formName = null)
+	{
+		$scope = $formName === null ? $this->formName() : $formName;
+		if ($scope === '' && !empty($data)) {
+			$this->setAttributes($data);
+			return true;
+		} elseif (isset($data[$scope])) {
+			$this->setAttributes($data[$scope]);
+			return true;
+		} else {
+			return false;
 		}
 	}
 	/**
