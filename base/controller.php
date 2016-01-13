@@ -15,16 +15,30 @@ abstract class Controller
 	 */
 	private $_name = '';
 	/**
-	 * @var string 视图目录
+	 * @var string 命名空间
 	 */
-	private $_viewPath;
+	private $_namespace;
+	/**
+	 * @var string 布局模块 例如layout.index
+	 */
+	private $_layout;
+	/**
+	 * @var string 主操作模块
+	 */
+	private $_content;
 	/**
 	 * 初始化控制器
 	 */
 	public function __construct()
 	{
 		$class = strtolower(get_called_class());
-		$this->_name = substr($class, strrpos($class,'\\')+1);
+		$lastsp = strrpos($class,'\\');
+		$this->_namespace = substr($class,0,$lastsp);
+		$this->_name = substr($class,$lastsp+1);
+		$config = \H2O::getAppConfigs(); //获取应用配置信息
+		if(isset($config['defaultLayout'])){//默认布局
+			$this->setLayout($config['defaultLayout']);
+		}
 	}
 	/**
 	 * 执行对应的操作
@@ -34,9 +48,18 @@ abstract class Controller
 	{
 		$action = 'act'.$act;
 		if(method_exists($this,$action)){
-			return call_user_func([$this,$action]);
+			$content = call_user_func([$this,$action]);
+			if(empty($this->_layout)){//非布局
+				return $content;
+			}else{//有布局
+				$route = Module::parseRoute($this->_layout);
+				$class = $this->_namespace.'\\'.strtolower($route['controller']);
+				$o = new $class();
+				$o->setContent($content);//设置主模块缓存
+				return call_user_func([$o,'act'.ucfirst(strtolower($route['action']))]);
+			}
 		}else{
-			throw new Exception('Module::runController',get_called_class().' no method:'.$action);
+			throw new Exception('Controller::runAction',get_called_class().' no method:'.$action);
 		}
 	}
 	/**
@@ -44,15 +67,8 @@ abstract class Controller
 	 */
 	public function getViewPath()
 	{
-		return $this->_viewPath;
-	}
-	/**
-	 * @param string $path 设置视图目录
-	 */
-	public function setViewPath($path)
-	{
-		$path = \H2O::getAlias($path);
-		$this->_viewPath = $path;
+		$reflector = new \ReflectionClass($this);
+		return dirname(dirname($reflector->getFileName())).DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.$this->_name;
 	}
 	/**
 	 * 获取当前布局信息
@@ -60,7 +76,7 @@ abstract class Controller
 	 */
 	public function getLayout()
 	{
-		return Module::getLayout();
+		return $this->_layout;
 	}
 	/**
 	 * 设置布局信息
@@ -68,22 +84,42 @@ abstract class Controller
 	 */
 	public function setLayout($url)
 	{
-		Module::setLayout($url);
+		$this->_layout = $url;
 	}
 	/**
 	 * 清空布局
 	 */
 	public function clearLayout()
 	{
-		Module::clearLayout();
+		$this->_layout = '';
+	}
+	/**
+	 * 设置主模块缓存
+	 * @param string $content 主模块内容
+	 */
+	public function setContent($content)
+	{
+		$this->_content = $content;
+	}
+	/**
+	 * 返回主操作模块内容
+	 */
+	public function getContent()
+	{
+		return $this->_content;
 	}
 	/**
 	 * 返回包含模板
 	 * @param string $url 例如 message.list
+	 * @param string $namespace 命名空间
 	 */
-	public function loadModule($url)
+	public function loadModule($url,$namespace = '')
 	{
-		return \H2O::getContainer('module')->loadModule($url);
+		$namespace = empty($namespace)?$this->_namespace:$namespace;
+		$route = Module::parseRoute($url);
+		$class = $namespace.'\\'.strtolower($route['controller']);
+		$o = new $class();
+		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 	/**
 	 * 返回模板渲染后的字符串
@@ -94,8 +130,8 @@ abstract class Controller
 	{
 		$ov = \H2O::getContainer('view');
 		$ov->setFile($tpl);
-		$viewpath = $this->getViewPath().DIRECTORY_SEPARATOR.$this->_name;
-		$ov->setPath($viewpath);
+		$ov->setPath($this->getViewPath());
+		$ov->setContent($this->getContent());
 		return $ov->render($vars);
 	}
 }

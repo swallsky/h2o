@@ -19,6 +19,10 @@ class View
 	 */
 	private $_templateFile;
 	/**
+	 * @var string 主操作模块内容
+	 */
+	private $_content;
+	/**
 	 * 初始化
 	 */
 	public function __construct()
@@ -68,12 +72,20 @@ class View
 		return $this->getPath().DIRECTORY_SEPARATOR.$this->_templateFile.'.php';
 	}
 	/**
+	 * 设置主模块缓存
+	 * @param string $content 主模块内容
+	 */
+	public function setContent($content)
+	{
+		$this->_content = $content;
+	}
+	/**
 	 * 布局页面中显示主内容区
 	 * @return string
 	 */
 	public function getContent()
 	{
-		echo Module::getContent();
+		echo $this->_content;
 	}
 	/**
 	 * 模板解析和渲染

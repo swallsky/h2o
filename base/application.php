@@ -57,9 +57,9 @@ abstract class Application
 	public function run()
 	{
 		Event::trigger(self::EVENT_BEFORE_ACTION);
-		$this->handleRequest();
+		$h = $this->handleRequest();
 		Event::trigger(self::EVENT_AFTER_ACTION);
-		echo \H2O::getContainer('module')->runModules();
+		echo $h;
 	}
 	/**
 	 * 继承类必须实现的方法

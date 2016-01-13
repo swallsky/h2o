@@ -15,31 +15,16 @@ class Module
 	 */
 	private $_basePath;
 	/**
-	 * @var string 视图文件目录
-	 */
-	private $_viewPath;
-	/**
 	 * @var string 控制器命名空间
 	 */
 	private $_ctrnSpace;
-	/**
-	 * @var array 布局模块
-	 */
-	public static $layout = [];
-	/**
-	 * @var array 模块组 默认存在layout模块,但是为空
-	 */
-	public static $modules = [
-		'layout'		=>	'',
-		'content'		=>	''
-	];
 	/**
 	 * 初始化
 	 */
 	public function __construct()
 	{
 		$config = \H2O::getAppConfigs(); //获取应用配置信息
-		if(isset($config['basePath']))
+		if(isset($config['basePath'])) //应用程序主目录
 			$this->setBasePath($config['basePath']);
 		$this->init();
 	}
@@ -105,27 +90,6 @@ class Module
 		}
 	}
 	/**
-	 * 返回这个模块的模板目录
-	 * @return string 模板目录
-	 */
-	public function getViewPath()
-	{
-		if ($this->_viewPath !== null) {
-			return $this->_viewPath;
-		} else {
-			return $this->_viewPath = $this->_basePath . DIRECTORY_SEPARATOR . 'views';
-		}
-	}
-	/**
-	 * 设置这个模块的模板目录
-	 * @param string 模板目录
-	 * @throws 如果不存在，则抛弃异常
-	 */
-	public function setViewPath($path)
-	{
-		$this->_viewPath = \H2O::getAlias($path);
-	}
-	/**
 	 * 返回控制器的命名空间
 	 */
 	public function getCtrNameSpace()
@@ -133,80 +97,13 @@ class Module
 		return $this->_ctrnSpace;
 	}
 	/**
-	 * 返回包含模块
-	 * @param $url
-	 * @return string
-	 * @throws Exception
-	 */
-	public function loadModule($url)
-	{
-		$route = self::parseRoute($url);
-		return $this->runSingleModules($route);
-	}
-	/**
-	 * 执行单个模块
-	 * @param array $route 路由
-	 * @return string 解析后的模块
-	 */
-	private function runSingleModules($route)
-	{
-		$stro = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
-		$o = new $stro();
-		$o->setViewPath($this->getViewPath());
-		return $o->runAction(ucfirst(strtolower($route['action'])));
-	}
-	/**
-	 * 获取布局信息
-	 * @return array
-	 */
-	public static function getLayout()
-	{
-		return self::$layout;
-	}
-	/**
-	 * 设置布局信息
-	 * @param string $url 例如 layout.index
-	 */
-	public static function setLayout($url)
-	{
-		$route = self::parseRoute($url);
-		self::$layout = $route;
-	}
-	/**
-	 * 清空布局
-	 */
-	public static function clearLayout()
-	{
-		self::$layout = [];
-	}
-	/**
 	 * 执行动作
 	 * @param array $route 路由
-	 * @param bool $content 是否是主内容
 	 */
-	public function runAction($route,$content = true)
+	public function runAction($route)
 	{
-		$context = $this->runSingleModules($route);
-		if($content) self::$modules['content'] = $context;
-		return $context;
-	}
-	/**
-	 * 返回主操作区信息
-	 * @return string
-	 */
-	public static function getContent()
-	{
-		return self::$modules['content'];
-	}
-	/**
-	 * 执行模块
-	 */
-	public function runModules()
-	{
-		if(empty(self::$layout)){//不存在布局，直接返回内容
-			return self::$modules['content'];
-		}else{//存在布局模块时返回布局
-			return $this->runAction(self::$layout,false);
-		}
+		$class = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
+		$o = new $class();
+		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 }

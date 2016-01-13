@@ -25,6 +25,7 @@ class Application extends H2O\base\Application
 	public function setPreObject()
 	{
 		return [
+			'request'		=>		'\H2O\web\Request', //HTTP请求组件
 			'module'		=>		'\H2O\base\module', //默认的模块类
 			'view'				=>		'\H2O\web\view', //渲染层类
 		];
@@ -34,13 +35,9 @@ class Application extends H2O\base\Application
 	 */
 	public function handleRequest()
 	{
-		$config = \H2O::getAppConfigs('request'); //请求配置信息
-		$request = new Request($config); //初始请求
+		$request = \H2O::getContainer('request'); //获取HTTP请求组件
 		$dd = $request->getRoute();
 		$module = \H2O::getContainer('module');
-		if(isset($config['defaultLayout'])){//默认布局
-			$module->setLayout($config['defaultLayout']);
-		}
-		$module->runAction($dd);
+		return $module->runAction($dd);
 	}
 }

@@ -31,10 +31,10 @@ class Request
 	public static $postData = [];
 	/**
 	 * 路由配置
-	 * @param array $config 路由规则
 	 */
-	public function __construct($config = [])
+	public function __construct()
 	{
+		$config = \H2O::getAppConfigs('request'); //请求配置信息
 		$this->_routeTable = isset($config['route'])?$config['route']:[];
 		self::$getParams = $_GET;
 		self::$postData = isset($_POST)?$_POST:[];
