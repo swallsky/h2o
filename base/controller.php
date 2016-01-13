@@ -31,6 +31,13 @@ abstract class Controller
 	 */
 	public function __construct()
 	{
+		$this->init();
+	}
+	/**
+	 * 初始化
+	 */
+	public function init()
+	{
 		$class = strtolower(get_called_class());
 		$lastsp = strrpos($class,'\\');
 		$this->_namespace = substr($class,0,$lastsp);
@@ -119,6 +126,7 @@ abstract class Controller
 		$route = Module::parseRoute($url);
 		$class = $namespace.'\\'.strtolower($route['controller']);
 		$o = new $class();
+		$o->init();
 		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 	/**
