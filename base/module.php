@@ -104,6 +104,7 @@ class Module
 	{
 		$class = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
 		$o = new $class();
+		$o->init();
 		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 }
