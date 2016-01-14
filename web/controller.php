@@ -10,13 +10,13 @@ namespace H2O\web;
 use H2O;
 abstract class Controller extends H2O\base\Controller
 {
-    /**
-     * 初始化控制器
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+	/**
+	 * 初始化
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
 	/**
 	 * 获取当前布局信息
 	 * @return array 布局信息

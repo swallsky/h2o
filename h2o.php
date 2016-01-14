@@ -11,6 +11,10 @@
  */
 defined('H2O_BEGIN_TIME') or define('H2O_BEGIN_TIME', microtime(true));
 /**
+ * 路径分隔符
+ */
+define('DS',DIRECTORY_SEPARATOR);
+/**
  * 框架根目录
  */
 defined('H2O_PATH') or define('H2O_PATH', __DIR__);
@@ -103,6 +107,20 @@ abstract class H2O
 	public static function getContainer($name)
 	{
 		return self::$_container[$name];
+	}
+	/**
+	 * 初始化类
+	 * @param string $class 类名
+	 * @param mixed $params
+	 * @throws H2O\base\Exception
+	 */
+	public static function createObject($class,$params = '')
+	{
+		if(is_string($class)){
+			return new $class($params);
+		}else{
+			throw new H2O\base\Exception("Alias","Invalid path alias: $class");
+		}
 	}
 	/**
 	 * 框架初始化

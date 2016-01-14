@@ -11,10 +11,6 @@ use H2O;
 abstract class Controller
 {
 	/**
-	 * @var string 控制器名称
-	 */
-	private $_name = '';
-	/**
 	 * @var string 命名空间
 	 */
 	private $_namespace;
@@ -27,21 +23,13 @@ abstract class Controller
 	 */
 	private $_content;
 	/**
-	 * 初始化控制器
-	 */
-	public function __construct()
-	{
-		$this->init();
-	}
-	/**
 	 * 初始化
 	 */
-	public function init()
+	public function __construct()
 	{
 		$class = strtolower(get_called_class());
 		$lastsp = strrpos($class,'\\');
 		$this->_namespace = substr($class,0,$lastsp);
-		$this->_name = substr($class,$lastsp+1);
 		$config = \H2O::getAppConfigs(); //获取应用配置信息
 		if(isset($config['defaultLayout'])){//默认布局
 			$this->setLayout($config['defaultLayout']);
@@ -60,8 +48,7 @@ abstract class Controller
 				return $content;
 			}else{//有布局
 				$route = Module::parseRoute($this->_layout);
-				$class = $this->_namespace.'\\'.strtolower($route['controller']);
-				$o = new $class();
+				$o = \H2O::createObject($this->_namespace.'\\'.strtolower($route['controller']));
 				$o->setContent($content);//设置主模块缓存
 				return call_user_func([$o,'act'.ucfirst(strtolower($route['action']))]);
 			}
@@ -75,7 +62,7 @@ abstract class Controller
 	public function getViewPath()
 	{
 		$reflector = new \ReflectionClass($this);
-		return dirname(dirname($reflector->getFileName())).DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.$this->_name;
+		return dirname(dirname($reflector->getFileName())).DS.'views'.DS.strtolower($reflector->getShortName());
 	}
 	/**
 	 * 获取当前布局信息
@@ -124,9 +111,7 @@ abstract class Controller
 	{
 		$namespace = empty($namespace)?$this->_namespace:$namespace;
 		$route = Module::parseRoute($url);
-		$class = $namespace.'\\'.strtolower($route['controller']);
-		$o = new $class();
-		$o->init();
+		$o = \H2O::createObject($namespace.'\\'.strtolower($route['controller']));
 		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 	/**

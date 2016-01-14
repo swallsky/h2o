@@ -102,9 +102,7 @@ class Module
 	 */
 	public function runAction($route)
 	{
-		$class = $this->_ctrnSpace.'\\'.strtolower($route['controller']);
-		$o = new $class();
-		$o->init();
+		$o = \H2O::createObject($this->_ctrnSpace.'\\'.strtolower($route['controller']));
 		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 }

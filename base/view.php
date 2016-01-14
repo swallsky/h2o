@@ -23,12 +23,6 @@ class View
 	 */
 	private $_content;
 	/**
-	 * 初始化
-	 */
-	public function __construct()
-	{
-	}
-	/**
 	 * 设置模板文件
 	 * @param string $tpl 文件名，注意不用写文件后缀名，默认后缀名为.php
 	 */
@@ -41,7 +35,7 @@ class View
 	 */
 	public function getPath()
 	{
-		return rtrim($this->_templatePath,DIRECTORY_SEPARATOR);
+		return rtrim($this->_templatePath,DS);
 	}
 	/**
 	 * 设置模板目录
@@ -69,7 +63,7 @@ class View
 	 */
 	public function getFile()
 	{
-		return $this->getPath().DIRECTORY_SEPARATOR.$this->_templateFile.'.php';
+		return $this->getPath().DS.$this->_templateFile.'.php';
 	}
 	/**
 	 * 设置主模块缓存
