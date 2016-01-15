@@ -10,6 +10,10 @@ namespace H2O\db;
 class Connection
 {
 	/**
+	 * @var string 数据源
+	 */
+	public $dsn;
+	/**
 	 * @var string 主机地址
 	 */
 	public $host;
@@ -33,4 +37,20 @@ class Connection
 	 * @var string 字符集 默认字符集为utf8
 	 */
 	public $charset = 'utf8';
+	/**
+	 * @var array 定义PDO 属性
+	 */
+	public $attributes;
+	/**
+	 * @var resource PDO句柄
+	 */
+	public $pdo;
+	/**
+	 * 初始化
+	 * @param string $tag 多库标识
+	 */
+	public function __construct($tag)
+	{
+		
+	}
 }
