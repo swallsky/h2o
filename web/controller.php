@@ -7,7 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\web;
-use H2O;
+use H2O,H2O\web\Request;
 abstract class Controller extends H2O\base\Controller
 {
 	/**
@@ -39,6 +39,26 @@ abstract class Controller extends H2O\base\Controller
 	public function clearLayout()
 	{
 		parent::clearLayout();
+	}
+	/**
+	 * 返回url参数
+	 * @param string $name GET参数key值
+	 * @param string $value 给GET参数设置值
+	 * @return 返回GET数据，如果不存在返回为空
+	 */
+	public function get($name = '',$value = '')
+	{
+		return Request::get($name,$value);
+	}
+	/**
+	 * 返回post数据
+	 * @param string $name POST数据名称
+	 * @param mixed $value 给POST参数赋值
+	 * @return 返回POST数据，如果不存在返回为空
+	 */
+	public function post($name = '',$value = '')
+	{
+		return Request::post($name,$value);
 	}
 	/**
 	 * 返回包含模板

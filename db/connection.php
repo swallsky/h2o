@@ -59,14 +59,14 @@ class Connection
 	private static $_instance = [];
 	/**
 	 * 初始化连接数据库句柄
-	 * @param string $dsntag 数据库配置标识 方便多库调用
+	 * @param string $dsntag 数据库配置标识 方便多库调用 默认为db
 	 */
-	private function __construct($dsntag)
+	private function __construct($dsntag = 'db')
 	{
 		$db = \H2O::getAppConfigs('db');
 		$this->dsntag = $dsntag;
-		if(isset($db($dsntag))){//配置参数存在
-			$config = $db($dsntag); //获取数据配置信息
+		if(isset($db[$dsntag])){//配置参数存在
+			$config = $db[$dsntag]; //获取数据配置信息
 			$this->_checkconfig($config);
 			$this->_open();
 		}else{//如果配置参数存在，则直接抛弃异常
@@ -115,12 +115,12 @@ class Connection
 	}
 	/**
 	 * 获取MYSQL单例对象
-	 * @param string $dsntag 数据库配置标识 方便多库调用
+	 * @param string $cname 数据库配置文件名
 	 */
-	public static function getInstance($dsntag = 'default')
+	public static function getInstance($cname = 'db')
 	{
-		if(!isset(self::$_instance[$dsntag]))//判断使用的数据库是否已经初始化
-			self::$_instance[$dsntag] =new self($dsntag);	//若当前对象实例不存在
-		return self::$_instance[$dsntag];  	//调用对象私有方法连接 数据库
+		if(!isset(self::$_instance[$cname]))//判断使用的数据库是否已经初始化
+			self::$_instance[$cname] =new self($cname);	//若当前对象实例不存在
+		return self::$_instance[$cname];  	//调用对象私有方法连接 数据库
 	}
 }

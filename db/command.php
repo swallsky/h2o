@@ -15,9 +15,22 @@ class Command
 	 */
 	protected $pdo = null;
 	/**
+	 * @var array PDO参数值
+	 */
+	protected $params = [];
+	/**
 	 * @var string SQL语句
 	 */
 	private $_sql;
+	/**
+	 * 初始化命令行
+	 * @param string $tag 数据库标识 用户区分应用库
+	 */
+	public function __construct($tag = 'db')
+	{
+		$connect = Connection::getInstance($tag);
+		$this->pdo = $connect->pdo;
+	}
 	/**
 	 * 返回SQL语句
 	 */
@@ -31,7 +44,43 @@ class Command
 	 */
 	public function setSql($sql)
 	{
-		$this->_sql = $sql;
+		if($sql !== $this->_sql){
+			$this->_sql = $sql;
+		}
+		return $this;
+	}
+	/**
+	 * 返回参数值替换后的SQL，主要用于debug或者写日志
+	 * @return string 替换参数后的SQL
+	 */
+	public function getRawSql()
+	{
+		if (empty($this->params)) {
+			return $this->_sql;
+		}
+		$params = [];
+		foreach ($this->params as $name => $value) {
+			if (is_string($name) && strncmp(':', $name, 1)) {
+				$name = ':' . $name;
+			}
+			if (is_string($value)) {
+				$params[$name] = $this->quoteValue($value);
+			} elseif (is_bool($value)) {
+				$params[$name] = ($value ? 'TRUE' : 'FALSE');
+			} elseif ($value === null) {
+				$params[$name] = 'NULL';
+			} elseif (!is_object($value) && !is_resource($value)) {
+				$params[$name] = $value;
+			}
+		}
+		if (!isset($params[1])) {
+			return strtr($this->_sql, $params);
+		}
+		$sql = '';
+		foreach (explode('?', $this->_sql) as $i => $part) {
+			$sql .= (isset($params[$i]) ? $params[$i] : '') . $part;
+		}
+		return $sql;
 	}
 	/**
 	 * 插入记录
@@ -46,10 +95,9 @@ class Command
 		$values = array();
 		foreach($data as $k=>$v){
 			$fields[] = $k;//字段列表
-			$values[] = $this->pdo->quote($v);//字段对应的值
+			$values[] = $this->quoteValue($v);//字段对应的值
 		}
-		$sql = 'INSERT INTO '.$table.' ('.join(',',$fields).') VALUES ('.join(',',$values).')';
-		return $this->exec($sql);
+		return $this->setSql('INSERT INTO '.$table.' ('.join(',',$fields).') VALUES ('.join(',',$values).')');
 	}
 	/**
 	 * 更改记录信息
@@ -63,80 +111,110 @@ class Command
 	{
 		$items = array();
 		foreach($fdata as $k=>$v)
-			$items[] = $k.'='.$this->pdo->quote($v);
-		$sql = 'UPDATE '.$table.' SET '.implode(',',$items).' WHERE '.$where;
-		return $this->execute($sql,$param);
+			$items[] = $k.'='.$this->quoteValue($v);
+		if(!empty($param) && is_array($param)){
+			$this->params = $param;
+		}
+		return $this->setSql('UPDATE '.$table.' SET '.implode(',',$items).' WHERE '.$where);
 	}
 	/**
 	 * 执行一条 SQL 语句，并返回受影响的行数 不返回结果集
-	 * @param string $sql
 	 */
-	public function exec($sql)
+	public function exec()
 	{
+		$sql = $this->getSql();
 		$res = $this->pdo->exec($sql);
 		return $this->errorInfo($res, 'exec',$sql);
 	}
 	/**
 	 * 执行一条 SQL 语句,并返回结果集
-	 * @param string $sql
 	 */
-	public function query($sql)
+	public function query()
 	{
+		$sql = $this->getSql();
 		$res = $this->pdo->query($sql);
 		return $this->errorInfo($res, 'query',$sql);
 	}
 	/**
-	 * 变量参数预处理
-	 * @param string $sql
-	 * @param array $param
-	 实例1
-	 $sth = $dbh->prepare('SELECT name, colour, calories FROM fruit WHERE calories < ? AND colour = ?');
-	 $sth->execute(array(150, 'red'));
-	 $red = $sth->fetchAll();
-	
-	 实例2
-	 $sql = 'SELECT name, colour, calories FROM fruit  WHERE calories < :calories AND colour = :colour';
-	 $sth = $dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	 $sth->execute(array(':calories' => 150, ':colour' => 'red'));
-	
+	 * 绑定一个参数到对应的SQL占位符上
+	 * @param string $name
+	 * @param mixed $value
 	 */
-	public function execute($sql,$param = array())
+	public function bindValue($name,$value)
 	{
+		$this->params[$name] = $value;
+		return $this;
+	}
+	/**
+	 * 绑定多个参数到对应的SQL占位符上
+	 * @param array $values
+	 */
+	public function bindValues($values)
+	{
+		if(empty($values) || !is_array($values))
+			return $this;
+		foreach($values as $k=>$v){
+			$this->params[$k] = $v;
+		}
+		return $this;
+	}
+	/**
+	 * 变量参数预处理
+	 */
+	private function execute()
+	{
+		$sql = $this->getSql();
 		$sth = $this->pdo->prepare($sql);
 		$this->errorInfo($sth, 'prepare',$sql);
+		$param = $this->params;
 		$res = empty($param)?$sth->execute():$sth->execute($param);
 		$this->errorInfo($res, 'execute',$sql);
 		return $sth;
 	}
 	/**
 	 * 获取一行结果集
-	 * @param string $sql
-	 * @param array $param
 	 */
-	public function fetch($sql,$param = array())
+	public function fetch()
 	{
+		$sql = $this->getSql();
+		$param = $this->params;
 		$sth = $this->execute($sql,$param);
 		return $sth->fetch(PDO::FETCH_ASSOC);
 	}
 	/**
 	 * 获取所有结果集
-	 * @param string $sql
-	 * @param array $param
 	 */
-	public function fetchAll($sql,$param = array())
+	public function fetchAll()
 	{
+		$sql = $this->getSql();
+		$param = $this->params;
 		$sth = $this->execute($sql,$param);
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	/**
 	 * 返回结果集行数
-	 * @param string $sql
-	 * @param array $param
 	 */
-	public function rowCount($sql,$param = array())
+	public function rowCount()
 	{
+		$sql = $this->getSql();
+		$param = $this->params;
 		$sth = $this->execute($sql,$param);
 		return $sth->rowCount();
+	}
+	/**
+	 * 返回安全有效的数据
+	 * @param mixed $str
+	 */
+	private function quoteValue($str)
+	{
+		if (!is_string($str)) {
+			return $str;
+		}
+		if (($value = $this->pdo->quote($str)) !== false) {
+			return $value;
+		} else {
+			return "'" . addcslashes(str_replace("'", "''", $str), "\000\n\r\\\032") . "'";
+		}
 	}
 	/**
 	 * 返回插入的ID
