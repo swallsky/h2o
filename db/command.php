@@ -233,8 +233,8 @@ class Command
 			try {
 				$this->pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);//显示报告和异常
 				$this->pdo->beginTransaction(); //开始事务
-				$ansfun(); //业务事务
-				$this->pdo->commit(); //得交事务
+				$ansfun($this); //业务事务
+				$this->pdo->commit(); //提交事务
 			} catch (\Exception $e) {
 				$this->pdo->rollBack();//回滚
 				throw new \H2O\base\Exception('H2O\db\Command:transaction',$e->getMessage());
