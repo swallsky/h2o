@@ -161,7 +161,7 @@ class Command
 	/**
 	 * 变量参数预处理
 	 */
-	private function execute()
+	public function execute()
 	{
 		$sql = $this->getSql();
 		$sth = $this->pdo->prepare($sql);
