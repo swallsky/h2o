@@ -22,6 +22,10 @@ defined('H2O_PATH') or define('H2O_PATH', __DIR__);
  * 系统的根目录
  */
 defined('APP_PATH') or define('APP_PATH', dirname(dirname(dirname(__DIR__))));
+/**
+ * 系统运行环境 默认为prod   该参数包含三个值：prod生产环境 dev开发环境 test测试环境
+ */
+defined('H2O_ENV') or define('H2O_ENV', 'prod');
 
 abstract class H2O
 {

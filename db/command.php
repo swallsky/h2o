@@ -13,7 +13,7 @@ class Command
 	/**
 	 * @var PDO 
 	 */
-	protected $pdo = null;
+	public $pdo = null;
 	/**
 	 * @var array PDO参数值
 	 */
@@ -226,6 +226,14 @@ class Command
 	/**
 	 * 事务处理 方便没有设置成功时 回滚 事务在mysql的表中只能为InnoDB引擎
 	 * @param  anonymous function 事务函数
+	 * 例如：
+	 * $db = new \H2O\db\Command();
+		$db->transaction(function($db){
+			$randid = mt_rand(100,999);
+			$db->insert('user',['us_name'=>'测试'.$randid,'us_password'=>'123456','us_email'=>'1@1'.$randid.'.com'])->execute();
+			$query = $db->setSql('SELECT * FROM user WHERE us_name1=:us_name')->bindValues([':us_name'=>'root'])->fetch();
+			print_r($query);
+		});
 	 */
 	public function transaction($ansfun)
 	{
@@ -240,6 +248,27 @@ class Command
 				throw new \H2O\base\Exception('H2O\db\Command:transaction',$e->getMessage());
 			}
 		}
+	}
+	/**
+	 * 事务处理 不包含匿名函数作为参数的
+	 * 例如：
+	 * $db = new \H2O\db\Command();
+	 * try{
+			$db->beginTransaction();
+			$randid = mt_rand(100,999);
+			$db->insert('user',['us_name'=>'测试'.$randid,'us_password'=>'123456','us_email'=>'1@1'.$randid.'.com'])->execute();
+			$query = $db->setSql('SELECT * FROM user WHERE us_name1=:us_name')->bindValues([':us_name'=>'root'])->fetch();
+			print_r($query);
+			$db->pdo->commit();
+		}catch(\Exception $e){
+			$this->pdo->rollBack();//回滚
+			throw new \H2O\base\Exception('taguser',$e->getMessage());
+		}
+	 */
+	public function beginTransaction()
+	{
+		$this->pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);//显示报告和异常
+		$this->pdo->beginTransaction(); //开始事务
 	}
 	/**
 	 * 错误信息

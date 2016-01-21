@@ -9,7 +9,10 @@
 namespace H2O\base;
 class Exception extends \Exception
 {
-	public function __construct($tag,$msg = '')
+	/**
+	 * @param object $e 异常对象
+	 */
+	public function __construct($e)
 	{
 		$msg = date('Y-m-d H:i:s').PHP_EOL."\tFile:".$this->getFile().PHP_EOL."\tLine:".$this->getLine().PHP_EOL."\t".$tag.": ".$msg.PHP_EOL;//异常信息
 		echo $msg;
