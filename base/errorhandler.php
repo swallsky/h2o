@@ -10,10 +10,10 @@ namespace H2O\base;
 use H2O;
 class ErrorHandler
 {
-    /**
-     * @var Exception 当前异常信息
+   	/**
+     * @var boolean 是否不显示错误提示。默认值为false
      */
-    public $exception;
+    public $discardExistingOutput = false;
     /**
      * 注册错误句柄
      */
@@ -42,8 +42,8 @@ class ErrorHandler
     {
         //防止处理错误或异常出现递归错误
         $this->unregister();
-        //输出错误日志信息
         $this->logException($exception);
+        exit(1);
     }
 
     /**
@@ -55,9 +55,20 @@ class ErrorHandler
      */
     public function handleError($code, $message, $file, $line)
     {
-        if (error_reporting() & $code) {
-            echo $message;
+       if (error_reporting() & $code) {
+            $exception = new \ErrorException($message, $code, $code, $file, $line);
+            //代码跟踪信息
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            array_shift($trace);
+            foreach ($trace as $frame) {
+                if ($frame['function'] == '__toString') {
+                    $this->handleException($exception);
+                    exit(1);
+                }
+            }
+            throw $exception;
         }
+        return false;
     }
 
     /**
@@ -67,13 +78,9 @@ class ErrorHandler
     {
         $error = error_get_last();
     	if ($this->isFatalError($error)) {
-    		$exception = new ErrorException($error['message'], $error['type'], $error['type'], $error['file'], $error['line']);
-            $this->exception = $exception;
-			
+    		$exception = new \ErrorException($error['message'], $error['type'], $error['type'], $error['file'], $error['line']);
             $this->logException($exception);
-			$this->clearOutput();
-			
-            exit();
+            exit(1);
         }
     }
     /**
@@ -82,7 +89,20 @@ class ErrorHandler
      */
     public function logException($exception)
     {
-        var_dump($exception);
+    	if ($exception instanceof Exception) {
+    		$message = "Exception ({$exception->getName()})";
+    	} elseif ($exception instanceof ErrorException) {
+    		$message = "{$exception->getName()}";
+    	} else {
+    		$message = 'Exception';
+    	}
+    	$message .= " '" . get_class($exception) . "' with message '{$exception->getMessage()}' \n\nin "
+    	. $exception->getFile() . ':' . $exception->getLine() . "\n\n"
+    	. "Stack trace:\n" . $exception->getTraceAsString();
+    	echo $message;
+        if($this->discardExistingOutput){
+        	$this->clearOutput();
+        }
     }
     /**
      * 在调用这个方法之前删除所有输出响应。
