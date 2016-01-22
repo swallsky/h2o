@@ -7,6 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\base;
+use H2O;
 class ErrorHandler
 {
     /**
@@ -65,8 +66,14 @@ class ErrorHandler
     public function handleFatalError()
     {
         $error = error_get_last();
-        if ($this->isFatalError($error)) {
-            print_r($error);
+    	if ($this->isFatalError($error)) {
+    		$exception = new ErrorException($error['message'], $error['type'], $error['type'], $error['file'], $error['line']);
+            $this->exception = $exception;
+			
+            $this->logException($exception);
+			$this->clearOutput();
+			
+            exit();
         }
     }
     /**
@@ -76,6 +83,17 @@ class ErrorHandler
     public function logException($exception)
     {
         var_dump($exception);
+    }
+    /**
+     * 在调用这个方法之前删除所有输出响应。
+     */
+    public function clearOutput()
+    {
+    	for ($level = ob_get_level(); $level > 0; --$level) {
+    		if (!@ob_end_clean()) {
+    			ob_clean();
+    		}
+    	}
     }
     /**
      * 致命错误类型

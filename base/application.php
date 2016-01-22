@@ -39,6 +39,7 @@ abstract class Application
 		return [
 			'module'		=>		'\H2O\base\module', //默认的模块类
 			'view'				=>		'\H2O\base\view', //默认的渲染层类
+			'logger'			=>		'\H2O\base\logger' // 日志记录器
 		];
 	}
 	/**
