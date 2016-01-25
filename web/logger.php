@@ -33,7 +33,7 @@ class Logger implements H2O\base\Logger
 		foreach($files as $f=>$lines){
 			$sfile = file($f); //读取文件信息
 			$trow = count($sfile); //该文件总行数
-			echo '<div><span style="color:red;">'.$f.'</span><b>Lines:'.join('、',$lines).'</b></div>';
+			echo '<div><span style="color:red;">'.$f.'</span><b style="margin-left:10px;">Lines:'.join('、',$lines).'</b></div>';
 			if($fi===0){
 				foreach($lines as $line){
 					$min = $line-$lspt; $max = $line+$lspt;
