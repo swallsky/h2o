@@ -89,20 +89,35 @@ class ErrorHandler
      */
     public function logException($exception)
     {
-    	if ($exception instanceof Exception) {
-    		$message = "Exception ({$exception->getName()})";
-    	} elseif ($exception instanceof ErrorException) {
-    		$message = "{$exception->getName()}";
-    	} else {
-    		$message = 'Exception';
-    	}
-    	$message .= " '" . get_class($exception) . "' with message '{$exception->getMessage()}' \n\nin "
-    	. $exception->getFile() . ':' . $exception->getLine() . "\n\n"
-    	. "Stack trace:\n" . $exception->getTraceAsString();
-    	echo $message;
+    	$data = $this->parseException($exception);
+    	$logger = \H2O::getContainer('logger');
+    	$logger->exceptionDebug($data['message'],$data['files']); //显示错误日志 方便调试
+    	
         if($this->discardExistingOutput){
         	$this->clearOutput();
         }
+    }
+    /**
+     * 解析异常信息
+     * @param object $e
+     * @return array
+     */
+    public function parseException($e)
+    {
+    	$trace = $e->getTrace();
+    	$pro=[];$sys = [];
+    	foreach($trace as $t){
+    		if(!empty($t['file'])){
+    			$file = $t['file']; unset($t['file']);
+    			if(strpos($file,H2O_PATH) !== false){
+    				$sys[$file][] = $t['line'];
+    			}else{
+    				$pro[$file][] = $t['line'];
+    			}
+    		}
+    	}
+    	$files = array_merge($pro,$sys);
+    	return ['message'=>$e->getMessage(),'files'=>$files];
     }
     /**
      * 在调用这个方法之前删除所有输出响应。

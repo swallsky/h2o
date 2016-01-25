@@ -245,7 +245,7 @@ class Command
 				$this->pdo->commit(); //提交事务
 			} catch (\Exception $e) {
 				$this->pdo->rollBack();//回滚
-				throw new \H2O\base\Exception('H2O\db\Command:transaction',$e->getMessage());
+				throw new \ErrorException($e->getMessage());
 			}
 		}
 	}
@@ -282,7 +282,7 @@ class Command
 		$error = $this->pdo->errorInfo();
 		if($res===false && $error[0]!='00000'){//发生错误
 			$sql = empty($sql)?'':$sql.PHP_EOL;
-			throw new \H2O\base\Exception('SQL.'.$tag,$sql."\tERROR:".$error[2]);
+			throw new \ErrorException($sql."\tERROR:".$error[2]);
 		}
 		return $res;
 	}

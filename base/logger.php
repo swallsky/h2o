@@ -10,5 +10,16 @@ namespace H2O\base;
 use H2O;
 interface Logger
 {
-	
+	/**
+	 * 异常写入日志
+	 * @param string $message 错误信息
+	 * @param array $files 跟踪文件
+	 */
+	public function exceptionWrite($message,$files);
+	/**
+	 * 异常调试显示
+	 * @param string $message 错误信息
+	 * @param array $files 跟踪文件
+	 */
+	public function exceptionDebug($message,$files);
 }

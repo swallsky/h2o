@@ -70,7 +70,7 @@ class Connection
 			$this->_checkconfig($config);
 			$this->_open();
 		}else{//如果配置参数存在，则直接抛弃异常
-			throw new \H2O\base\Exception('H2O\db\Connection:__construct','Connect failure config is not found"'.$this->dsntag);
+			throw new \Exception('Connect failure config is not found"'.$this->dsntag);
 		}
 	}
 	/**
@@ -96,7 +96,7 @@ class Connection
 			}
 		}
 		if(!empty($error))
-			throw new \H2O\base\Exception('H2O\db\Connection:_checkconfig','Config error is "'.join(',',$error).'"');
+			throw new \Exception('Config error is "'.join(',',$error).'"');
 		$this->dsn = $this->type.':host='.$config['host'].';port='.$config['port'].';dbname='.$config['dbname'].';charset='.$this->charset; //数据源
 		
 	}
@@ -110,7 +110,7 @@ class Connection
 			$this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);//字符转义
 			$this->pdo->exec('SET NAMES '.$this->charset);
 		}catch (\Exception $e){//连接异常
-			throw new \H2O\base\Exception('H2O\db\Connection:_open','Connect failure "'.$this->dsntag.'" :'.$e->getMessage());
+			throw new \Exception('Connect failure "'.$this->dsntag.'" :'.$e->getMessage());
 		}
 	}
 	/**
