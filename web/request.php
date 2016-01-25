@@ -174,7 +174,7 @@ class Request
 		elseif(isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'],$_SERVER['DOCUMENT_ROOT'])===0)
 			$scriptUrl = str_replace('\\','/',str_replace($_SERVER['DOCUMENT_ROOT'],'',$_SERVER['SCRIPT_FILENAME']));
 		else
-			throw new \H2O\base\Exception('H2O\web\request','It is unable to determine the entry script URL.');
+			throw new \Exception('It is unable to determine the entry script URL.');
 		return $scriptUrl;
 	}
 }

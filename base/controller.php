@@ -53,7 +53,7 @@ abstract class Controller
 				return call_user_func([$o,'act'.ucfirst(strtolower($route['action']))]);
 			}
 		}else{
-			throw new Exception('Controller::runAction',get_called_class().' no method:'.$action);
+			throw new \Exception(get_called_class().' no method:'.$action);
 		}
 	}
 	/**

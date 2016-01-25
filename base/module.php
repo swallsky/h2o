@@ -61,7 +61,7 @@ class Module
 				'action'		=>	$ep[1]
 			];
 		}else{
-			throw new Exception('H2O\base\Module','routeUrl:'.$routepath.' is error.');
+			throw new \Exception('routeUrl:'.$routepath.' is error.');
 		}
 	}
 	/**
@@ -86,7 +86,7 @@ class Module
 		if($p !== false && is_dir($p)){
 			$this->_basePath = $p;
 		}else{
-			throw new Exception('Module::setBasePath',$path.' is error!');
+			throw new \Exception($path.' is error!');
 		}
 	}
 	/**

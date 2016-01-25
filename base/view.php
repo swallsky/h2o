@@ -55,7 +55,7 @@ class View
 	{
 		$tpl = \H2O::getAlias($tpl);
 		if(!file_exists($tpl)){
-			throw new Exception('View::_checkFile',$tpl.':template is not found!');
+			throw new \Exception($tpl.':template is not found!');
 		}
 	}
 	/**
