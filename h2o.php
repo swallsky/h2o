@@ -23,10 +23,6 @@ defined('H2O_PATH') or define('H2O_PATH', __DIR__);
  */
 defined('APP_PATH') or define('APP_PATH', dirname(dirname(dirname(__DIR__))));
 /**
- * 系统运行环境 默认为prod   该参数包含三个值：prod生产环境 dev开发环境 test测试环境
- */
-defined('H2O_ENV') or define('H2O_ENV', 'prod');
-/**
  * 设置内部编码
  */
 mb_internal_encoding('UTF-8');
@@ -41,6 +37,29 @@ abstract class H2O
 	 * @var array 路径别名
 	 */
 	public static $aliases = ['@h2o' => __DIR__];
+	/**
+	 * 运行环境 prod:生产环境 dev:开发环境 test:测试环境 默认为prod
+	 * @var string 
+	 */
+	private static $_runenv = 'prod';
+	/**
+	 * 设置运行环境
+	 */
+	private static function setRunEnv()
+	{
+		$env = self::getAppConfigs('runenv');
+		$envs = ['prod','dev','test'];
+		if(!empty($env) && in_array($env,$envs)!==false){
+			self::$_runenv = $env;
+		}
+	}
+	/**
+	 * 返回当前应用运行环境
+	 */
+	public static function getRunEnv()
+	{
+		return self::$_runenv;
+	}
 	/**
 	 * 获取路径别名，如果不包含@，直接返回，如果存在@返回别名真实路径
 	 * @param string $alias
@@ -140,6 +159,6 @@ abstract class H2O
 	public static function init()
 	{
 		(new H2O\base\ErrorHandler())->register(); //注册自定义错误和异常信息
+		self::setRunEnv(); //设置APP运行环境
 	}
 }
-H2O::init();

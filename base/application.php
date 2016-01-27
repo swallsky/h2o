@@ -20,6 +20,7 @@ abstract class Application
 	public function __construct($config = [])
 	{
 		\H2O::setAppConfigs($config);
+		\H2O::init();
 		$this->_preInit();
 	}
 	/**

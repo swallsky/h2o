@@ -91,8 +91,12 @@ class ErrorHandler
     {
     	$data = $this->parseException($exception);
     	$logger = \H2O::getContainer('logger');
-    	$logger->exceptionDebug($data['message'],$data['files']); //显示错误日志 方便调试
-    	
+    	$env = \H2O::getRunEnv(); //获取运行环境
+    	if($env=='prod'){//生产环境
+    		$logger->exceptionWrite($data['message'],$data['files']); //写入错误日志
+    	}else{//开发、测试环境 都直接显示错误
+    		$logger->exceptionDebug($data['message'],$data['files']); //显示错误日志 方便调试
+    	}
         if($this->discardExistingOutput){
         	$this->clearOutput();
         }
