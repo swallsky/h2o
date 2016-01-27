@@ -166,8 +166,7 @@ class Command
 		$sql = $this->getSql();
 		$sth = $this->pdo->prepare($sql);
 		$this->errorInfo($sth, 'prepare',$sql);
-		$param = $this->params;
-		$res = empty($param)?$sth->execute():$sth->execute($param);
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
 		$this->errorInfo($res, 'execute',$sql);
 		return $sth;
 	}
@@ -176,9 +175,7 @@ class Command
 	 */
 	public function fetch()
 	{
-		$sql = $this->getSql();
-		$param = $this->params;
-		$sth = $this->execute($sql,$param);
+		$sth = $this->execute();
 		return $sth->fetch(PDO::FETCH_ASSOC);
 	}
 	/**
@@ -186,9 +183,7 @@ class Command
 	 */
 	public function fetchAll()
 	{
-		$sql = $this->getSql();
-		$param = $this->params;
-		$sth = $this->execute($sql,$param);
+		$sth = $this->execute();
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	/**
@@ -196,9 +191,7 @@ class Command
 	 */
 	public function rowCount()
 	{
-		$sql = $this->getSql();
-		$param = $this->params;
-		$sth = $this->execute($sql,$param);
+		$sth = $this->execute();
 		return $sth->rowCount();
 	}
 	/**

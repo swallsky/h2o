@@ -14,14 +14,6 @@ abstract class Application
 	 */
 	const APP_ROOT_NAME = '\app';
 	/**
-	 * @event ActionEvent 前置事件
-	 */
-	const EVENT_BEFORE_ACTION = 'beforeAction';
-	/**
-	 * @event ActionEvent 后置事件
-	 */
-	const EVENT_AFTER_ACTION = 'afterAction';
-	/**
 	 * 初始化应用
 	 * @param array $config
 	 */
@@ -57,10 +49,7 @@ abstract class Application
 	 */
 	public function run()
 	{
-		Event::trigger(self::EVENT_BEFORE_ACTION);
-		$h = $this->handleRequest();
-		Event::trigger(self::EVENT_AFTER_ACTION);
-		echo $h;
+		echo $this->handleRequest();
 	}
 	/**
 	 * 继承类必须实现的方法
