@@ -254,8 +254,8 @@ class Command
 			print_r($query);
 			$db->pdo->commit();
 		}catch(\Exception $e){
-			$this->pdo->rollBack();//回滚
-			throw new \H2O\base\Exception('taguser',$e->getMessage());
+			$db->pdo->rollBack();//回滚
+			throw new \ErrorException($e->getMessage());
 		}
 	 */
 	public function beginTransaction()

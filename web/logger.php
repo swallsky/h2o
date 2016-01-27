@@ -29,7 +29,7 @@ class Logger implements H2O\base\Logger
 		header("Content-type: text/html; charset=utf-8");
 		echo '<div><b>Message:</b><span style="color:red;">'.$message.'</span></div>';
 		echo '<div><b>Stack trace:</b></div>';
-		$lspt=2;$fi=0;
+		$lspt=3;$fi=0;
 		foreach($files as $f=>$lines){
 			$sfile = file($f); //读取文件信息
 			$trow = count($sfile); //该文件总行数
