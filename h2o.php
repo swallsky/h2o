@@ -26,6 +26,14 @@ defined('APP_PATH') or define('APP_PATH', dirname(dirname(dirname(__DIR__))));
  * 系统运行环境 默认为prod   该参数包含三个值：prod生产环境 dev开发环境 test测试环境
  */
 defined('H2O_ENV') or define('H2O_ENV', 'prod');
+/**
+ * 设置内部编码
+ */
+mb_internal_encoding('UTF-8');
+/**
+ * 设置默认时域 默认中国标准时间
+ */
+if(function_exists('date_default_timezone_set')) date_default_timezone_set('PRC');
 
 abstract class H2O
 {
@@ -61,7 +69,7 @@ abstract class H2O
 			}
 		}
 		if ($throwException) {
-			throw new H2O\base\Exception("Alias","Invalid path alias: $alias");
+			throw new \Exception("Invalid path alias: $alias");
 		} else {
 			return false;
 		}
@@ -123,7 +131,7 @@ abstract class H2O
 		if(is_string($class)){
 			return new $class($params);
 		}else{
-			throw new H2O\base\Exception("Alias","Invalid path alias: $class");
+			throw new \Exception("Invalid path alias: $class");
 		}
 	}
 	/**
