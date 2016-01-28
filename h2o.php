@@ -23,6 +23,10 @@ defined('H2O_PATH') or define('H2O_PATH', __DIR__);
  */
 defined('APP_PATH') or define('APP_PATH', dirname(dirname(dirname(__DIR__))));
 /**
+ * 运行时缓存目录
+ */
+defined('APP_RUNTIME') or define('APP_RUNTIME', APP_PATH.DS.'runtime');
+/**
  * 设置内部编码
  */
 mb_internal_encoding('UTF-8');
@@ -143,7 +147,7 @@ abstract class H2O
 	 * 初始化类
 	 * @param string $class 类名
 	 * @param mixed $params
-	 * @throws H2O\base\Exception
+	 * @throws \Exception
 	 */
 	public static function createObject($class,$params = '')
 	{
@@ -153,6 +157,7 @@ abstract class H2O
 			throw new \Exception("Invalid path alias: $class");
 		}
 	}
+	
 	/**
 	 * 框架初始化
 	 */

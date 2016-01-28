@@ -17,7 +17,29 @@ class Logger implements H2O\base\Logger
 	 */
 	public function exceptionWrite($message,$files)
 	{
-		//TODO
+		$log = 'Date:'.date('Y-m-d H:i:s').PHP_EOL;
+		$log .= 'Message:'.$message.PHP_EOL;
+		$log .= 'Stack trace:'.PHP_EOL;
+		$lspt=3;$fi=0;
+		foreach($files as $f=>$lines){
+			$sfile = file($f); //读取文件信息
+			$trow = count($sfile); //该文件总行数
+			$log .= $f.' Lines:'.join('、',$lines).PHP_EOL;
+			if($fi===0){
+				foreach($lines as $line){
+					$min = $line-$lspt; $max = $line+$lspt;
+					$min = $min<0?0:$min;
+					$max = $max>$trow?$trow:$max;
+					for($l=$min;$l<=$max;$l++){
+						$log .= ($l==$line?'**':'').$l.':'.$sfile[$l-1];
+					}
+				}
+			}
+			$fi++;
+		}
+		$logfile = APP_RUNTIME.DS.'web'.DS.date('Ymd').'_exception.log'; //异常日志文件
+		$content = $log.PHP_EOL.PHP_EOL; //内容
+		H2O\helpers\File::write($logfile,$content);//写入日志信息
 	}
 	/**
 	 * 调试显示
