@@ -37,8 +37,8 @@ class Logger implements H2O\base\Logger
 			}
 			$fi++;
 		}
-		$logfile = APP_RUNTIME.DS.'web'.DS.date('Ymd').'_exception.log'; //异常日志文件
-		$content = $log.PHP_EOL.PHP_EOL; //内容
+		$logfile = APP_RUNTIME.DS.'web'.DS.'exception'.DS.date('Ymd').'.log'; //异常日志文件
+		$content = $log.PHP_EOL; //内容
 		H2O\helpers\File::write($logfile,$content);//写入日志信息
 	}
 	/**
@@ -68,5 +68,20 @@ class Logger implements H2O\base\Logger
 			}
 			$fi++;
 		}
+	}
+	/**
+	 * 写入debugger日志
+	 * @param array $data 消耗信息
+	 */
+	public function debugger($data)
+	{
+		$request = \H2O::getContainer('request');
+		$log = 'Uri:'.$request->getRequestUri().PHP_EOL;
+		$log .= 'Date:'.date('Y-m-d H:i:s').PHP_EOL;
+		$log .= 'RunTime:'.$data['runtime'].PHP_EOL;
+		$log .= 'Memory:'.$data['memory'].PHP_EOL;
+		$logfile = APP_RUNTIME.DS.'web'.DS.'debugger'.DS.date('Ymd').'.log'; //异常日志文件
+		$content = $log.PHP_EOL; //内容
+		H2O\helpers\File::write($logfile,$content);//写入日志信息
 	}
 }

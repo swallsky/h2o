@@ -95,6 +95,14 @@ class Request
 		}
 	}
 	/**
+	 * 返回完整的访问路径
+	 * @return string
+	 */
+	public static function getRequestUri()
+	{
+		return $_SERVER['REQUEST_URI'];
+	}
+	/**
 	 * 返回post数据
 	 * @param string $name POST数据名称
 	 * @param mixed $value 给POST参数赋值

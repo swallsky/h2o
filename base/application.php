@@ -50,11 +50,28 @@ abstract class Application
 	 */
 	public function run()
 	{
-		echo $this->handleRequest();
+		$request = $this->handleRequest();
+		$module = \H2O::getContainer('module');
+		$res = $module->runAction($request);
+		$debug = \H2O::getAppConfigs('debug');
+		if($debug===true){//debug
+			$logger = \H2O::getContainer('logger');
+			$logger->debugger($this->runExpend());//记录运行状态
+		}
+		echo $res;
 	}
 	/**
-	 * 继承类必须实现的方法
-	 * @param Request $request
+	 * 返回消耗的毫秒、内存峰值信息
+	 */
+	public function runExpend()
+	{
+		return [
+			'runtime'		=>	ceil((microtime(true)-H2O_BEGIN_TIME)*1000).'ms',//运行时间 单位毫秒
+			'memory'		=>	round(memory_get_peak_usage()/1024/1024,2).'MB' //运行内存峰值
+		];
+	}
+	/**
+	 * 应用请求处理
 	 */
 	abstract public function handleRequest();
 }

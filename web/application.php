@@ -37,8 +37,6 @@ class Application extends H2O\base\Application
 	public function handleRequest()
 	{
 		$request = \H2O::getContainer('request'); //获取HTTP请求组件
-		$dd = $request->getRoute();
-		$module = \H2O::getContainer('module');
-		return $module->runAction($dd);
+		return $request->getRoute();
 	}
 }

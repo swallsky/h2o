@@ -22,4 +22,9 @@ interface Logger
 	 * @param array $files 跟踪文件
 	 */
 	public function exceptionDebug($message,$files);
+	/**
+	 * 写入debugger日志
+	 * @param unknown_type $data
+	 */
+	public function debugger($data);
 }
