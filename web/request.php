@@ -60,6 +60,60 @@ class Request
 		return $headers;
 	}
 	/**
+	 * 当前请求类型
+	 * @return string 返回请求类型 并将值变为大写
+	 */
+	public function getMethod()
+	{
+		if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+			return strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
+		} else {
+			return isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
+		}
+	}
+	/**
+	 * 判断是否为GET请求
+	 * @return boolean 是否为GET请求
+	 */
+	public function getIsGet()
+	{
+		return $this->getMethod() === 'GET';
+	}
+	/**
+	 * 判断是否HEAD请求
+	 * @return boolean 是否为HEAD请求
+	 */
+	public function getIsHead()
+	{
+		return $this->getMethod() === 'HEAD';
+	}
+	
+	/**
+	 * 判断是否POST请求
+	 * @return boolean 是否为POST请求
+	 */
+	public function getIsPost()
+	{
+		return $this->getMethod() === 'POST';
+	}
+	/**
+	 * 判断是否为Ajax请求
+	 * @return boolean 是否为Ajax请求
+	 */
+	public function getIsAjax()
+	{
+		return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+	}
+	/**
+	 * 判断是否为flash请求
+	 * @return boolean 是否为flash、flex请求
+	 */
+	public function getIsFlash()
+	{
+		return isset($_SERVER['HTTP_USER_AGENT']) &&
+		(stripos($_SERVER['HTTP_USER_AGENT'], 'Shockwave') !== false || stripos($_SERVER['HTTP_USER_AGENT'], 'Flash') !== false);
+	}
+	/**
 	 * 获取路由控制器和动作
 	 */
 	public function getRoute()
@@ -82,7 +136,7 @@ class Request
 	 * @param string $value 给GET参数设置值
 	 * @return 返回GET数据，如果不存在返回为空
 	 */
-	public static function get($name = '',$value = '')
+	public function get($name = '',$value = '')
 	{
 		if($name == ''){
 			return self::$getParams;
@@ -98,7 +152,7 @@ class Request
 	 * 返回完整的访问路径
 	 * @return string
 	 */
-	public static function getRequestUri()
+	public function getRequestUri()
 	{
 		return $_SERVER['REQUEST_URI'];
 	}
@@ -108,7 +162,7 @@ class Request
 	 * @param mixed $value 给POST参数赋值
 	 * @return 返回POST数据，如果不存在返回为空
 	 */
-	public static function post($name = '',$value = '')
+	public function post($name = '',$value = '')
 	{
 		if($name == ''){//如果为空返回所有数据
 			return self::$postData;

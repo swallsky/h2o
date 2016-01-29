@@ -5,6 +5,14 @@
     "homepage": "http://h2o.mx-8.com/",
     "type": "project",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "ybluesky",
+            "email": "xjz1688@1688.com",
+            "homepage": "http://www.mx-8.com/",
+            "role": "Founder and project lead"
+        }
+    ],
     "support": {
         "issues": "http://h2o.mx-8.com",
         "forum": "http://h2o.mx-8.com",
@@ -13,7 +21,8 @@
     },
     "minimum-stability": "dev",
     "require": {
-    	"php": ">=5.4.0"
+    	"php": ">=5.4.0",
+    	"ezyang/htmlpurifier": "4.6.*"
     },
     "autoload": {
     	"psr-4": {"H2O\\": ""}

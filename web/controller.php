@@ -41,24 +41,12 @@ abstract class Controller extends H2O\base\Controller
 		parent::clearLayout();
 	}
 	/**
-	 * 返回url参数
-	 * @param string $name GET参数key值
-	 * @param string $value 给GET参数设置值
-	 * @return 返回GET数据，如果不存在返回为空
+	 * 返回请求信息
+	 * @return 返回请求句柄
 	 */
-	public function get($name = '',$value = '')
+	public function request()
 	{
-		return Request::get($name,$value);
-	}
-	/**
-	 * 返回post数据
-	 * @param string $name POST数据名称
-	 * @param mixed $value 给POST参数赋值
-	 * @return 返回POST数据，如果不存在返回为空
-	 */
-	public function post($name = '',$value = '')
-	{
-		return Request::post($name,$value);
+		return \H2O::getContainer('request');
 	}
 	/**
 	 * 返回包含模板
