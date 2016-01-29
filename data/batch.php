@@ -13,7 +13,7 @@ use H2O;
  *例如
  class Test
  {
- 	public function batch($i)
+ 	public function fetchBatch($i)
  	{
  		return [];
  	}
@@ -30,9 +30,9 @@ class Batch implements \Iterator
 	 */
 	private $_eachObj;
     /**
-     * @var integer 批处理次数 默认从0开始
+     * @var integer 批处理次数 默认从1开始
      */
-    private $_ibatch = 0;
+    private $_batchnum = 1;
     /**
      * @var array 当前批的数据
      */
@@ -88,9 +88,9 @@ class Batch implements \Iterator
     public function next()
     {
         if ($this->_batch === null || next($this->_batch) === false) {
-            $this->_batch = call_user_func([$this->_eachObj,'batch'],$this->_ibatch);
+            $this->_batch = call_user_func([$this->_eachObj,'fetchBatch'],$this->_batchnum);
             reset($this->_batch);
-            $this->_ibatch++;
+            $this->_batchnum++;
         }
         $this->_value = current($this->_batch);
         $this->_key = key($this->_batch);

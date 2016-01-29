@@ -7,7 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\db;
-use PDO;
+use H2O,PDO;
 class Command
 {
 	/**
@@ -22,6 +22,10 @@ class Command
 	 * @var string SQL语句
 	 */
 	private $_sql;
+	/**
+	 * @var int 单次批处理的行数
+	 */
+	protected $_batchSize;
 	/**
 	 * 初始化命令行
 	 * @param string $tag 数据库标识 用户区分应用库
@@ -193,6 +197,34 @@ class Command
 	{
 		$sth = $this->execute();
 		return $sth->rowCount();
+	}
+	/**
+	 * 大数据批处理
+	 * @param int $bn 批次
+	 */
+	public function fetchBatch($bn)
+	{
+		$start = ($bn-1)*$this->_batchSize;//分页处理
+		$sql = $this->getSql();
+		$this->setSql($sql.'  LIMIT '.$start.','.$this->_batchSize);
+		$res = $this->fetchAll();
+		$this->setSql($sql);//将源SQL还原
+		return $res;
+	}
+	/**
+	 * 迭代批处理对象
+	 * 例如:
+	 	$db = new \H2O\db\Command();
+		$query = $db->setSql('SELECT * FROM user ORDER BY us_id DESC')->batch(10);
+		foreach ($query as $k=>$v){
+			echo $v['us_id'].'<br>';
+		}
+	 * @param int $bsize 单次处理的行数
+	 */
+	public function batch($bsize = 20)
+	{
+		$this->_batchSize = $bsize;
+		return new H2O\data\Batch($this);
 	}
 	/**
 	 * 返回安全有效的数据
