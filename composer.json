@@ -22,7 +22,9 @@
     "minimum-stability": "dev",
     "require": {
     	"php": ">=5.4.0",
-    	"ezyang/htmlpurifier": "4.6.*"
+    	"ezyang/htmlpurifier": "4.6.*",
+    	"swiftmailer/swiftmailer": "~5.0",
+    	"phpoffice/phpexcel": "1.8.*"
     },
     "autoload": {
     	"psr-4": {"H2O\\": ""}
