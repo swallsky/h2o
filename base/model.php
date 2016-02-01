@@ -14,7 +14,7 @@ class Model  implements IteratorAggregate,ArrayAccess
 {
 	/**
 	 * 返回表单名称
-	 * @return string the form name of this model class.
+	 * @return string 模型名称
 	 */
 	public function formName()
 	{
@@ -100,6 +100,38 @@ class Model  implements IteratorAggregate,ArrayAccess
 		} else {
 			return false;
 		}
+	}
+	/**
+	 * 返回字段属性验证
+	 * ~~~
+	 * [
+	 *     ['attribute1', 'attribute2'],
+	 *     'validator type',
+	 *     'on' => ['scenario1', 'scenario2'],
+	 *     ...other parameters...
+	 * ]
+	 *
+	 * 例子:
+	 *
+	 * ~~~
+	 * [
+	 *     // built-in "required" validator
+	 *     [['username', 'password'], 'required'],
+	 *     // built-in "string" validator customized with "min" and "max" properties
+	 *     ['username', 'string', 'min' => 3, 'max' => 12],
+	 *     // built-in "compare" validator that is used in "register" scenario only
+	 *     ['password', 'compare', 'compareAttribute' => 'password2', 'on' => 'register'],
+	 *     // an inline validator defined via the "authenticate()" method in the model class
+	 *     ['password', 'authenticate', 'on' => 'login'],
+	 *     // a validator of class "DateRangeValidator"
+	 *     ['dateRange', 'DateRangeValidator'],
+	 * ];
+	 * ~~~
+	 * @return array 验证规则
+	 */
+	public function rules()
+	{
+		return [];
 	}
 	/**
 	 * 返回遍历所有属性
