@@ -70,13 +70,14 @@ class Model  implements IteratorAggregate,ArrayAccess
 	/**
 	 * 设置字段值
 	 * @param array $values attribute values (name => value) to be assigned to the model.
+	 * @param array $hpcfg HTMLPurifier配置参数
 	 */
-	public function setAttributes($values)
+	public function setAttributes($values,$hpcfg = [])
 	{
 		if (is_array($values)) {
 			$attributes = $this->attributes();
 			foreach ($values as $name => $value) {
-				$this->$name = $value;
+				$this->$name = H2O\helpers\HTMLPurifier::filter($value,$hpcfg);
 			}
 		}
 	}
@@ -84,16 +85,17 @@ class Model  implements IteratorAggregate,ArrayAccess
 	 * 加载数据
 	 * @param array $data the data array. 数据
 	 * @param string $formName 表单名称
+	 * @param array $hpcfg HTMLPurifier配置参数
 	 * @return boolean 是否加载成功
 	 */
-	public function load($data, $formName = null)
+	public function load($data, $formName = null,$hpcfg = [])
 	{
 		$scope = $formName === null ? $this->formName() : $formName;
 		if ($scope === '' && !empty($data)) {
 			$this->setAttributes($data);
 			return true;
 		} elseif (isset($data[$scope])) {
-			$this->setAttributes($data[$scope]);
+			$this->setAttributes($data[$scope],$hpcfg);
 			return true;
 		} else {
 			return false;
