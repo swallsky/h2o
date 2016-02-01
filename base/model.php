@@ -103,16 +103,7 @@ class Model  implements IteratorAggregate,ArrayAccess
 	}
 	/**
 	 * 返回字段属性验证
-	 * ~~~
-	 * [
-	 *     ['attribute1', 'attribute2'],
-	 *     'validator type',
-	 *     'on' => ['scenario1', 'scenario2'],
-	 *     ...other parameters...
-	 * ]
-	 *
 	 * 例子:
-	 *
 	 * ~~~
 	 * [
 	 *     // built-in "required" validator
