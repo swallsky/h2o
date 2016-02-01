@@ -12,7 +12,7 @@ class HTMLPurifier
 	/**
 	 * 净化字符串
 	 * @param string $str 需要净化的字符串
-	 * @param array $config
+	 * @param array $hpcfg
 	 * 例如:
 	 	HTMLPurifier::filter($html,[
 	 		['HTML','DefinitionID','made by debugged interactive designs'],
@@ -21,11 +21,11 @@ class HTMLPurifier
 	 		['Core','Encoding','UTF-8'],
 	 	]);
 	 */
-	public static function filter($str,$config = [])
+	public static function filter($str,$hpcfg = [])
 	{
 		$config = \HTMLPurifier_Config::createDefault();
-		if(!empty($config)){
-			foreach($config as $v){
+		if(!empty($hpcfg)){
+			foreach($hpcfg as $v){
 				$config->set($v[0],$v[1],$v[2]); //设置过滤规则
 			}
 		}
