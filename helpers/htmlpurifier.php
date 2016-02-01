@@ -29,7 +29,7 @@ class HTMLPurifier
 				$config->set($v[0],$v[1],$v[2]); //设置过滤规则
 			}
 		}
-		$purifier = new HTMLPurifier($config);
+		$purifier = new \HTMLPurifier($config);
 		return $purifier->purify($str);
 	}
 }
