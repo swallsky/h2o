@@ -19,9 +19,10 @@
         "wiki": "http://h2o.mx-8.com/wiki/",
         "source": "http://h2o.mx-8.com/h2o"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
     	"php": ">=5.4.0",
+    	"twbs/bootstrap": "3.3.*",
     	"ezyang/htmlpurifier": "4.6.*",
     	"swiftmailer/swiftmailer": "~5.0",
     	"phpoffice/phpexcel": "1.8.*"
