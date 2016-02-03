@@ -2,22 +2,21 @@
 	"name": "ybluesky/h2o",
     "description": "h2o framework is a lightweight framework",
     "keywords": ["h2o", "framework", "ybluesky"],
-    "homepage": "http://h2o.mx-8.com/",
+    "homepage": "https://github.com/ybluesky/h2o",
     "type": "project",
     "license": "MIT",
     "authors": [
         {
             "name": "ybluesky",
             "email": "xjz1688@1688.com",
-            "homepage": "http://www.mx-8.com/",
+            "homepage": "https://github.com/ybluesky/h2o",
             "role": "Founder and project lead"
         }
     ],
     "support": {
-        "issues": "http://h2o.mx-8.com",
-        "forum": "http://h2o.mx-8.com",
-        "wiki": "http://h2o.mx-8.com/wiki/",
-        "source": "http://h2o.mx-8.com/h2o"
+        "issues": "https://github.com/ybluesky/h2o/issues",
+        "wiki": "https://github.com/ybluesky/h2o/wiki",
+        "source": "https://github.com/ybluesky/h2o"
     },
     "minimum-stability": "stable",
     "require": {
