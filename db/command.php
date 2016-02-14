@@ -1,6 +1,6 @@
 <?php
 /**
- * 数据库命令查询
+ * 数据库命令 SQL
  * @category   H2O
  * @package    db
  * @author     Xujinzhang <xjz1688@163.com>
