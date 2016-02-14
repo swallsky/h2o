@@ -227,6 +227,20 @@ class Command
 		return new H2O\data\Batch($this);
 	}
 	/**
+	 * 返回表所对应的字段列名
+	 * @param string $table 表名
+	 */
+	public function getColumnName($table)
+	{
+		$sth = $this->pdo->query('SELECT * FROM '.$table);
+		$colcount = $sth->columnCount();
+		$fields = [];
+		for($i=0;$i<$colcount;$i++){
+			$fields[] = $sth->getColumnMeta($i)['name'];
+		}
+		return $fields;
+	}
+	/**
 	 * 返回安全有效的数据
 	 * @param mixed $str
 	 */
