@@ -128,7 +128,7 @@ class Command
 	{
 		$sql = $this->getSql();
 		$res = $this->pdo->exec($sql);
-		return $this->errorInfo($res, 'exec',$sql);
+		return $this->errorInfo($res, 'exec',$this->getRawSql());
 	}
 	/**
 	 * 执行一条 SQL 语句,并返回结果集
@@ -137,7 +137,7 @@ class Command
 	{
 		$sql = $this->getSql();
 		$res = $this->pdo->query($sql);
-		return $this->errorInfo($res, 'query',$sql);
+		return $this->errorInfo($res, 'query',$this->getRawSql());
 	}
 	/**
 	 * 绑定一个参数到对应的SQL占位符上
@@ -169,9 +169,9 @@ class Command
 	{
 		$sql = $this->getSql();
 		$sth = $this->pdo->prepare($sql);
-		$this->errorInfo($sth, 'prepare',$sql);
+		$this->errorInfo($sth, 'prepare',$this->getRawSql());
 		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
-		$this->errorInfo($res, 'execute',$sql);
+		$this->errorInfo($res, 'execute',$this->getRawSql());
 		return $sth;
 	}
 	/**
