@@ -1,13 +1,13 @@
 <?php
 /**
- * WEB控制器
+ * console的控制器
  * @category   H2O
- * @package    web
+ * @package    base
  * @author     Xujinzhang <xjz1688@163.com>
  * @version    0.1.0
  */
-namespace H2O\web;
-use H2O,H2O\web\Request;
+namespace H2O\console;
+use H2O,H2O\console\Request;
 abstract class Controller extends H2O\base\Controller
 {
 	/**
@@ -16,29 +16,6 @@ abstract class Controller extends H2O\base\Controller
 	public function __construct()
 	{
 		parent::__construct();
-	}
-	/**
-	 * 获取当前布局信息
-	 * @return array 布局信息
-	 */
-	public function getLayout()
-	{
-		return parent::getLayout();
-	}
-	/**
-	 * 设置布局信息
-	 * @param string $url 路由URL 例如layout.index
-	 */
-	public function setLayout($url)
-	{
-		parent::setLayout($url);
-	}
-	/**
-	 * 清空布局
-	 */
-	public function clearLayout()
-	{
-		parent::clearLayout();
 	}
 	/**
 	 * 返回请求信息

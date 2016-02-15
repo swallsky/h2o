@@ -86,7 +86,7 @@ class Module
 		if($p !== false && is_dir($p)){
 			$this->_basePath = $p;
 		}else{
-			throw new \Exception($path.' is error!');
+			throw new \Exception('Configs of basePath set error:'.$path);
 		}
 	}
 	/**

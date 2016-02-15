@@ -35,16 +35,20 @@ class Request
 	public function getRoute()
 	{
 		$params = isset($_SERVER['argv'])?$_SERVER['argv']:[];
-		if(empty($params) || count($params)>0){
+		if(empty($params) || count($params)<1){
 			throw new \Exception('console params is error!');
+		}
+		array_shift($params);
+		if(empty($params)){
+			throw new \Exception('console route is no found!');
 		}
 		$pointcnt = substr_count($params[0],'.');
 		if($pointcnt!=1){
 			throw new \Exception('console route is error! for example: main.index');
 		}
+		$data = \H2O\base\Module::parseRoute($params[0]); //返回路由规则URL
 		array_shift($params);
 		$this->_checkParams($params); //参数格式检查
-		$data = \H2O\base\Module::parseRoute($params[0]); //返回路由规则URL
 		return $data;
 	}
 	/**
@@ -53,5 +57,13 @@ class Request
 	public function getParams()
 	{
 		return $this->_params;
+	}
+	/**
+	 * 返回完整的访问路径
+	 * @return string
+	 */
+	public function getRequestUri()
+	{
+		return join(' ',$_SERVER['argv']);
 	}
 }
