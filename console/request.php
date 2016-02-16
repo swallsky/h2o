@@ -1,13 +1,14 @@
 <?php
 /**
  * 命令行请求基类
- * h2o <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]
+ * h2o <route> [--option1=value1 --option2=value2 ... argument1 argument2 ......]
  * @category   H2O
  * @package    console
  * @author     Xujinzhang <xjz1688@163.com>
  * @version    0.1.0
  */
 namespace H2O\console;
+use H2O\helpers\Stdout;
 class Request
 {
 	/**
@@ -30,6 +31,20 @@ class Request
 		}
 	}
 	/**
+	 * 显示命令输入帮助信息
+	 */
+	public function help()
+	{
+		Stdout::title('This is H2O version '.\H2O::getVersion());
+		Stdout::table([
+			['route','COMMAND <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]'],
+			['example for windows','command hello.index -test=info'],
+			['example for linux','./command hello.index -test=info']
+		]);
+		echo Stdout::get();
+		exit();
+	}
+	/**
 	 * 获取路由控制器和动作
 	 */
 	public function getRoute()
@@ -39,8 +54,8 @@ class Request
 			throw new \Exception('console params is error!');
 		}
 		array_shift($params);
-		if(empty($params)){
-			throw new \Exception('console route is no found!');
+		if(empty($params)){//显示帮助信息
+			$this->help();
 		}
 		$pointcnt = substr_count($params[0],'.');
 		if($pointcnt!=1){

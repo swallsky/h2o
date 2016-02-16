@@ -47,6 +47,13 @@ abstract class H2O
 	 */
 	private static $_runenv = 'prod';
 	/**
+	 * @return string 返回当前版本号
+	 */
+	public static function getVersion()
+	{
+		return '0.1.2';
+	}
+	/**
 	 * 设置运行环境
 	 */
 	private static function setRunEnv()

@@ -7,7 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\console;
-use H2O;
+use H2O,H2O\helpers\Stdout;
 class Logger implements H2O\base\Logger
 {
 	/**
@@ -18,28 +18,35 @@ class Logger implements H2O\base\Logger
 	 */
 	private function _exceptionLog($message,$files)
 	{
-		$log = 'Date:'.date('Y-m-d H:i:s').PHP_EOL;
-		$log .= 'Message:'.$message.PHP_EOL;
-		$log .= 'Stack trace:'.PHP_EOL;
-		$lspt=3;$fi=0;
+		Stdout::title('Exception Log '.date('Y-m-d H:i:s').Stdout::$br.'Message:'.$message);
+		$stackfile = [['File','Lines']]; //相关联的文件
+		$code = [['The code key parts']]; //关联的第一个文件代码
+		$lspt=3; $fi=0;
 		foreach($files as $f=>$lines){
-			$sfile = file($f); //读取文件信息
-			$trow = count($sfile); //该文件总行数
-			$log .= $f.' Lines:'.join('、',$lines).PHP_EOL;
-			if($fi===0){
+			if($fi===0){//输出关键部位的代码结构
+				$sfile = file($f); //读取文件信息
+				$trow = count($sfile); //该文件总行数
+				$code[] = ['File: '.$f.' Lines:' .join('、',$lines)];
+				$framge = Stdout::$br;//代码片断
 				foreach($lines as $line){
 					$min = $line-$lspt; $max = $line+$lspt;
 					$min = $min<0?0:$min;
 					$max = $max>$trow?$trow:$max;
 					for($l=$min;$l<=$max;$l++){
-						$log .= ($l==$line?'**':'').$l.':'.$sfile[$l-1];
+						$framge .= ($l==$line?'**':'').$l.':'.$sfile[$l-1];
 					}
 				}
-				$log .= PHP_EOL;
+				$code[] = [$framge];
+			}else{
+				$stackfile[] = [$f,join('、',$lines)];
 			}
 			$fi++;
 		}
-		return $log.PHP_EOL;
+		Stdout::table($code);//代码跟踪
+		if(count($stackfile)>1){
+			Stdout::table($stackfile);//相关文件
+		}
+		return Stdout::get();
 	}
 	/**
 	 * 写入日志
@@ -68,12 +75,13 @@ class Logger implements H2O\base\Logger
 	public function debugger($data)
 	{
 		$request = \H2O::getContainer('request');
-		$log = 'Route:'.$request->getRequestUri().PHP_EOL;
-		$log .= 'Date:'.date('Y-m-d H:i:s').PHP_EOL;
-		$log .= 'RunTime:'.$data['runtime'].PHP_EOL;
-		$log .= 'Memory:'.$data['memory'].PHP_EOL;
+		Stdout::title('Debugger Info '.date('Y-m-d H:i:s'));
+		Stdout::table([
+			['Route','RunTime','Memory'],
+			[$request->getRequestUri(),$data['runtime'],$data['memory']]
+		]);
 		$logfile = APP_RUNTIME.DS.'console'.DS.'debugger'.DS.date('Ymd').'.log'; //异常日志文件
-		$content = $log.PHP_EOL; //内容
+		$content = Stdout::get(); //内容
 		H2O\helpers\File::write($logfile,$content);//写入日志信息
 	}
 }

@@ -19,6 +19,7 @@ class ErrorHandler
      */
     public function register()
     {
+    	error_reporting(0);
         ini_set('display_errors', false);//关闭系统错误提示
         set_exception_handler([$this, 'handleException']); //用户自定义异常处理方法
         set_error_handler([$this, 'handleError']);//用户自定义错误处理方法
@@ -110,6 +111,10 @@ class ErrorHandler
     {
     	$trace = $e->getTrace();
     	$pro=[];$sys = [];
+    	$gfile = $e->getFile();
+    	if(!empty($gfile)){
+    		$pro[$gfile][] = $e->getLine();
+    	}
     	foreach($trace as $t){
     		if(!empty($t['file'])){
     			$file = $t['file']; unset($t['file']);
