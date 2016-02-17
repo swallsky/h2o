@@ -71,19 +71,21 @@ class Builder
 		$cols = [];
 		foreach ($columns as $name => $type) {
 			if (is_string($name)) {
-				$cols[] = "\t`" . $name . '` ' . $this->_getColumnType($type);
+				$cols[] = "  `" . $name . '` ' . $this->_getColumnType($type);
 			} else {
-				$cols[] = "\t" . $type;
+				$cols[] = '  '.$type;
 			}
 		}
 		if(is_array($table)){
 			$tname = $table[0];
-			$tcomment = ' COMMENT '.$table[1];
+			$tcomment = ' COMMENT \''.$table[1].'\'';
+			$isdrop = (isset($table[2]) && $table[2]==1)?"DROP TABLE IF EXISTS `".$tname."`;".PHP_EOL:'';
 		}else{
 			$tname = $table;
 			$tcomment = '';
+			$isdrop = '';
 		}
-		return "CREATE TABLE `" . $tname . "` (\n" . implode(",\n", $cols) . "\n) ENGINE=".$engine." DEFAULT CHARSET=".$charset.$tcomment."\n";
+		return $isdrop."CREATE TABLE `" . $tname . "` (".PHP_EOL . implode(",".PHP_EOL, $cols) .PHP_EOL.") ENGINE=".$engine." DEFAULT CHARSET=".$charset.$tcomment.";".PHP_EOL;
 	}
 	/**
 	 * 返回列信息
@@ -99,10 +101,10 @@ class Builder
 					$col = $this->_typeMap[$type[0]].$comment;
 				break;
 				case 'string':
-					$type = $this->_typeMap[$type[0]];
+					$col = $this->_typeMap[$type[0]];
 					$default = isset($type[5])?' DEFAULT \''.$type[5].'\'':''; //默认值
-					$type = str_replace('(N)','('.(isset($type[2])?intval($type[2]):255).')',$type); //字符长度
-					$col = $type.(isset($type[3]) && $type[3]==1?' NOT NULL':'').$default.$comment;
+					$col = str_replace('(N)','('.(isset($type[2])?intval($type[2]):255).')',$col); //字符长度
+					$col = $col.(isset($type[3]) && $type[3]==1?' NOT NULL':'').$default.$comment;
 				break;
 				default:
 					$default = isset($type[4])?' DEFAULT \''.$type[4].'\'':''; //默认值

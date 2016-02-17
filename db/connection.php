@@ -96,7 +96,7 @@ class Connection
 			}
 		}
 		if(!empty($error))
-			throw new \Exception('Config error is "'.join(',',$error).'"');
+			throw new \Exception('Config error is "'.implode(',',$error).'"');
 		$this->dsn = $this->type.':host='.$config['host'].';port='.$config['port'].';dbname='.$config['dbname'].';charset='.$this->charset; //数据源
 		
 	}

@@ -79,6 +79,6 @@ class Request
 	 */
 	public function getRequestUri()
 	{
-		return join(' ',$_SERVER['argv']);
+		return implode(' ',$_SERVER['argv']);
 	}
 }

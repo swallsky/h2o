@@ -51,7 +51,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.1.2';
+		return '0.1.3';
 	}
 	/**
 	 * 设置运行环境

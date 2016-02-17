@@ -101,7 +101,7 @@ class Command
 			$fields[] = $k;//字段列表
 			$values[] = $this->quoteValue($v);//字段对应的值
 		}
-		return $this->setSql('INSERT INTO '.$table.' ('.join(',',$fields).') VALUES ('.join(',',$values).')');
+		return $this->setSql('INSERT INTO '.$table.' ('.implode(',',$fields).') VALUES ('.implode(',',$values).')');
 	}
 	/**
 	 * 更改记录信息

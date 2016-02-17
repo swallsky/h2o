@@ -25,7 +25,7 @@ class Logger implements H2O\base\Logger
 			if($fi===0){//输出关键部位的代码结构
 				$sfile = file($f); //读取文件信息
 				$trow = count($sfile); //该文件总行数
-				$code[] = ['File: '.$f.' Lines:' .join('、',$lines)];
+				$code[] = ['File: '.$f.' Lines:' .implode('、',$lines)];
 				$framge = Stdout::$br;//代码片断
 				foreach($lines as $line){
 					$min = $line-$lspt; $max = $line+$lspt;
@@ -37,7 +37,7 @@ class Logger implements H2O\base\Logger
 				}
 				$code[] = [$framge];
 			}else{
-				$stackfile[] = [$f,join('、',$lines)];
+				$stackfile[] = [$f,implode('、',$lines)];
 			}
 			$fi++;
 		}
@@ -63,7 +63,7 @@ class Logger implements H2O\base\Logger
 		foreach($files as $f=>$lines){
 			$sfile = file($f); //读取文件信息
 			$trow = count($sfile); //该文件总行数
-			echo '<div><span style="color:red;">'.$f.'</span><b style="margin-left:10px;">Lines:'.join('、',$lines).'</b></div>';
+			echo '<div><span style="color:red;">'.$f.'</span><b style="margin-left:10px;">Lines:'.implode('、',$lines).'</b></div>';
 			if($fi===0){
 				foreach($lines as $line){
 					$min = $line-$lspt; $max = $line+$lspt;

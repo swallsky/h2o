@@ -72,13 +72,13 @@ class Stdout
 			$td[] = self::$br;
 		}
 		$td[] = self::$br;
-		self::add(join('',$td));
+		self::add(implode('',$td));
 	}
 	/**
 	 * @return 返回表格信息
 	 */
 	public static function get()
 	{
-		return join('',self::$text);
+		return implode('',self::$text);
 	}
 }
