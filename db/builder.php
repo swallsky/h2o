@@ -10,6 +10,10 @@ namespace H2O\db;
 class Builder
 {
 	/**
+	 * @var array 缓存SQL语句变量
+	 */
+	private static $_sql = [];
+	/**
 	 * @var array 列类型映射转换
 	 * - `pk`: an auto-incremental primary key type, will be converted into "int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY"
      * - `bigpk`: an auto-incremental primary key type, will be converted into "bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY"
@@ -49,6 +53,47 @@ class Builder
 		'binary'		=>	'blob' //二进制
 	];
 	/**
+	 * 返回列信息
+	 * @param array $type 列信息
+	 */
+	private function _getColumnType($type)
+	{
+		$col = ''; //列信息
+		if(is_array($type) && isset($this->_typeMap[$type[0]])){//必须为数组，并且类型必须存在
+			$comment = isset($type[1])?' COMMENT \''.$type[1].'\'':''; //备注
+			switch ($type[0]){
+				case 'pk': case 'bigpk':
+					$col = $this->_typeMap[$type[0]].$comment;
+					break;
+				case 'string':
+					$col = $this->_typeMap[$type[0]];
+					$default = isset($type[5])?' DEFAULT \''.$type[5].'\'':''; //默认值
+					$col = str_replace('(N)','('.(isset($type[2])?intval($type[2]):255).')',$col); //字符长度
+					$col = $col.(isset($type[3]) && $type[3]==1?' NOT NULL':'').$default.$comment;
+					break;
+				default:
+					$default = isset($type[4])?' DEFAULT \''.$type[4].'\'':''; //默认值
+					$col = $this->_typeMap[$type[0]].(isset($type[2]) && $type[2]==1?' NOT NULL':'').$default.$comment;
+			}
+		}
+		return $col;
+	}
+	/**
+	 * 新增SQL语句
+	 * @param string $sql SQL语句
+	 */
+	public function add($sql)
+	{
+		self::$_sql[] = $sql;
+	}
+	/**
+	 * 返回SQL语句
+	 */
+	public function get()
+	{
+		return implode(';'.PHP_EOL,self::$_sql).PHP_EOL;
+	}
+	/**
 	 * 创建新表
 	 * 例如,
 	 * ~~~
@@ -85,32 +130,102 @@ class Builder
 			$tcomment = '';
 			$isdrop = '';
 		}
-		return $isdrop."CREATE TABLE `" . $tname . "` (".PHP_EOL . implode(",".PHP_EOL, $cols) .PHP_EOL.") ENGINE=".$engine." DEFAULT CHARSET=".$charset.$tcomment.";".PHP_EOL;
+		self::add($isdrop."CREATE TABLE `" . $tname . "` (".PHP_EOL . implode(",".PHP_EOL, $cols) .PHP_EOL.") ENGINE=".$engine." DEFAULT CHARSET=".$charset.$tcomment);
 	}
 	/**
-	 * 返回列信息
-	 * @param array $type 列信息
+	 * 修改数据库表名
+	 * @param string $oldName 旧表名
+	 * @param string $newName 新表名
+	 * @return string 修改表名SQL语句
 	 */
-	private function _getColumnType($type)
+	public function renameTable($oldName, $newName)
 	{
-		$col = ''; //列信息
-		if(is_array($type) && isset($this->_typeMap[$type[0]])){//必须为数组，并且类型必须存在
-			$comment = isset($type[1])?' COMMENT \''.$type[1].'\'':''; //备注
-			switch ($type[0]){
-				case 'pk': case 'bigpk':
-					$col = $this->_typeMap[$type[0]].$comment;
-				break;
-				case 'string':
-					$col = $this->_typeMap[$type[0]];
-					$default = isset($type[5])?' DEFAULT \''.$type[5].'\'':''; //默认值
-					$col = str_replace('(N)','('.(isset($type[2])?intval($type[2]):255).')',$col); //字符长度
-					$col = $col.(isset($type[3]) && $type[3]==1?' NOT NULL':'').$default.$comment;
-				break;
-				default:
-					$default = isset($type[4])?' DEFAULT \''.$type[4].'\'':''; //默认值
-					$col = $this->_typeMap[$type[0]].(isset($type[2]) && $type[2]==1?' NOT NULL':'').$default.$comment;
-			}
-		}
-		return $col;
+		self::add('RENAME TABLE `' . $oldName . '` TO `' . $newName.'`');
+	}
+	/**
+	 * 删除数据库表
+	 * @param string $table 表名
+	 * @return string 删除SQL语句
+	 */
+	public function dropTable($table)
+	{
+		self::add("DROP TABLE `".$table."`");
+	}
+	/**
+	 * 清空数据库表所有数据
+	 * @param string $table 表名
+	 * @return string 清空数据SQL语句
+	 */
+	public function truncateTable($table)
+	{
+		self::add("TRUNCATE TABLE `".$table."`");
+	}
+	/**
+	 * 增加数据库表的列字段
+	 * @param string $table 表名
+	 * @param string $column 字段名称
+	 * @param string $type 字段属性
+	 * @return string 增加表字段SQL语句
+	 */
+	public function addColumn($table, $column, $type)
+	{
+		self::add('ALTER TABLE `'.$table.'` ADD `'.$column.'` '.$this->_getColumnType($type));
+	}
+	
+	/**
+	 * 删除数据库表的列字段
+	 * @param string $table 表名
+	 * @param string $column 字段名
+	 * @return string 删除数据库表的列SQL语句
+	 */
+	public function dropColumn($table, $column)
+	{
+		self::add("ALTER TABLE `".$table."` DROP COLUMN `".$column."`");
+	}
+	/**
+	 * 修改数据库表的字段名称
+	 * @param string $table 表名
+	 * @param string $oldName 旧的字段名
+	 * @param string $newName 新的字段名
+	 * @return string 修改数据库表的列名称SQL语句
+	 */
+	public function renameColumn($table, $oldName, $newName)
+	{
+		self::add("ALTER TABLE `".$table."` RENAME COLUMN `".$oldName."` TO `".$newName."`");
+	}
+	/**
+	 * 修改数据库表的字段属性
+	 * @param string $table 表名
+	 * @param string $column 字段名
+	 * @param string $type 字段属性
+	 * @return string 修改字段属性SQL语句
+	 */
+	public function alterColumn($table, $column, $type)
+	{
+		self::add('ALTER TABLE `'.$table.'` CHANGE `'.$column. '` `'.$column.'` '.$this->_getColumnType($type));
+	}
+	/**
+	 * 创建一个索引SQL语句
+	 * @param string $name 索引名称
+	 * @param string $table 创建索引的表名
+	 * @param string $columns 需要创建索引的字段名称，多个字段，以逗号分隔
+	 * @param boolean $unique 是否需要创建一个唯一不重复的索引值 默认为false
+	 * @return string 创建索引SQL语句
+	 */
+	public function createIndex($name, $table, $columns, $unique = false)
+	{
+		self::add(($unique ? 'CREATE UNIQUE INDEX ' : 'CREATE INDEX ')
+		. '`' . $name . '` ON `'.$table.'` ('.$columns.')');
+	}
+	
+	/**
+	 * 删除索引
+	 * @param string $name 需要删除的索引名称
+	 * @param string $table 表名
+	 * @return string 删除索引的SQL语句
+	 */
+	public function dropIndex($name, $table)
+	{
+		self::add('DROP INDEX `'.$name. ' ON `'.$table.'`');
 	}
 }
