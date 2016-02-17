@@ -110,12 +110,17 @@ class ErrorHandler
     public function parseException($e)
     {
     	$trace = $e->getTrace();
-    	$pro=[];$sys = [];
+    	$files = [];$pro=[];$sys = [];
     	$gfile = $e->getFile();
     	if(!empty($gfile)){
-    		$pro[$gfile][] = $e->getLine();
+    		$files[] = ['file'=>$gfile,'line'=>$e->getLine()];
     	}
     	foreach($trace as $t){
+    		if(!empty($t['file'])){
+    			$files[] = ['file'=>$t['file'],'line'=>$t['line']];
+    		}
+    	}
+    	foreach ($files as $t){
     		if(!empty($t['file'])){
     			$file = $t['file']; unset($t['file']);
     			if(strpos($file,H2O_PATH) !== false){

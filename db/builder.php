@@ -67,12 +67,12 @@ class Builder
 					break;
 				case 'string':
 					$col = $this->_typeMap[$type[0]];
-					$default = isset($type[5])?' DEFAULT \''.$type[5].'\'':''; //默认值
+					$default = isset($type[4])?' DEFAULT \''.$type[4].'\'':''; //默认值
 					$col = str_replace('(N)','('.(isset($type[2])?intval($type[2]):255).')',$col); //字符长度
 					$col = $col.(isset($type[3]) && $type[3]==1?' NOT NULL':'').$default.$comment;
 					break;
 				default:
-					$default = isset($type[4])?' DEFAULT \''.$type[4].'\'':''; //默认值
+					$default = isset($type[3])?' DEFAULT \''.$type[3].'\'':''; //默认值
 					$col = $this->_typeMap[$type[0]].(isset($type[2]) && $type[2]==1?' NOT NULL':'').$default.$comment;
 			}
 		}
@@ -91,7 +91,7 @@ class Builder
 	 */
 	public function get()
 	{
-		return implode(';'.PHP_EOL,self::$_sql).PHP_EOL;
+		return implode(';'.PHP_EOL,self::$_sql).';'.PHP_EOL;
 	}
 	/**
 	 * 创建新表
@@ -99,8 +99,8 @@ class Builder
 	 * ~~~
 	 * $sql = $queryBuilder->createTable(['sys_user','用户表'], [
 	 *  'usr_id' => ['pk','用户ID'], //第一个字段类型，第二参数为备注
-	 *  'usr_name' => ['string','用户名',30,1], //如果为字符类型，第三参数是长度，第四个参数是否必填，其他类型都是第三个参数为是否必填
-	 *  'usr_age' => ['int','年龄',1], //第三个参数如果为1，则是必须填写
+	 *  'usr_name' => ['string','用户名',30,1,'无'], //如果为字符类型，第三参数是长度，第四个参数是否必填，其他类型都是第三个参数为是否必填
+	 *  'usr_age' => ['int','年龄',1,20], //第一个参数是类型，第二个参数是备注，第三个参数是否必填，第四个参数为默认值
 	 *  'usr_intro' => ['text','介绍',0],
 	 *  'usr_birthday' => ['date','生日',1]
 	 * ]);
@@ -183,26 +183,16 @@ class Builder
 		self::add("ALTER TABLE `".$table."` DROP COLUMN `".$column."`");
 	}
 	/**
-	 * 修改数据库表的字段名称
+	 * 修改数据库表的字段属性
 	 * @param string $table 表名
 	 * @param string $oldName 旧的字段名
 	 * @param string $newName 新的字段名
-	 * @return string 修改数据库表的列名称SQL语句
-	 */
-	public function renameColumn($table, $oldName, $newName)
-	{
-		self::add("ALTER TABLE `".$table."` RENAME COLUMN `".$oldName."` TO `".$newName."`");
-	}
-	/**
-	 * 修改数据库表的字段属性
-	 * @param string $table 表名
-	 * @param string $column 字段名
 	 * @param string $type 字段属性
 	 * @return string 修改字段属性SQL语句
 	 */
-	public function alterColumn($table, $column, $type)
+	public function alterColumn($table, $oldName, $newName, $type)
 	{
-		self::add('ALTER TABLE `'.$table.'` CHANGE `'.$column. '` `'.$column.'` '.$this->_getColumnType($type));
+		self::add('ALTER TABLE `'.$table.'` CHANGE `'.$oldName. '` `'.$newName.'` '.$this->_getColumnType($type));
 	}
 	/**
 	 * 创建一个索引SQL语句
@@ -226,6 +216,6 @@ class Builder
 	 */
 	public function dropIndex($name, $table)
 	{
-		self::add('DROP INDEX `'.$name. ' ON `'.$table.'`');
+		self::add('DROP INDEX `'.$name. '` ON `'.$table.'`');
 	}
 }
