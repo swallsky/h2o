@@ -207,7 +207,6 @@ class Builder
 		self::add(($unique ? 'CREATE UNIQUE INDEX ' : 'CREATE INDEX ')
 		. '`' . $name . '` ON `'.$table.'` ('.$columns.')');
 	}
-	
 	/**
 	 * 删除索引
 	 * @param string $name 需要删除的索引名称
