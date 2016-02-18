@@ -36,7 +36,19 @@ class Application extends H2O\base\Application
 	 */
 	public function handleRequest()
 	{
-		$request = \H2O::getContainer('request'); //获取HTTP请求组件
-		return $request->getRoute();
+		$request = \H2O::getContainer('request'); //控制台请求
+		$route = $request->getRoute();
+		if(strncmp($route['controller'], '@', 1)===0) {//当有前缀@时为，则为系统控制台模块
+			$sclass = '\H2O\console\\'.substr($route['controller'],1);
+			$o = \H2O::createObject($sclass);
+			if(method_exists($o,$route['action'])){
+				return call_user_func([$o,$route['action']]);//初始化系统模块
+			}else{
+				throw new \Exception('Class '.$sclass.' not found method:'.$route['action']);
+			}
+		}else{
+			$module = \H2O::getContainer('module');
+			return $module->runAction($route);
+		}
 	}
 }

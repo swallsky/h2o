@@ -79,8 +79,7 @@ abstract class H2O
 	 */
 	public static function getAlias($alias, $throwException = true)
 	{
-		if (strncmp($alias, '@', 1)) {
-			//不存在别名
+		if(strncmp($alias, '@', 1)) {//不存在别名
 			return $alias;
 		}
 	
@@ -161,7 +160,7 @@ abstract class H2O
 		if(is_string($class)){
 			return new $class($params);
 		}else{
-			throw new \Exception("Invalid path alias: $class");
+			throw new \Exception("Class create failure: $class");
 		}
 	}
 	

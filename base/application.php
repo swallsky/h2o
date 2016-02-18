@@ -50,9 +50,7 @@ abstract class Application
 	 */
 	public function run()
 	{
-		$request = $this->handleRequest();
-		$module = \H2O::getContainer('module');
-		$res = $module->runAction($request);
+		$res = $this->handleRequest();
 		$debug = \H2O::getAppConfigs('debug');
 		if($debug===true){//debug
 			$logger = \H2O::getContainer('logger');
