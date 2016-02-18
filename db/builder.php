@@ -89,9 +89,18 @@ class Builder
 	/**
 	 * 返回SQL语句
 	 */
-	public function get()
+	public function getSql()
 	{
 		return implode(';'.PHP_EOL,self::$_sql).';'.PHP_EOL;
+	}
+	/**
+	 * 将SQL语句导入到数据库
+	 * @param string $tag 数据库标识 用户区分应用库
+	 */
+	public function exec($tag = 'db')
+	{
+		$cmd = new \H2O\db\Command($tag);
+		return $cmd->setSql($this->getSql())->exec();
 	}
 	/**
 	 * 创建新表

@@ -43,4 +43,8 @@ abstract class Controller extends H2O\base\Controller
 	{
 		return parent::render($tpl,$vars);
 	}
+	/**
+	 * 命令下使用方法帮助信息
+	 */
+	abstract public function actHelp();
 }
