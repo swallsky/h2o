@@ -36,10 +36,16 @@ class Request
 	public function help()
 	{
 		Stdout::title('This is H2O version '.\H2O::getVersion());
+		//命令行使用
 		Stdout::table([
 			['route','COMMAND <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]'],
 			['example for windows','command hello.index -test=info'],
 			['example for linux','./command hello.index -test=info']
+		]);
+		//数据迁移模块
+		Stdout::table([
+			['migrate','Manages application migrations','Params list'],
+			['migrate.create','Create a new migrate','version,dev']
 		]);
 		echo Stdout::get();
 		exit();

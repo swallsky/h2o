@@ -17,7 +17,11 @@ class Migrate
 	{
 		$request = \H2O::getContainer('request'); //控制台请求
 		$params = $request->getParams();
-		if(empty($params['version'])){
+		if(!empty($params['version'])){//初始化
+			//TODO
+			return 'Migrate '.$params['version'].' create success';
+		}
+		if(empty($params['version']) && empty($params['dev'])){
 			Stdout::title('Warning:');
 			Stdout::table([
 				['params','error info'],
@@ -25,6 +29,5 @@ class Migrate
 			]);
 			return Stdout::get();
 		}
-		return '测试';
 	}
 }
