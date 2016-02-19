@@ -8,7 +8,7 @@
  */
 namespace H2O\console;
 use H2O\helpers\Stdout,H2O\helpers\File;
-class Migrate implements MigrateInterface
+class Migrate
 {
 	/**
 	 * @var string 数据迁移目录
@@ -33,10 +33,11 @@ class Migrate implements MigrateInterface
 	}
 	/**
 	 * 执行对应的操作
-	 * @param $action 操作名称
+	 * @param $act 操作名称
 	 */
-	public function runAction($action)
+	public function runAction($act)
 	{
+		$action = 'act'.ucfirst($act);
 		if(method_exists($this,$action)){
 			$content = call_user_func([$this,$action]);
 		}else{
@@ -44,16 +45,9 @@ class Migrate implements MigrateInterface
 		}
 	}
 	/**
-	 * 返回SQL操作对象
-	 */
-	public function getDdCommand()
-	{
-		return new \H2O\db\Command();
-	}
-	/**
 	 * 创建迁移
 	 */
-	public function create()
+	public function actCreate()
 	{
 		if($this->_runenv == 'prod'){//生产环境不充许创建迁移
 			echo "Prod environment is not allowed to create migrate application!";
@@ -78,14 +72,14 @@ class '.ucfirst($name).' extends \H2O\db\Builder
 	/**
 	 * Migrate Applcation update
 	 */
-	public function up()
+	public function actUp()
 	{
 		//TODO
 	}
 	/**
 	 * Migrate Applcation restore
 	 */
-	public function restore()
+	public function actRestore()
 	{
 		//TODO
 	}
@@ -131,15 +125,15 @@ class '.ucfirst($name).' extends \H2O\db\Builder
 	/**
 	 * 更新操作
 	 */
-	public function up()
+	public function actUp()
 	{
-		$this->_cmd('up');
+		$this->_cmd('actUp');
 	}
 	/**
 	 * 恢复更新操作
 	 */
-	public function restore()
+	public function actRestore()
 	{
-		$this->_cmd('restore');
+		$this->_cmd('actRestore');
 	}
 }
