@@ -41,11 +41,7 @@ class Application extends H2O\base\Application
 		if(strncmp($route['controller'], '@', 1)===0) {//当有前缀@时为，则为系统控制台模块
 			$sclass = '\H2O\console\\'.substr($route['controller'],1);
 			$o = \H2O::createObject($sclass);
-			if(method_exists($o,$route['action'])){
-				return call_user_func([$o,$route['action']]);//初始化系统模块
-			}else{
-				throw new \Exception('Class '.$sclass.' not found method:'.$route['action']);
-			}
+			$o->runAction($route['action']);
 		}else{
 			$module = \H2O::getContainer('module');
 			return $module->runAction($route);

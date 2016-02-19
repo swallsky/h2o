@@ -55,7 +55,7 @@ class Logger implements H2O\base\Logger
 	 */
 	public function exceptionWrite($message,$files)
 	{
-		$logfile = APP_RUNTIME.DS.'web'.DS.'exception'.DS.date('Ymd').'.log'; //异常日志文件
+		$logfile = APP_RUNTIME.DS.'console'.DS.'exception'.DS.date('Ymd').'.log'; //异常日志文件
 		$content = $this->_exceptionLog($message, $files); //内容
 		H2O\helpers\File::write($logfile,$content);//写入日志信息
 	}

@@ -105,15 +105,15 @@ class Builder
 	/**
 	 * 创建新表
 	 * 例如,
-	 * ~~~
-	 * $sql = $queryBuilder->createTable(['sys_user','用户表'], [
-	 *  'usr_id' => ['pk','用户ID'], //第一个字段类型，第二参数为备注
-	 *  'usr_name' => ['string','用户名',30,1,'无'], //如果为字符类型，第三参数是长度，第四个参数是否必填，其他类型都是第三个参数为是否必填
-	 *  'usr_age' => ['int','年龄',1,20], //第一个参数是类型，第二个参数是备注，第三个参数是否必填，第四个参数为默认值
-	 *  'usr_intro' => ['text','介绍',0],
-	 *  'usr_birthday' => ['date','生日',1]
-	 * ]);
-	 * ~~~
+	 ~~~
+	 $sql = $queryBuilder->createTable(['sys_user','用户表'], [
+	 		'usr_id' => ['pk','用户ID'], //第一个字段类型，第二参数为备注
+	 		'usr_name' => ['string','用户名',30,1,'无'], //如果为字符类型，第三参数是长度，第四个参数是否必填，其他类型都是第三个参数为是否必填
+	 		'usr_age' => ['int','年龄',1,20], //第一个参数是类型，第二个参数是备注，第三个参数是否必填，第四个参数为默认值
+	 		'usr_intro' => ['text','介绍',0],
+	 		'usr_birthday' => ['date','生日',1]
+	 ]);
+	 ~~~
 	 * @param mixed $table 要创建的表的名称
 	 * @param array $columns 字段定义
 	 * @param string $charset 字符集类型，默认为utf8
