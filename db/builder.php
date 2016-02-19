@@ -7,12 +7,20 @@
  * @version    0.1.0
  */
 namespace H2O\db;
-class Builder
+class Builder extends Command
 {
+	/**
+	 * 初始化
+	 * @param string $tag 数据库标识 用户区分应用库
+	 */
+	public function __construct($tag = 'db')
+	{
+		parent::__construct($tag);
+	}
 	/**
 	 * @var array 缓存SQL语句变量
 	 */
-	private static $_sql = [];
+	private static $_buildsqls = [];
 	/**
 	 * @var array 列类型映射转换
 	 * - `pk`: an auto-incremental primary key type, will be converted into "int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY"
@@ -82,25 +90,23 @@ class Builder
 	 * 新增SQL语句
 	 * @param string $sql SQL语句
 	 */
-	public function add($sql)
+	public function setBuildSql($sql)
 	{
-		self::$_sql[] = $sql;
+		self::$_buildsqls[] = $sql;
 	}
 	/**
 	 * 返回SQL语句
 	 */
-	public function getSql()
+	public function getBuildSql()
 	{
-		return implode(';'.PHP_EOL,self::$_sql).';'.PHP_EOL;
+		return implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
 	}
 	/**
 	 * 将SQL语句导入到数据库
-	 * @param string $tag 数据库标识 用户区分应用库
 	 */
-	public function exec($tag = 'db')
+	public function buildExec()
 	{
-		$cmd = new \H2O\db\Command($tag);
-		return $cmd->setSql($this->getSql())->exec();
+		return $this->setSql($this->getBuildSql())->exec();
 	}
 	/**
 	 * 创建新表
@@ -139,7 +145,8 @@ class Builder
 			$tcomment = '';
 			$isdrop = '';
 		}
-		self::add($isdrop."CREATE TABLE `" . $tname . "` (".PHP_EOL . implode(",".PHP_EOL, $cols) .PHP_EOL.") ENGINE=".$engine." DEFAULT CHARSET=".$charset.$tcomment);
+		self::setBuildSql($isdrop."CREATE TABLE `" . $tname . "` (".PHP_EOL . implode(",".PHP_EOL, $cols) .PHP_EOL.") ENGINE=".$engine." DEFAULT CHARSET=".$charset.$tcomment);
+		return $this;
 	}
 	/**
 	 * 修改数据库表名
@@ -149,7 +156,8 @@ class Builder
 	 */
 	public function renameTable($oldName, $newName)
 	{
-		self::add('RENAME TABLE `' . $oldName . '` TO `' . $newName.'`');
+		self::setBuildSql('RENAME TABLE `' . $oldName . '` TO `' . $newName.'`');
+		return $this;
 	}
 	/**
 	 * 删除数据库表
@@ -158,7 +166,8 @@ class Builder
 	 */
 	public function dropTable($table)
 	{
-		self::add("DROP TABLE `".$table."`");
+		self::setBuildSql("DROP TABLE `".$table."`");
+		return $this;
 	}
 	/**
 	 * 清空数据库表所有数据
@@ -167,7 +176,8 @@ class Builder
 	 */
 	public function truncateTable($table)
 	{
-		self::add("TRUNCATE TABLE `".$table."`");
+		self::setBuildSql("TRUNCATE TABLE `".$table."`");
+		return $this;
 	}
 	/**
 	 * 增加数据库表的列字段
@@ -178,7 +188,8 @@ class Builder
 	 */
 	public function addColumn($table, $column, $type)
 	{
-		self::add('ALTER TABLE `'.$table.'` ADD `'.$column.'` '.$this->_getColumnType($type));
+		self::setBuildSql('ALTER TABLE `'.$table.'` ADD `'.$column.'` '.$this->_getColumnType($type));
+		return $this;
 	}
 	
 	/**
@@ -189,7 +200,8 @@ class Builder
 	 */
 	public function dropColumn($table, $column)
 	{
-		self::add("ALTER TABLE `".$table."` DROP COLUMN `".$column."`");
+		self::setBuildSql("ALTER TABLE `".$table."` DROP COLUMN `".$column."`");
+		return $this;
 	}
 	/**
 	 * 修改数据库表的字段属性
@@ -201,7 +213,8 @@ class Builder
 	 */
 	public function alterColumn($table, $oldName, $newName, $type)
 	{
-		self::add('ALTER TABLE `'.$table.'` CHANGE `'.$oldName. '` `'.$newName.'` '.$this->_getColumnType($type));
+		self::setBuildSql('ALTER TABLE `'.$table.'` CHANGE `'.$oldName. '` `'.$newName.'` '.$this->_getColumnType($type));
+		return $this;
 	}
 	/**
 	 * 创建一个索引SQL语句
@@ -213,8 +226,9 @@ class Builder
 	 */
 	public function createIndex($name, $table, $columns, $unique = false)
 	{
-		self::add(($unique ? 'CREATE UNIQUE INDEX ' : 'CREATE INDEX ')
+		self::setBuildSql(($unique ? 'CREATE UNIQUE INDEX ' : 'CREATE INDEX ')
 		. '`' . $name . '` ON `'.$table.'` ('.$columns.')');
+		return $this;
 	}
 	/**
 	 * 删除索引
@@ -224,6 +238,7 @@ class Builder
 	 */
 	public function dropIndex($name, $table)
 	{
-		self::add('DROP INDEX `'.$name. '` ON `'.$table.'`');
+		self::setBuildSql('DROP INDEX `'.$name. '` ON `'.$table.'`');
+		return $this;
 	}
 }

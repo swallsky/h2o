@@ -8,7 +8,7 @@
  */
 namespace H2O\console;
 use H2O\helpers\Stdout,H2O\helpers\File;
-class Migrate extends \H2O\db\Builder implements MigrateInterface
+class Migrate implements MigrateInterface
 {
 	/**
 	 * @var string 数据迁移目录
@@ -66,24 +66,24 @@ class Migrate extends \H2O\db\Builder implements MigrateInterface
 			$mfile = $this->_migratedir.DS.$name.'.php';
 			$code =	'<?php
 namespace Migrate;
-class '.ucfirst($name).' extends \H2O\console\Migrate
+class '.ucfirst($name).' extends \H2O\db\Builder
 {
 	/**
-	 * Module update
+	 * Initialization Migrate Applcation
 	 */
-	public function getDdCommand()
+	public function __construct()
 	{
-		return new \H2O\db\Command();
+		parent::__construct();
 	}
 	/**
-	 * Module update
+	 * Migrate Applcation update
 	 */
 	public function up()
 	{
 		//TODO
 	}
 	/**
-	 * Module restore
+	 * Migrate Applcation restore
 	 */
 	public function restore()
 	{
@@ -112,21 +112,16 @@ class '.ucfirst($name).' extends \H2O\console\Migrate
 			require($file);
 			$class = '\Migrate\\'.ucfirst($params['name']);
 			$oc = new $class();
-			$db = $oc->getDdCommand();
-			if(empty($db)){
+			try{
+				$oc->beginTransaction();
 				$oc->$n();
-			}else{
-				try{
-					$db->beginTransaction();
-					$oc->$n();
-					$db->setSql($oc->getSql())->exec();//执行SQL
-					$db->pdo->commit();
-					echo 'Executed successfully!';
-					exit();
-				}catch(\Exception $e){
-					$db->pdo->rollBack();//回滚
-					throw new \ErrorException($e->getMessage());
-				}
+				$oc->buildExec();//执行SQL
+				$oc->pdo->commit();
+				echo 'Executed successfully!';
+				exit();
+			}catch(\Exception $e){
+				$oc->pdo->rollBack();//回滚
+				throw new \ErrorException($e->getMessage());
 			}
 		}else{
 			echo 'The file is not exist:"'.$file.'"';
