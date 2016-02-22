@@ -15,6 +15,10 @@ class Migrate
 	 */
 	private $_migratedir;
 	/**
+	 * @var string 命名空间
+	 */
+	private $_namespace;
+	/**
 	 * @var string 当前运行环境
 	 */
 	private $_runenv;
@@ -27,7 +31,9 @@ class Migrate
 		if(empty($version)){
 			throw new \Exception("Config set error: lost version param!");
 		}
-		$this->_migratedir = APP_PATH.DS.'migrate'.DS.$version;
+		$nv = 'v'.str_replace('.','',$version); 
+		$this->_migratedir = APP_PATH.DS.'migrate'.DS.$nv;
+		$this->_namespace = Application::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
 		file::createDirectory($this->_migratedir);//创建目录
 		$this->_runenv = \H2O::getRunEnv();
 	}
@@ -59,7 +65,7 @@ class Migrate
 			$name = strtolower($name);
 			$mfile = $this->_migratedir.DS.$name.'.php';
 			$code =	'<?php
-namespace Migrate;
+namespace '.substr($this->_namespace,1).';
 class '.ucfirst($name).' extends \H2O\db\Builder
 {
 	/**
@@ -101,25 +107,18 @@ class '.ucfirst($name).' extends \H2O\db\Builder
 			echo 'Missing required parameter: name';
 			exit();
 		}
-		$file = $this->_migratedir.DS.$params['name'].'.php';
-		if(file_exists($file)){
-			require($file);
-			$class = '\Migrate\\'.ucfirst($params['name']);
-			$oc = new $class();
-			try{
-				$oc->beginTransaction();
-				$oc->$n();
-				$oc->buildExec();//执行SQL
-				$oc->pdo->commit();
-				echo 'Executed successfully!';
-				exit();
-			}catch(\Exception $e){
-				$oc->pdo->rollBack();//回滚
-				throw new \ErrorException($e->getMessage());
-			}
-		}else{
-			echo 'The file is not exist:"'.$file.'"';
+		$class = $this->_namespace.'\\'.ucfirst($params['name']);
+		$oc = new $class();
+		try{
+			$oc->beginTransaction();
+			$oc->$n();
+			$oc->buildExec();//执行SQL
+			$oc->pdo->commit();
+			echo 'Executed successfully!';
 			exit();
+		}catch(\Exception $e){
+			$oc->pdo->rollBack();//回滚
+			throw new \ErrorException($e->getMessage());
 		}
 	}
 	/**
