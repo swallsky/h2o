@@ -104,20 +104,15 @@ class Model  implements IteratorAggregate,ArrayAccess
 	/**
 	 * 返回字段属性验证
 	 * 例子:
-	 * ~~~
-	 * [
-	 *     // built-in "required" validator
-	 *     [['username', 'password'], 'required'],
-	 *     // built-in "string" validator customized with "min" and "max" properties
-	 *     ['username', 'string', 'min' => 3, 'max' => 12],
-	 *     // built-in "compare" validator that is used in "register" scenario only
-	 *     ['password', 'compare', 'compareAttribute' => 'password2', 'on' => 'register'],
-	 *     // an inline validator defined via the "authenticate()" method in the model class
-	 *     ['password', 'authenticate', 'on' => 'login'],
-	 *     // a validator of class "DateRangeValidator"
-	 *     ['dateRange', 'DateRangeValidator'],
-	 * ];
-	 * ~~~
+	 ~~~
+	 [
+	     // 验证不能为空
+	     [['username', 'password'], 'required'],
+	     // 验证字符串长度
+	     ['username', 'string', 'min' => 3, 'max' => 12],
+	     ...
+	 ];
+	 ~~~
 	 * @return array 验证规则
 	 */
 	public function rules()
@@ -133,7 +128,6 @@ class Model  implements IteratorAggregate,ArrayAccess
 		$attributes = $this->getAttributes();
 		return new ArrayIterator($attributes);
 	}
-	
 	/**
 	 * 接口函数 判断变量是否存在
 	 * @param mixed $offset 检查属性
@@ -143,7 +137,6 @@ class Model  implements IteratorAggregate,ArrayAccess
 	{
 		return $this->$offset !== null;
 	}
-	
 	/**
 	 * 接口函数 获取变量
 	 * @param mixed $offset 属性名称
@@ -153,7 +146,6 @@ class Model  implements IteratorAggregate,ArrayAccess
 	{
 		return $this->$offset;
 	}
-	
 	/**
 	 * 接口函数 设置变量
 	 * @param integer $offset 属性名称
@@ -163,7 +155,6 @@ class Model  implements IteratorAggregate,ArrayAccess
 	{
 		$this->$offset = $item;
 	}
-	
 	/**
 	 * 接口函数 unset
 	 * @param mixed $offset
