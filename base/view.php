@@ -11,6 +11,10 @@ use H2O;
 class View
 {
 	/**
+	 * @var string 模板依耐的控制器
+	 */
+	private $_controller;
+	/**
 	 * @var string 模板目录
 	 */
 	private $_templatePath;
@@ -29,6 +33,14 @@ class View
 	public function setFile($tpl)
 	{
 		$this->_templateFile = $tpl;
+	}
+	/**
+	 * 设置依耐控制器
+	 * @param object $o 控制器对象
+	 */
+	public function setController($o)
+	{
+		$this->_controller = $o;
 	}
 	/**
 	 * 返回模板目录
@@ -80,6 +92,15 @@ class View
 	public function getContent()
 	{
 		echo $this->_content;
+	}
+	/**
+	 * 返回包含模板
+	 * @param string $url 例如 message.list
+	 * @param string $namespace 命名空间
+	 */
+	public function loadModule($url,$namespace = '')
+	{
+		echo $this->_controller->loadModule($url,$namespace);
 	}
 	/**
 	 * 模板解析和渲染

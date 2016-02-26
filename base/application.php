@@ -46,12 +46,33 @@ abstract class Application
 		}
 	}
 	/**
+	 * 执行引导程序
+	 * @param array $bt 引导程序数组
+	 * @throws \Exception
+	 */
+	private function _boot($bt)
+	{
+		foreach($bt as $b){
+			if(strpos($b,'.') === false){//如果填写不存在方法名直接报错
+				throw new \Exception('Configs of boot params is error!');
+			}else{
+				$ao = explode('.',$b);
+				$o = \H2O::createObject($ao[0]);
+				call_user_func([$o,'act'.ucfirst($ao[1])]);
+			}
+		}
+	}
+	/**
 	 * 运行实例
 	 */
 	public function run()
 	{
+		$configs = \H2O::getAppConfigs();
+		if(isset($configs['boot']) && !empty($configs['boot']) && is_array($configs['boot'])){//加载引导程序
+			$this->_boot($configs['boot']);
+		}
 		$res = $this->handleRequest();
-		$debug = \H2O::getAppConfigs('debug');
+		$debug = $configs['debug'];
 		if($debug===true){//debug
 			$logger = \H2O::getContainer('logger');
 			$logger->debugger($this->runExpend());//记录运行状态

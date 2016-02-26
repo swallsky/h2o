@@ -123,6 +123,7 @@ abstract class Controller
 	{
 		$ov = \H2O::getContainer('view');
 		$ov->setFile($tpl);
+		$ov->setController(new static());//设置依附的控制器
 		$ov->setPath($this->getViewPath());
 		$ov->setContent($this->getContent());
 		return $ov->render($vars);
