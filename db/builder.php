@@ -99,7 +99,9 @@ class Builder extends Command
 	 */
 	public function getBuildSql()
 	{
-		return implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
+		$sql = implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
+		$sql .= $this->getSql().';'.PHP_EOL;
+		return $sql;
 	}
 	/**
 	 * 将SQL语句导入到数据库
