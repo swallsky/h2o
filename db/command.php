@@ -91,17 +91,43 @@ class Command
 	 * @access public
 	 * @param string $table  数据表名
 	 * @param array  $data  字段数组
+	 * @param array  $field  字段信息
 	 * @return 受影响的行数
+	 ~~~
+	 example 1: 单行插入
+	 $this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0]);
+	 example 2: 多行插入
+	 $this->insert('sys_menu',
+	 	[
+	 		[1,'first menu',0],
+	 		[2,'second menu',1],
+	 	],
+	 	['sm_id','sm_title,'sm_pid']
+	 );
+	 ~~~
 	 */
-	public function insert($table, $data = array())
+	public function insert($table, $data = [],$field = [])
 	{
-		$fields = array();
-		$values = array();
-		foreach($data as $k=>$v){
-			$fields[] = $k;//字段列表
-			$values[] = $this->quoteValue($v);//字段对应的值
+		$fields = [];$values = [];
+		if(empty($field)){//单行插入
+			foreach($data as $k=>$v){
+				$fields[] = $k;//字段列表
+				$values[] = $this->quoteValue($v);//字段对应的值
+			}
+			$sval = '('.implode(',',$values).')';
+		}else{//多行插入
+			$fields = $field;
+			foreach($data as $dv){
+				if(is_array($dv)){//必须是二维数组
+					foreach($dv as $k=>$v){
+						$dv[$k] = $this->quoteValue($v);//字段对应的值
+					}
+					$values[] = '('.implode(',',$dv).')';
+				}
+			}
+			$sval = implode(',',$values);
 		}
-		return $this->setSql('INSERT INTO '.$table.' ('.implode(',',$fields).') VALUES ('.implode(',',$values).')');
+		return $this->setSql('INSERT INTO '.$table.' ('.implode(',',$fields).') VALUES '.$sval);
 	}
 	/**
 	 * 更改记录信息
@@ -111,9 +137,9 @@ class Command
 	 * @param array		$param 变量替换值
 	 * @return 成功返回true 否则返回false
 	 */
-	public function update($table, $fdata = array(), $where,$param = array())
+	public function update($table, $fdata = [], $where,$param = [])
 	{
-		$items = array();
+		$items = [];
 		foreach($fdata as $k=>$v)
 			$items[] = $k.'='.$this->quoteValue($v);
 		if(!empty($param) && is_array($param)){
