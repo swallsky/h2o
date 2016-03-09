@@ -119,7 +119,7 @@ abstract class Controller
 		$ov->setPath($this->getViewPath());
 		$ov->setContent($this->getContent());
 		$content = $ov->render($vars);
-		if(empty($this->_layout)){//非布局
+		if(empty($this->_layout) || !empty($this->_content)){//非布局 或者已有内容信息，则当前已为布局模块
 			return $content;
 		}else{//有布局
 			$route = Module::parseRoute($this->_layout);
