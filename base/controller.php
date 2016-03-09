@@ -43,15 +43,7 @@ abstract class Controller
 	{
 		$action = 'act'.$act;
 		if(method_exists($this,$action)){
-			$content = call_user_func([$this,$action]);
-			if(empty($this->_layout)){//非布局
-				return $content;
-			}else{//有布局
-				$route = Module::parseRoute($this->_layout);
-				$o = \H2O::createObject($this->_namespace.'\\'.strtolower($route['controller']));
-				$o->setContent($content);//设置主模块缓存
-				return call_user_func([$o,'act'.ucfirst(strtolower($route['action']))]);
-			}
+			return call_user_func([$this,$action]);
 		}else{
 			throw new \Exception(get_called_class().' no method:'.$action);
 		}
@@ -126,6 +118,14 @@ abstract class Controller
 		$ov->setController(new static());//设置依附的控制器
 		$ov->setPath($this->getViewPath());
 		$ov->setContent($this->getContent());
-		return $ov->render($vars);
+		$content = $ov->render($vars);
+		if(empty($this->_layout)){//非布局
+			return $content;
+		}else{//有布局
+			$route = Module::parseRoute($this->_layout);
+			$o = \H2O::createObject($this->_namespace.'\\'.strtolower($route['controller']));
+			$o->setContent($content);//设置主模块缓存
+			return call_user_func([$o,'act'.ucfirst(strtolower($route['action']))]);
+		}
 	}
 }
