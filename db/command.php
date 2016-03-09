@@ -48,6 +48,7 @@ class Command
 	 */
 	public function setSql($sql)
 	{
+		$this->params = [];
 		if($sql !== $this->_sql){
 			$this->_sql = $sql;
 		}
@@ -77,12 +78,12 @@ class Command
 				$params[$name] = $value;
 			}
 		}
-		if (!isset($params[1])) {
+		if (!isset($params[0])) { //非?号的直接替换
 			return strtr($this->_sql, $params);
 		}
 		$sql = '';
 		foreach (explode('?', $this->_sql) as $i => $part) {
-			$sql .= (isset($params[$i]) ? $params[$i] : '') . $part;
+			$sql .=  $part . (isset($params[$i]) ? $params[$i] : '');
 		}
 		return $sql;
 	}
