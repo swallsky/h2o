@@ -34,8 +34,8 @@ class Module
 	private function init()
 	{
 		if ($this->_ctrnSpace === null) {
-			$trn = str_replace(APP_PATH,'',$this->_basePath);
-			$this->_ctrnSpace = Application::APP_ROOT_NAME.str_replace('/','\\',$trn).'\\controllers';
+			$trn = str_replace(\H2O::getAppRootPath(),'',$this->_basePath);
+			$this->_ctrnSpace = \H2O::APP_ROOT_NAME.str_replace('/','\\',$trn).'\\controllers';
 		}
 	}
 	/**

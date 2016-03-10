@@ -19,6 +19,10 @@ define('DS',DIRECTORY_SEPARATOR);
  */
 defined('H2O_PATH') or define('H2O_PATH', __DIR__);
 /**
+ * composer安装目录
+ */
+defined('VENDOR_PATH') or define('VENDOR_PATH',dirname(dirname(H2O_PATH)));
+/**
  * 系统的根目录
  */
 defined('APP_PATH') or define('APP_PATH', dirname(dirname(dirname(__DIR__))));
@@ -47,11 +51,49 @@ abstract class H2O
 	 */
 	private static $_runenv = 'prod';
 	/**
+	 * @var string 应用程序的根空间
+	 */
+	const APP_ROOT_NAME = '\app';
+	/**
+	 * @var array 自动加载器
+	 */
+	public static $autoloader = null;
+	/**
 	 * @return string 返回当前版本号
 	 */
 	public static function getVersion()
 	{
-		return '0.1.7';
+		return '0.1.8';
+	}
+	/**
+	 * 获取自动加载器命名空间的前缀
+	 * @param string $pre 命名空间前缀
+	 */
+	public static function getPreNameSpace($pre = '')
+	{
+		$data = self::$autoloader->getPrefixesPsr4();
+		if(empty($pre)){
+			return $data;
+		}else{
+			$predata = isset($data[$pre])?$data[$pre]:'';
+			if(is_string($predata)){
+				return str_replace('/',DS,$predata);
+			}else if(is_array($predata)){
+				foreach($predata as $k=>$v){
+					$predata[$k] = str_replace('/',DS,$v);
+				}
+				return $predata;
+			}
+		}
+	}
+	/**
+	 * 返回应用根空间的对应的目录
+	 */
+	public static function getAppRootPath()
+	{
+		$app = str_replace('\\','',H2O::APP_ROOT_NAME).'\\';
+		$appath = \H2O::getPreNameSpace($app);
+		return is_array($appath)?$appath[0]:$appath;
 	}
 	/**
 	 * 设置运行环境
@@ -173,3 +215,7 @@ abstract class H2O
 		self::setRunEnv(); //设置APP运行环境
 	}
 }
+/**
+ * 初始化自动加载器
+ */
+H2O::$autoloader = require(VENDOR_PATH.DS.'autoload.php');

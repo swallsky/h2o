@@ -10,10 +10,6 @@ namespace H2O\base;
 abstract class Application
 {
 	/**
-	 * @var string 应用程序的根空间
-	 */
-	const APP_ROOT_NAME = '\app';
-	/**
 	 * 初始化应用
 	 * @param array $config
 	 */

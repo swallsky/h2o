@@ -32,8 +32,8 @@ class Migrate
 			throw new \Exception("Config set error: lost version param!");
 		}
 		$nv = 'v'.str_replace('.','',$version); 
-		$this->_migratedir = APP_PATH.DS.'migrate'.DS.$nv;
-		$this->_namespace = Application::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
+		$this->_migratedir = \H2O::getAppRootPath().DS.'migrate'.DS.$nv;
+		$this->_namespace = \H2O::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
 		file::createDirectory($this->_migratedir);//创建目录
 		$this->_runenv = \H2O::getRunEnv();
 	}
