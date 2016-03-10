@@ -35,7 +35,9 @@ class Module
 	{
 		if ($this->_ctrnSpace === null) {
 			$trn = str_replace(\H2O::getAppRootPath(),'',$this->_basePath);
-			$this->_ctrnSpace = \H2O::APP_ROOT_NAME.str_replace('/','\\',$trn).'\\controllers';
+			$trn = str_replace('/','\\',$trn);
+			$trn = (strpos($trn,'\\')===false)?'\\'.$trn:$trn;
+			$this->_ctrnSpace = \H2O::APP_ROOT_NAME.$trn.'\\controllers';
 		}
 	}
 	/**
