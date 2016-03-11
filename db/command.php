@@ -135,17 +135,13 @@ class Command
 	 * @param string 	$table  	数据表名
 	 * @param array     $fdata  	字段数组
 	 * @param string 	$where  	条件
-	 * @param array		$param 变量替换值
 	 * @return 成功返回true 否则返回false
 	 */
-	public function update($table, $fdata = [], $where,$param = [])
+	public function update($table, $fdata = [], $where)
 	{
 		$items = [];
 		foreach($fdata as $k=>$v)
 			$items[] = $k.'='.$this->quoteValue($v);
-		if(!empty($param) && is_array($param)){
-			$this->params = $param;
-		}
 		return $this->setSql('UPDATE '.$table.' SET '.implode(',',$items).' WHERE '.$where);
 	}
 	/**
