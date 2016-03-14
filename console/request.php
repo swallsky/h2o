@@ -39,8 +39,8 @@ class Request
 		//命令行使用
 		Stdout::table([
 			['route','COMMAND <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]'],
-			['example for windows','command hello.index -test=info'],
-			['example for linux','./command hello.index -test=info']
+			['example for windows','command hello.index --test=info'],
+			['example for linux','./command hello.index --test=info']
 		]);
 		//数据迁移模块
 		Stdout::table([

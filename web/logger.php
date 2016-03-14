@@ -11,11 +11,11 @@ use H2O,H2O\helpers\Stdout;
 class Logger implements H2O\base\Logger
 {
 	/**
-	 * 写入日志
-	 * @param string $message 错误信息
-	 * @param array $files 跟踪文件
+	 * 日志显示格式
+	 * @param string $message
+	 * @param array $files
 	 */
-	public function exceptionWrite($message,$files)
+	private function _logView($message,$files)
 	{
 		Stdout::title('Exception Log '.date('Y-m-d H:i:s').Stdout::$br.'Message:'.$message);
 		$stackfile = [['File','Lines']]; //相关联的文件
@@ -45,8 +45,17 @@ class Logger implements H2O\base\Logger
 		if(count($stackfile)>1){
 			Stdout::table($stackfile);//相关文件
 		}
+		return Stdout::get();; //内容
+	}
+	/**
+	 * 写入日志
+	 * @param string $message 错误信息
+	 * @param array $files 跟踪文件
+	 */
+	public function exceptionWrite($message,$files)
+	{
 		$logfile = APP_RUNTIME.DS.'web'.DS.'exception'.DS.date('Ymd').'.log'; //异常日志文件
-		$content = Stdout::get();; //内容
+		$content = $this->_logView($message, $files); //内容
 		H2O\helpers\File::write($logfile,$content);//写入日志信息
 	}
 	/**
@@ -56,25 +65,30 @@ class Logger implements H2O\base\Logger
 	 */
 	public function exceptionDebug($message,$files)
 	{
-		header("Content-type: text/html; charset=utf-8");
-		echo '<div><b>Message:</b><span style="color:red;">'.$message.'</span></div>';
-		echo '<div><b>Stack trace:</b></div>';
-		$lspt=3;$fi=0;
-		foreach($files as $f=>$lines){
-			$sfile = file($f); //读取文件信息
-			$trow = count($sfile); //该文件总行数
-			echo '<div><span style="color:red;">'.$f.'</span><b style="margin-left:10px;">Lines:'.implode('、',$lines).'</b></div>';
-			if($fi===0){
-				foreach($lines as $line){
-					$min = $line-$lspt; $max = $line+$lspt;
-					$min = $min<0?0:$min;
-					$max = $max>$trow?$trow:$max;
-					for($l=$min;$l<=$max;$l++){
-						echo '<div '.($l==$line?'style="color:red;"':'').'>'.$l.':'.$sfile[$l-1].'</div>';
+		$request = \H2O::getContainer('request');
+		if($request->getIsPost() || $request->getIsAjax() || $request->getIsFlash()){
+			echo $this->_logView($message, $files); //内容
+		}else{
+			header("Content-type: text/html; charset=utf-8");
+			echo '<div><b>Message:</b><span style="color:red;">'.$message.'</span></div>';
+			echo '<div><b>Stack trace:</b></div>';
+			$lspt=3;$fi=0;
+			foreach($files as $f=>$lines){
+				$sfile = file($f); //读取文件信息
+				$trow = count($sfile); //该文件总行数
+				echo '<div><span style="color:red;">'.$f.'</span><b style="margin-left:10px;">Lines:'.implode('、',$lines).'</b></div>';
+				if($fi===0){
+					foreach($lines as $line){
+						$min = $line-$lspt; $max = $line+$lspt;
+						$min = $min<0?0:$min;
+						$max = $max>$trow?$trow:$max;
+						for($l=$min;$l<=$max;$l++){
+							echo '<div '.($l==$line?'style="color:red;"':'').'>'.$l.':'.$sfile[$l-1].'</div>';
+						}
 					}
 				}
+				$fi++;
 			}
-			$fi++;
 		}
 	}
 	/**
