@@ -33,7 +33,7 @@ defined('APP_RUNTIME') or define('APP_RUNTIME', APP_PATH.DS.'runtime');
 /**
  * 设置内部编码
  */
-mb_internal_encoding('UTF-8');
+if(function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
 /**
  * 设置默认时域 默认中国标准时间
  */
