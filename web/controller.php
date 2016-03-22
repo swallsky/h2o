@@ -49,6 +49,22 @@ abstract class Controller extends H2O\base\Controller
 		return \H2O::getContainer('request');
 	}
 	/**
+	 * 重定向跳转
+	 * @param string $url	跳转连接
+	 */
+	public function redirect($url = '')
+	{
+		$url = (''== $url)?getenv('HTTP_REFERER'):$url;
+		//多行URL地址支持
+		$url = str_replace(array("\n", "\r"), '', $url);
+		if(!headers_sent()){
+			header("Location:".$url);
+			exit();
+		}else{
+			echo '<script>document.location="'.$url.'";</script>';
+		}
+	}
+	/**
 	 * 返回包含模板
 	 * @param string $url 例如 message.list
 	 * @param string $namespace 命名空间

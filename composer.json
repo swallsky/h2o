@@ -23,7 +23,7 @@
     	"php": ">=5.4.0",
     	"ezyang/htmlpurifier": "4.6.*",
     	"swiftmailer/swiftmailer": "~5.0",
-    	"gregwar/captcha": "1.1.*", 
+    	"gregwar/captcha": "1.*", 
     	"phpoffice/phpexcel": "1.8.*"
     },
     "autoload": {

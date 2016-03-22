@@ -83,6 +83,12 @@ class Builder extends Command
 					$default = isset($type[3])?' DEFAULT \''.$type[3].'\'':''; //默认值
 					$col = $this->_typeMap[$type[0]].(isset($type[2]) && $type[2]==1?' NOT NULL':'').$default.$comment;
 			}
+		}else{
+			if(is_array($type)){
+				throw new \Exception(get_called_class().' no found column type:'.$type[0]);
+			}else{
+				throw new \Exception(get_called_class().' no found column type:'.var_dump($type));
+			}
 		}
 		return $col;
 	}
