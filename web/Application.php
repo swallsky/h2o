@@ -25,10 +25,10 @@ class Application extends H2O\base\Application
 	public function setPreObject()
 	{
 		return [
-			'logger'			=>		'\H2O\web\logger', // 日志记录
+			'logger'			=>		'\H2O\web\Logger', // 日志记录
 			'request'		=>		'\H2O\web\Request', //HTTP请求组件
-			'module'		=>		'\H2O\base\module', //默认的模块类
-			'view'				=>		'\H2O\web\view' //渲染层类
+			'module'		=>		'\H2O\base\Module', //默认的模块类
+			'view'				=>		'\H2O\web\View' //渲染层类
 		];
 	}
 	/**
