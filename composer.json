@@ -28,5 +28,12 @@
     },
     "autoload": {
     	"psr-4": {"H2O\\": ""}
-    }
+    },
+    "config": {
+        "secure-http": false
+    },
+    "repositories": [
+        {"type": "composer", "url": "http://pkg.phpcomposer.com/repo/packagist/"},
+        {"packagist": false}
+    ]
 }
