@@ -4,7 +4,7 @@
  * @author     Xujinzhang <xjz1688@163.com>
  * @version    0.1.0
  */
-include(__DIR__."TopSdk.php"); //导入SDK
+include(__DIR__.DS."TopSdk.php"); //导入SDK
 /**
  * 短信发送
  * @param array $tag 配置信息模板标识 ['default','test']
