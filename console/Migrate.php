@@ -55,16 +55,12 @@ class Migrate
 	 */
 	public function actCreate()
 	{
-		if($this->_runenv == 'prod'){//生产环境不充许创建迁移
-			echo "Prod environment is not allowed to create migrate application!";
-			exit();
-		}else{
-			$request = \H2O::getContainer('request'); //控制台请求
-			$params = $request->getParams();
-			$name = isset($params['name'])?$params['name']:'crt'.date('YmdHis');
-			$name = strtolower($name);
-			$mfile = $this->_migratedir.DS.$name.'.php';
-			$code =	'<?php
+		$request = \H2O::getContainer('request'); //控制台请求
+		$params = $request->getParams();
+		$name = isset($params['name'])?$params['name']:'crt'.date('YmdHis');
+		$name = strtolower($name);
+		$mfile = $this->_migratedir.DS.$name.'.php';
+		$code =	'<?php
 namespace '.substr($this->_namespace,1).';
 class '.ucfirst($name).' extends \H2O\db\Builder
 {
@@ -90,9 +86,8 @@ class '.ucfirst($name).' extends \H2O\db\Builder
 		//TODO
 	}
 }';
-			file::write($mfile,$code);
-			echo 'Migrate application to create success!';
-		}
+		file::write($mfile,$code);
+		echo 'Migrate application to create success!';
 	}
 	/**
 	 * 需要执行的命令

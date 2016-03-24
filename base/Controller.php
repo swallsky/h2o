@@ -123,9 +123,9 @@ abstract class Controller
 			return $content;
 		}else{//有布局
 			$route = Module::parseRoute($this->_layout);
-			$o = \H2O::createObject($this->_namespace.'\\'.strtolower($route['controller']));
+			$o = \H2O::createObject($this->_namespace.'\\'.$route['controller']);
 			$o->setContent($content);//设置主模块缓存
-			return call_user_func([$o,'act'.ucfirst(strtolower($route['action']))]);
+			return call_user_func([$o,'act'.ucfirst($route['action'])]);
 		}
 	}
 }

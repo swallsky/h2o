@@ -12,7 +12,7 @@ class Request
 	/**
 	 * @var string 默认Controller名称
 	 */
-	private $_defaultController = 'site';
+	private $_defaultController = 'Site';
 	/**
 	 * @var string 默认Action名称
 	 */

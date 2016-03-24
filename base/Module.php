@@ -59,7 +59,7 @@ class Module
 		if($pointcnt==1){
 			$ep = explode('.',$routepath);
 			return [
-				'controller'	=>	$ep[0],
+				'controller'	=>	ucfirst($ep[0]),
 				'action'		=>	$ep[1]
 			];
 		}else{
@@ -104,7 +104,7 @@ class Module
 	 */
 	public function runAction($route)
 	{
-		$o = \H2O::createObject($this->_ctrnSpace.'\\'.strtolower($route['controller']));
-		return $o->runAction(ucfirst(strtolower($route['action'])));
+		$o = \H2O::createObject($this->_ctrnSpace.'\\'.$route['controller']);
+		return $o->runAction(ucfirst($route['action']));
 	}
 }
