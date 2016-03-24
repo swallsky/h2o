@@ -27,7 +27,8 @@
     	"phpoffice/phpexcel": "1.8.*"
     },
     "autoload": {
-    	"psr-4": {"H2O\\": ""}
+    	"psr-4": {"H2O\\": ""},
+    	"files": ["ali/sms/api.php"]
     },
     "config": {
         "secure-http": false
