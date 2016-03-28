@@ -32,7 +32,7 @@ class Migrate
 			throw new \Exception("Config set error: lost version param!");
 		}
 		$nv = 'v'.str_replace('.','',$version); 
-		$this->_migratedir = \H2O::getAppRootPath().DS.'migrate'.DS.$nv;
+		$this->_migratedir = \H2O::getAppRootPath().'migrate'.DS.$nv;
 		$this->_namespace = \H2O::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
 		file::createDirectory($this->_migratedir);//创建目录
 		$this->_runenv = \H2O::getRunEnv();
@@ -58,11 +58,15 @@ class Migrate
 		$request = \H2O::getContainer('request'); //控制台请求
 		$params = $request->getParams();
 		$name = isset($params['name'])?$params['name']:'crt'.date('YmdHis');
-		$name = strtolower($name);
+		$name = ucfirst($name);
 		$mfile = $this->_migratedir.DS.$name.'.php';
+		if(file_exists($mfile)){//文件已存在，提示
+			echo $mfile.' is exist!'.PHP_EOL;
+			exit();
+		}
 		$code =	'<?php
 namespace '.substr($this->_namespace,1).';
-class '.ucfirst($name).' extends \H2O\db\Builder
+class '.$name.' extends \H2O\db\Builder
 {
 	/**
 	 * Initialization Migrate Applcation
@@ -109,7 +113,7 @@ class '.ucfirst($name).' extends \H2O\db\Builder
 			$oc->$n();
 			$oc->buildExec();//执行SQL
 			$oc->pdo->commit();
-			echo 'Executed successfully!';
+			echo 'Executed successfully!'.PHP_EOL;
 			exit();
 		}catch(\Exception $e){
 			$oc->pdo->rollBack();//回滚
