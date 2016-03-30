@@ -62,6 +62,7 @@ abstract class Controller extends H2O\base\Controller
 			exit();
 		}else{
 			echo '<script>document.location="'.$url.'";</script>';
+			exit();
 		}
 	}
 	/**

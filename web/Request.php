@@ -160,15 +160,27 @@ class Request
 	 * 返回post数据
 	 * @param string $name POST数据名称
 	 * @param mixed $value 给POST参数赋值
+	 * @param array $hpcfg HTMLPurifier配置参数
 	 * @return 返回POST数据，如果不存在返回为空
 	 */
-	public function post($name = '',$value = '')
+	public function post($name = '',$value = '',$hpcfg = [])
 	{
 		if($name == ''){//如果为空返回所有数据
-			return self::$postData;
+			$data = self::$postData;
+			//防止XSS攻击
+			foreach ($data as $k=>$v){
+				if(is_array($v)){
+					foreach ($v as $kk=>$vv){
+						$data[$k][$kk] = \H2O\helpers\HTMLPurifier::filter($vv,$hpcfg);
+					}
+				}else{
+					$data[$k] = \H2O\helpers\HTMLPurifier::filter($v,$hpcfg);
+				}
+			}
+			return $data;
 		}else{
-			if(empty($value)){
-				self::$postData[$name] = $value;
+			if(!empty($value)){
+				self::$postData[$name] = \H2O\helpers\HTMLPurifier::filter($value,$hpcfg);
 			}else{
 				return isset(self::$postData[$name])?self::$postData[$name]:'';
 			}
