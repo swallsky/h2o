@@ -18,6 +18,10 @@ class Request
 	 */
 	private $_defaultAction = 'index';
 	/**
+	 * @var string RESTful的POST的key值. 默认为 '__method'. 共有三个值可用PUT, PATCH or DELETE
+	 */
+	public $methodParam = '__method';
+	/**
 	 * @var 路由配置表
 	 */
 	private $_routeTable = [];
@@ -60,12 +64,15 @@ class Request
 		return $headers;
 	}
 	/**
-	 * 当前请求类型
-	 * @return string 返回请求类型 并将值变为大写
+	 * 返回当前请求的方法 (e.g. GET, POST, HEAD, PUT, PATCH, DELETE).
+	 * @return string 请求方法, 例如 GET, POST, HEAD, PUT, PATCH, DELETE.
+	 * 返回的值变成了大写
 	 */
 	public function getMethod()
 	{
-		if (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
+		if (isset($_POST[$this->methodParam])) {
+			return strtoupper($_POST[$this->methodParam]);
+		} elseif (isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'])) {
 			return strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
 		} else {
 			return isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
@@ -87,7 +94,6 @@ class Request
 	{
 		return $this->getMethod() === 'HEAD';
 	}
-	
 	/**
 	 * 判断是否POST请求
 	 * @return boolean 是否为POST请求
@@ -95,6 +101,30 @@ class Request
 	public function getIsPost()
 	{
 		return $this->getMethod() === 'POST';
+	}
+	/**
+	 * 判断是否是DELETE请求
+	 * @return boolean 是否DELETE请求
+	 */
+	public function getIsDelete()
+	{
+		return $this->getMethod() === 'DELETE';
+	}
+	/**
+	 * 判断是否是PUT请求
+	 * @return boolean 是否PUT请求
+	 */
+	public function getIsPut()
+	{
+		return $this->getMethod() === 'PUT';
+	}
+	/**
+	 * 判断是否是PATCH请求
+	 * @return boolean 是否PATCH请求
+	 */
+	public function getIsPatch()
+	{
+		return $this->getMethod() === 'PATCH';
 	}
 	/**
 	 * 判断是否为Ajax请求
@@ -126,6 +156,7 @@ class Request
 			];
 		}else{//其他路由
 			$routepath = $this->getRealPath($routepath);
+			$routepath = strpos($routepath,'.') === false?$routepath.'.'.ucfirst(strtolower($this->getMethod())):$routepath;
 			$data = \H2O\base\Module::parseRoute($routepath);
 		}
 		return $data;
