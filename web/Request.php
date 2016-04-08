@@ -198,11 +198,22 @@ class Request
 	{
 		if($name == ''){//如果为空返回所有数据
 			$data = self::$postData;
-			//防止XSS攻击
-			foreach ($data as $k=>$v){
+			//防止XSS攻击 
+			//此处不建议用递归 防止不稳定
+			foreach ($data as $k=>$v){//first
 				if(is_array($v)){
-					foreach ($v as $kk=>$vv){
-						$data[$k][$kk] = \H2O\helpers\HTMLPurifier::filter($vv,$hpcfg);
+					foreach ($v as $kk=>$vv){//second
+						if(is_array($vv)){
+							foreach ($vv as $kkk=>$vvv){//three 超过三级时，自动合并
+								if(is_array($vvv)){
+									$data[$k][$kk][$kkk] = \H2O\helpers\HTMLPurifier::filter(implode(",",$vvv),$hpcfg);
+								}else{
+									$data[$k][$kk][$kkk] = \H2O\helpers\HTMLPurifier::filter($vvv,$hpcfg);
+								}
+							}
+						}else{
+							$data[$k][$kk] = \H2O\helpers\HTMLPurifier::filter($vv,$hpcfg);
+						}
 					}
 				}else{
 					$data[$k] = \H2O\helpers\HTMLPurifier::filter($v,$hpcfg);
