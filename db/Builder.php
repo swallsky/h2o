@@ -105,9 +105,7 @@ class Builder extends Command
 	 */
 	public function getBuildSql()
 	{
-		$sql = implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
-		$sql .= $this->getSql().';'.PHP_EOL;
-		return $sql;
+		return implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
 	}
 	/**
 	 * 将SQL语句导入到数据库
@@ -248,5 +246,63 @@ class Builder extends Command
 	{
 		self::setBuildSql('DROP INDEX `'.$name. '` ON `'.$table.'`');
 		return $this;
+	}
+	/**
+	 * 插入记录
+	 * @access public
+	 * @param string $table  数据表名
+	 * @param array  $data  字段数组
+	 * @param array  $field  字段信息
+	 * @return 受影响的行数
+	 ~~~
+	 example 1: 单行插入
+	 $this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0]);
+	 example 2: 多行插入
+	 $this->insert('sys_menu',
+	 [
+	 [1,'first menu',0],
+	 [2,'second menu',1],
+	 ],
+	 ['sm_id','sm_title,'sm_pid']
+	 );
+	 ~~~
+	 */
+	public function insert($table, $data = [],$field = [])
+	{
+		parent::insert($table,$data,$field);
+		$sql = parent::getSql(); //获取单条时的SQL语句
+		self::setBuildSql($sql);
+		return $this;
+	}
+	/**
+	 * 更改记录信息
+	 * @param string 	$table  	数据表名
+	 * @param array     $fdata  	字段数组
+	 * @param string 	$where  	条件
+	 * @return 成功返回true 否则返回false
+	 */
+	public function update($table, $fdata = [], $where)
+	{
+		parent::update($table,$fdata,$where);
+		$sql = parent::getSql(); //获取单条时的SQL语句
+		self::setBuildSql($sql);
+		return $this;
+	}
+	/**
+	 * 绑定一个参数到对应的SQL占位符上
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	public function bindValue($name,$value)
+	{
+		throw new \Exception("Builder does not support this method");
+	}
+	/**
+	 * 绑定多个参数到对应的SQL占位符上
+	 * @param array $values
+	 */
+	public function bindValues($values)
+	{
+		throw new \Exception("Builder does not support this method");
 	}
 }
