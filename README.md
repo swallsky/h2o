@@ -1,5 +1,4 @@
-H2O
-Composer - Dependency Management for PHP
+H2O - As simple as water, as important as water
 ========================================
 …or create a new repository on the command line
 
