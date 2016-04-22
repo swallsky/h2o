@@ -115,6 +115,16 @@ class Builder extends Command
 		return $this->setSql($this->getBuildSql())->exec();
 	}
 	/**
+	 * 判断表是否存在
+	 * @param string $table 表名
+	 * @return false:为不存在,true:为存在
+	 */
+	public function existTable($table)
+	{
+	    $tmp = $this->setSql('SHOW TABLES WHERE Tables_in_'.$this->dbname.'="'.$table.'"')->fetch();
+	    return empty($tmp)?false:true;
+	}
+	/**
 	 * 创建新表
 	 * 例如,
 	 ~~~
@@ -221,6 +231,28 @@ class Builder extends Command
 	{
 		self::setBuildSql('ALTER TABLE `'.$table.'` CHANGE `'.$oldName. '` `'.$newName.'` '.$this->_getColumnType($type));
 		return $this;
+	}
+	/**
+	 * 构建一个SQL语句添加到现有表主键
+	 * @param string $table 表名
+	 * @param string $name 主键字段
+	 * @return string 创建索引SQL语句
+	 */
+	public function addPrimaryKey($table,$name)
+	{
+	    self::setBuildSql('ALTER TABLE  `'.$table.'` ADD PRIMARY KEY (  `'.$name.'` )');
+	    return $this;
+	}
+	
+	/**
+	 * 构建一个SQL语句删除现有表的主键
+	 * @param string $table 表名
+	 * @return string 创建索引SQL语句
+	 */
+	public function dropPrimaryKey($table)
+	{
+	    self::setBuildSql('ALTER TABLE '.$table.' DROP PRIMARY KEY');
+	    return $this;
 	}
 	/**
 	 * 创建一个索引SQL语句

@@ -1,5 +1,6 @@
 H2O
-
+Composer - Dependency Management for PHP
+========================================
 …or create a new repository on the command line
 
 echo # H2O >> README.md

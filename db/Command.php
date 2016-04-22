@@ -27,6 +27,10 @@ class Command
 	 */
 	protected $_batchSize;
 	/**
+	 * @var string 当前数据库名
+	 */
+	public $dbname = '';
+	/**
 	 * 初始化命令行
 	 * @param string $tag 数据库标识 用户区分应用库
 	 */
@@ -34,6 +38,7 @@ class Command
 	{
 		$connect = Connection::getInstance($tag);
 		$this->pdo = $connect->pdo;
+		$this->dbname = $connect->dbname;
 	}
 	/**
 	 * 返回SQL语句
@@ -267,7 +272,7 @@ class Command
 	 * 返回安全有效的数据
 	 * @param mixed $str
 	 */
-	private function quoteValue($str)
+	public function quoteValue($str)
 	{
 		if (!is_string($str)) {
 			return $str;

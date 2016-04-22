@@ -7,7 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\console;
-use H2O\helpers\Stdout,H2O\helpers\File;
+use H2O\helpers\File;
 class Migrate
 {
 	/**
@@ -36,19 +36,6 @@ class Migrate
 		$this->_namespace = \H2O::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
 		file::createDirectory($this->_migratedir);//创建目录
 		$this->_runenv = \H2O::getRunEnv();
-	}
-	/**
-	 * 执行对应的操作
-	 * @param $act 操作名称
-	 */
-	public function runAction($act)
-	{
-		$action = 'act'.ucfirst($act);
-		if(method_exists($this,$action)){
-			$content = call_user_func([$this,$action]);
-		}else{
-			throw new \Exception(get_called_class().' no method:'.$action);
-		}
 	}
 	/**
 	 * 创建迁移

@@ -97,8 +97,8 @@ class Connection
 		}
 		if(!empty($error))
 			throw new \Exception('Config error is "'.implode(',',$error).'"');
+		$this->dbname = $config['dbname']; //数据库名
 		$this->dsn = $this->type.':host='.$config['host'].';port='.$config['port'].';dbname='.$config['dbname'].';charset='.$this->charset; //数据源
-		
 	}
 	/**
 	 * 连接数据库

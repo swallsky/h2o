@@ -44,6 +44,13 @@ class Request
 		]);
 		//数据迁移模块
 		Stdout::table([
+		    ['dtguid','DataBase Table strategy need GUID','Params list'],
+		    ['@dtguid.create','Create a cache table for GUID','name'],
+		    ['@dtguid.clear','Truncate table a cache table for GUID','name'],
+		    ['@dtguid.delete','Delete GUID Table strategy','name']
+		]);
+		//数据迁移模块
+		Stdout::table([
 			['migrate','Manages application migrations','Params list'],
 			['@migrate.create','Create a new migrate','name'],
 			['@migrate.up','Update a new migrate','name'],
