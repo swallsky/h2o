@@ -114,13 +114,14 @@ abstract class TableStrategy extends Command
 	public function getTablesName()
 	{
 	    $field = 'Tables_in_'.$this->dbname;
-	    $tmp = $this->setSql('SHOW TABLES WHERE '.$field.' LIKE "'.$this->_tablepre.'%"')->fetchAll();
+		parent::setSql('SHOW TABLES WHERE '.$field.' LIKE "'.$this->_tablepre.'%"');
+		$tmp = parent::fetchAll();
 	    if(empty($tmp)){
 	        return [];
 	    }else{
 	        $tables = [];
 	        foreach ($tmp as $v){
-	           $tables[] = $v;
+	           $tables[] = $v[$field];
 	        }
 	        return $tables;
 	    }
@@ -198,7 +199,7 @@ abstract class TableStrategy extends Command
 	    $tables = $this->getTablesName();
 	    $tsql = [];
 	    foreach ($tables as $s){
-	        $tsql[] = str_replace($sql,$this->_tablesql,$s);
+	        $tsql[] = str_replace($this->_tablesql,$s,$sql);
 	    }
 	    $this->setSql(implode(' UNION ',$tsql));
 	}
@@ -221,7 +222,7 @@ abstract class TableStrategy extends Command
 	{
 	    $this->_unionSql();
 	    $sth = $this->execute();
-		return $sth->fetch(PDO::FETCH_ASSOC);
+		return $sth->fetch(\PDO::FETCH_ASSOC);
 	}
 	/**
 	 * 获取所有结果集
@@ -230,7 +231,7 @@ abstract class TableStrategy extends Command
 	{
 	    $this->_unionSql();
 	    $sth = $this->execute();
-		return $sth->fetchAll(PDO::FETCH_ASSOC);
+		return $sth->fetchAll(\PDO::FETCH_ASSOC);
 	}
 	/**
 	 * 返回结果集行数
