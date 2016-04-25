@@ -36,7 +36,7 @@ class Request
 	public function help()
 	{
 		Stdout::title('This is H2O version '.\H2O::getVersion());
-		//命令行使用
+		//命令行使用 
 		Stdout::table([
 			['route','COMMAND <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]'],
 			['example for windows','command hello.index --test=info'],

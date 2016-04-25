@@ -70,7 +70,7 @@ abstract class TableStrategy extends Command
 	 */
 	abstract public function AUTO_INCREMENT();
 	/**
-	 * 定义表结构
+	 * 定义表结构 
 	 ~~~
 	 example:
 	 public function Structure(){
