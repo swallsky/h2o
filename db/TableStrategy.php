@@ -61,20 +61,14 @@ abstract class TableStrategy extends Command
 	 */
 	abstract public function TableExt();
 	/**
-	 * 初始化自增值
+	 * 新建表时，初始化策略
 	 */
-	public function AUTO_INC_INIT()
-	{
-	    //$this->setSql()->exec();
-	}
+	abstract public function AUTO_INC_INIT();
 	/**
-	 * ID自增策略函数
+	 * 主键自增策略
 	 * @return 自增ID 如果为空，则跟单表自增规则一致
 	 */
-	public function AUTO_INCREMENT()
-	{
-	    return 'NEXTVAL("'.$this->getTableName().'")';
-	}
+	abstract public function AUTO_INCREMENT();
 	/**
 	 * 定义表结构
 	 ~~~
@@ -157,7 +151,7 @@ abstract class TableStrategy extends Command
 	    $fieldstu = $this->Structure();//表结构
 	    if(!$this->_obuild->existTable($table)){ //如果表不存在，则创建
 	        $this->_obuild->createTable($table,$fieldstu)->buildExec();
-	        $this->AUTO_INC_INIT(); //初始化自增ID
+	        $this->AUTO_INC_INIT(); //初始化策略
 	    }
 	    //主键查找逻辑
         $keyfield = '';
