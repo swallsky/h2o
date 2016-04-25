@@ -249,7 +249,7 @@ abstract class TableStrategy extends Command
 	 */
 	public function bindValue($name,$value)
 	{
-	    throw new \Exception("Builder does not support this method");
+	    throw new \Exception("TableStrategy does not support this method");
 	}
 	/**
 	 * 绑定多个参数到对应的SQL占位符上
@@ -257,6 +257,6 @@ abstract class TableStrategy extends Command
 	 */
 	public function bindValues($values)
 	{
-	    throw new \Exception("Builder does not support this method");
+	    throw new \Exception("TableStrategy does not support this method");
 	}
 }
