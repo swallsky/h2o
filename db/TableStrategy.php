@@ -201,6 +201,7 @@ abstract class TableStrategy extends Command
 	    foreach ($tables as $s){
 	        $tsql[] = str_replace($this->_tablesql,$s,$sql);
 	    }
+	    $tsql = $this->getRawSql(); //解析对应的参数
 	    $this->setSql(implode(' UNION ',$tsql));
 	}
 	/**
@@ -241,22 +242,5 @@ abstract class TableStrategy extends Command
 	    $this->_unionSql();
 	    $sth = $this->execute();
 		return $sth->rowCount();
-	}
-	/**
-	 * 绑定一个参数到对应的SQL占位符上
-	 * @param string $name
-	 * @param mixed $value
-	 */
-	public function bindValue($name,$value)
-	{
-	    throw new \Exception("TableStrategy does not support this method");
-	}
-	/**
-	 * 绑定多个参数到对应的SQL占位符上
-	 * @param array $values
-	 */
-	public function bindValues($values)
-	{
-	    throw new \Exception("TableStrategy does not support this method");
 	}
 }
