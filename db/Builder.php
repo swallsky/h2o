@@ -44,6 +44,7 @@ class Builder extends Command
 	private $_typeMap = [
 		'pk'				=>	'int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY', //主键
 		'bigpk'		=>	'bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY', //主键
+		'stringpk'	=>	'varchar(200) NOT NULL PRIMARY KEY', //非数字的主键值
 		'string'		=>	'varchar(N)', //字符串 字符串长度默认为255
 		'text'			=>	'text', //文本
 		'longtext'	=>	'longtext', //长文本

@@ -63,19 +63,25 @@ abstract class TableStrategy extends Command
 	/**
 	 * 新建表时，初始化策略
 	 */
-	abstract public function AUTO_INC_INIT();
+	public function AUTO_INC_INIT()
+	{
+	    //TODO
+	}
 	/**
 	 * 主键自增策略
 	 * @return 自增ID 如果为空，则跟单表自增规则一致
 	 */
-	abstract public function AUTO_INCREMENT();
+	public function AUTO_INCREMENT()
+	{
+	    return 'UUID()'; //利用mysql uuid函数生成一个唯一ID
+	}
 	/**
 	 * 定义表结构 
 	 ~~~
 	 example:
 	 public function Structure(){
     	 return [
-            'lgd_id' 	=> ['pk','日志ID'],
+            'lgd_id' 	=> ['stringpk','日志ID'],
             'lgd_time' 	=> ['datetime','时间'],
             'lgd_model' 	=> ['string','模块名称',30,0],
             'lgd_stfid' 	=> ['int','访问者id',1],
@@ -157,7 +163,7 @@ abstract class TableStrategy extends Command
 	    //主键查找逻辑
         $keyfield = '';
         foreach($fieldstu as $fk=>$fv){
-            if(in_array($fv[0],['pk','bigpk'])){//查找主键
+            if(in_array($fv[0],['pk','bigpk','stringpk'])){//查找主键
                 $keyfield = $fk;
                 break;
             }
@@ -195,13 +201,12 @@ abstract class TableStrategy extends Command
 	 */
 	private function _unionSql()
 	{
-	    $sql = $this->getSql();
+	    $sql = $this->getRawSql();//解析完参数后的SQL语句
 	    $tables = $this->getTablesName();
 	    $tsql = [];
 	    foreach ($tables as $s){
 	        $tsql[] = str_replace($this->_tablesql,$s,$sql);
 	    }
-	    $tsql = $this->getRawSql(); //解析对应的参数
 	    $this->setSql(implode(' UNION ',$tsql));
 	}
 	/**

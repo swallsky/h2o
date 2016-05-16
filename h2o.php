@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.3.2';
+		return '0.3.3';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
