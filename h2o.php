@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.3.3';
+		return '0.3.4';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
@@ -93,7 +93,8 @@ abstract class H2O
 	{
 		$app = str_replace('\\','',H2O::APP_ROOT_NAME).'\\';
 		$appath = \H2O::getPreNameSpace($app);
-		return is_array($appath)?$appath[0]:$appath;
+		$real = is_array($appath)?$appath[0]:$appath;
+		return realpath($real); //返回规范化的绝对路径
 	}
 	/**
 	 * 设置运行环境
