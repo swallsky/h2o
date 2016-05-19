@@ -113,7 +113,9 @@ class Builder extends Command
 	 */
 	public function buildExec()
 	{
-		return $this->setSql($this->getBuildSql())->exec();
+	    foreach(self::$_buildsqls as $sql){
+	        $this->setSql($sql)->exec();
+	    }
 	}
 	/**
 	 * 判断表是否存在
