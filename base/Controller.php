@@ -23,6 +23,10 @@ abstract class Controller
 	 */
 	private $_content;
 	/**
+	 * @var array 渲染给模板全局变量
+	 */
+	public static $viewglobalvars = [];
+	/**
 	 * 初始化
 	 */
 	public function __construct()
@@ -107,6 +111,21 @@ abstract class Controller
 		return $o->runAction(ucfirst(strtolower($route['action'])));
 	}
 	/**
+	 * 设置全局的模板变量
+	 * @param mixed $tag string|array
+	 * @param string $var
+	 */
+	public function assign($tag,$var = '')
+	{
+	    if(is_array($tag)){//如果数组，则循环设置
+	        foreach($tag as $t=>$v){
+	           self::$viewglobalvars[$t] = $v; 
+	        }
+	    }else{//单个变量赋值
+	        self::$viewglobalvars[$tag] = $var;
+	    }
+	}
+	/**
 	 * 返回模板渲染后的字符串
 	 * @param string $tpl 模板文件
 	 * @param array $vars 需要传入模板的数据参数
@@ -118,6 +137,7 @@ abstract class Controller
 		$ov->setController(new static());//设置依附的控制器
 		$ov->setPath($this->getViewPath());
 		$ov->setContent($this->getContent());
+		$vars = array_merge(self::$viewglobalvars,$vars);//合并全局变量和局部变量
 		$content = $ov->render($vars);
 		if(empty($this->_layout) || !empty($this->_content)){//非布局 或者已有内容信息，则当前已为布局模块
 			return $content;
