@@ -36,9 +36,11 @@ abstract class TableStrategy extends Command
 	 */
 	private function _tablePre()
 	{
-	    if($this->_tablepre==''){
+	   if($this->_tablepre==''){
 	        $class = get_called_class();
-    	    $class = str_split(basename($class));
+	        $last = strrpos($class,'\\');
+	        if($last !== false) $class = substr($class,$last+1);
+    	    $class = str_split($class);
     	    $tmp = [];
     	    foreach ($class as $k=>$c){
     	        $s = ord($c);
