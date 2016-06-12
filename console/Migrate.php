@@ -51,6 +51,24 @@ class Migrate
 			echo $mfile.' is exist!'.PHP_EOL;
 			exit();
 		}
+		if($name == 'All'){//全量模板
+		    $code =	'<?php
+namespace '.substr($this->_namespace,1).';
+class '.$name.'
+{
+    /**
+	 * Migrate Applcation update
+	 */
+	public function Regtable()
+	{
+		return [
+            "module1",
+            "module2",
+            "module3"
+        ];
+	}
+}';
+		}else{
 		$code =	'<?php
 namespace '.substr($this->_namespace,1).';
 class '.$name.' extends \H2O\db\Builder
@@ -62,7 +80,7 @@ class '.$name.' extends \H2O\db\Builder
 	{
 		parent::__construct();
 	}
-	/**
+    /**
 	 * Migrate Applcation update
 	 */
 	public function actUp()
@@ -77,6 +95,7 @@ class '.$name.' extends \H2O\db\Builder
 		//TODO
 	}
 }';
+		}
 		file::write($mfile,$code);
 		echo 'Migrate application to create success!';
 	}
@@ -120,5 +139,46 @@ class '.$name.' extends \H2O\db\Builder
 	public function actRestore()
 	{
 		$this->_cmd('actRestore');
+	}
+	/**
+	 * 更新/恢复该版本下所有迁移模块
+	 */
+	public function actAll()
+	{
+	    $request = \H2O::getContainer('request'); //控制台请求
+	    $params = $request->getParams();
+	    if(empty($params['type'])){
+	        echo 'Missing required parameter: type';
+	        exit();
+	    }
+	    $mtype = 'act'.ucfirst($params['type']); //更新类型 up/restore
+	    $all = $this->_namespace.'\All'; //全量数据列表
+	    $oall = new $all();
+	    if(!method_exists($oall,'Regtable')){
+	        echo $all.' is not found method: regtable';
+	        exit();
+	    }
+	    $regnames = $oall->Regtable(); //获取所有注册到全量的数据信息
+	    if(empty($regnames) || !is_array($regnames)){
+	        echo $all.':regtable return value is empty or is not array!';
+	        exit();
+	    }
+	    try{
+            foreach ($regnames as $reg) //批量执行
+            {
+                $class = $this->_namespace.'\\'.ucfirst($reg);
+                $oc = new $class();
+                $oc->clearBuildSQL(); //清空上一个模块的SQL，防止重复写入
+                $oc->beginTransaction();
+                $oc->$mtype();
+                $oc->buildExec();//执行SQL
+                $oc->pdo->commit();
+            }
+    	   echo 'Executed successfully!'.PHP_EOL;
+    	   exit();
+	   }catch(\Exception $e){
+	       $oc->pdo->rollBack();//回滚
+	       throw new \ErrorException($e->getMessage());
+	   }
 	}
 }

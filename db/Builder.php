@@ -109,6 +109,13 @@ class Builder extends Command
 		return implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
 	}
 	/**
+	 * 清空已存的SQL信息
+	 */
+	public function clearBuildSQL()
+	{
+	    self::$_buildsqls = [];
+	}
+	/**
 	 * 将SQL语句导入到数据库
 	 */
 	public function buildExec()
@@ -185,7 +192,7 @@ class Builder extends Command
 	 */
 	public function dropTable($table)
 	{
-		self::setBuildSql("DROP TABLE `".$table."`");
+		self::setBuildSql("DROP TABLE IF EXISTS `".$table."`");
 		return $this;
 	}
 	/**

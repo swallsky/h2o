@@ -45,9 +45,10 @@ class Request
 		//数据迁移模块
 		Stdout::table([
 			['migrate','Manages application migrations','Params list'],
-			['@migrate.create','Create a new migrate','name'],
-			['@migrate.up','Update a new migrate','name'],
-			['@migrate.restore','Restore a new migrate','name']
+			['@migrate.create','Create a new migrate','--name=test'],
+			['@migrate.up','Update a new migrate','--name=test'],
+			['@migrate.restore','Restore a new migrate','--name=test'],
+			['@migrate.all','Update/Restore all migrate','--type=up OR --type=restore'] //全量更新
 		]);
 		echo Stdout::get();
 		exit();
