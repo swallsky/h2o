@@ -57,7 +57,7 @@ namespace '.substr($this->_namespace,1).';
 class '.$name.'
 {
     /**
-	 * Migrate Applcation update
+	 * Migrate total transfer
 	 */
 	public function Regtable()
 	{
