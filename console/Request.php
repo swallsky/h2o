@@ -36,11 +36,13 @@ class Request
 	public function help()
 	{
 		Stdout::title('This is H2O version '.\H2O::getVersion());
+		//命令行引导入口信息
+		$index = $GLOBALS['argv'][0];
 		//命令行使用 
 		Stdout::table([
 			['route','COMMAND <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]'],
-			['example for windows','command hello.index --test=info'],
-			['example for linux','./command hello.index --test=info']
+			['example for windows',$index.' hello.index --test=info'],
+			['example for linux',$index.' hello.index --test=info']
 		]);
 		//数据迁移模块
 		Stdout::table([
@@ -49,6 +51,15 @@ class Request
 			['@migrate.up','Update a new migrate','--name=test'],
 			['@migrate.restore','Restore a new migrate','--name=test'],
 			['@migrate.all','Update/Restore all migrate','--type=up OR --type=restore'] //全量更新
+		]);
+		//后台离线服务程序
+		Stdout::table([
+		    ['service','Background offline service','Params list'],
+		    ['@service.start','Start a service','--n=hello.world'],
+		    ['@service.stop','Stop a service','--n=hello.world'],
+		    ['@service.stopall','Start all service',''],
+		    ['@service.cat','Cat a service','--n=hello.world'],
+		    ['@service.catall','Cat all services','--n=hello.world']
 		]);
 		echo Stdout::get();
 		exit();
