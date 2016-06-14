@@ -40,9 +40,9 @@ class Request
 		$index = $GLOBALS['argv'][0];
 		//命令行使用 
 		Stdout::table([
-			['route','COMMAND <route> [--option1=value1 --option2=value2 ... argument1 argument2 ...]'],
-			['example for windows',$index.' hello.index --test=info'],
-			['example for linux',$index.' hello.index --test=info']
+			['route','COMMAND <route> [--option1=value1 --option2=value2 ... ]'],
+			['example for system module',$index.' @migrate.create --name=all'],
+			['example for user define',$index.' hello.index --test=info']
 		]);
 		//数据迁移模块
 		Stdout::table([
@@ -55,11 +55,11 @@ class Request
 		//后台离线服务程序
 		Stdout::table([
 		    ['service','Background offline service','Params list'],
-		    ['@service.start','Start a service','--n=hello.world'],
-		    ['@service.stop','Stop a service','--n=hello.world'],
+		    ['@service.start','Start a service','--c=hello.world'],
+		    ['@service.stop','Stop a service','--c=hello.world'],
 		    ['@service.stopall','Start all service',''],
-		    ['@service.cat','Cat a service','--n=hello.world'],
-		    ['@service.catall','Cat all services','--n=hello.world']
+		    ['@service.cat','Cat a service','--c=hello.world'],
+		    ['@service.catall','Cat all services','']
 		]);
 		echo Stdout::get();
 		exit();

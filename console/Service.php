@@ -10,42 +10,43 @@ namespace H2O\console;
 class Service
 {
     /**
-     * @var int 每次休眠时间 单位 秒
+     * @var string 日志路径
      */
-    private $_sleepTime = 1;
+    private $_logpath = '';
 	/**
 	 * 初始化
 	 */
 	public function __construct()
 	{
-		//TODO
+	    $this->_logpath = APP_RUNTIME.DS.'console'.DS.'service'.DS; //日志目录
 	}
 	/**
 	 * 返回对应的参数
-	 * @param string $tag 参数key值
+	 * @param string $tag 参数key值 如果为空，则返回所有参数值
 	 */
-	private function _getParams($tag)
+	private function _getParams($tag = '')
 	{
 	    $request = \H2O::getContainer('request'); //控制台请求
 	    $params = $request->getParams();
-	    if(empty($params[$tag])){
-	        echo 'Missing required parameter: '.$tag;
-	        exit();
-	    }
-	    return $params[$tag];
+	    return empty($tag)?$params:$params[$tag];
 	}
 	/**
 	 * 启动
 	 */
 	public function actStart()
 	{
-	    $mf = $this->_getParams('n');
+	    $paras = $this->_getParams();
+	    if(empty($paras['c'])){//该参数必须需要
+	        echo 'The parameter `c` is a must!';
+	        exit();
+	    }
+	    $routep = $paras['c']; //路由规则path
 	    while(true){
 	        $module = \H2O::getContainer('module');
-	        $route = \H2O\base\Module::parseRoute($mf); //返回路由规则URL
+	        $route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
 	        $res = $module->runAction($route);
 	        echo $res.PHP_EOL;
-	        sleep($this->_sleepTime); //休眠时间
+	        sleep(1); //休眠时间 1秒
 	    }
 	}
 	/**
