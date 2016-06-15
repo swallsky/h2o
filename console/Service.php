@@ -61,7 +61,10 @@ class Service
 	{
 	    $routep = empty($routep)?$this->_getRoutePath():$routep; //路由规则path
 	    $logfile = $this->_logpath.$routep.'.signal'; //当前的信号信息
-	    H2O\helpers\File::write($logfile,$data);//写入日志信息
+	    $runlog = $this->_logpath.$routep.'.log'; //日志信息
+	    if(file_exists($runlog) && time()-filemtime($runlog)<600){//运行文件存在，并且文件修改时间不能大于10分钟，否则视为程序退出
+	       H2O\helpers\File::write($logfile,$data);//写入日志信息
+	    }
 	}
 	/**
 	 * 读取信息号信息
