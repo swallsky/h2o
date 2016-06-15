@@ -7,6 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\console;
+use H2O;
 class Service
 {
     /**
@@ -41,19 +42,37 @@ class Service
 	        exit();
 	    }
 	    $routep = $paras['c']; //路由规则path
+	    $logfile = $this->_logpath.$routep.'.log'; //记录日志信息
+	    $module = \H2O::getContainer('module');
+	    $route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
 	    while(true){
-	        $module = \H2O::getContainer('module');
-	        $route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
 	        $res = $module->runAction($route);
-	        echo $res.PHP_EOL;
+	        $content = date('Y-m-d H:i:s').'　' . $res . PHP_EOL;
+	        H2O\helpers\File::write($logfile,$content);//写入日志信息
 	        sleep(1); //休眠时间 1秒
 	    }
 	}
 	/**
-	 * 停止
+	 * 查看单个服务运行情况
 	 */
-	public function actStop()
+	public function actCat()
 	{
-	    //TODO
+	    $paras = $this->_getParams();
+	    if(empty($paras['c'])){//该参数必须需要
+	        echo 'The parameter `c` is a must!';
+	        exit();
+	    }
+	    $routep = $paras['c']; //路由规则path
+	    $logfile = $this->_logpath.$routep.'.log'; //记录日志信息
+	    if(file_exists($logfile)){
+	        $data = file($logfile);
+	        for($i=0;$i<10;$i++){
+	            echo $data[$i].PHP_EOL;
+	        }
+	        exit();
+	    }else{
+	        echo 'Not found related services';
+	        exit();
+	    }
 	}
 }
