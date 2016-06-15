@@ -57,9 +57,7 @@ class Request
 		    ['service','Background offline service','Params list'],
 		    ['@service.start','Start a service','--c=hello.world'],
 		    ['@service.cat','Cat a service','--c=hello.world'],
-		    ['@service.catall','Cat all services',''],
-		    ['@service.stop','Stop a service','--c=hello.world'],
-		    ['@service.stopall','Start all service','']
+		    ['@service.stop','Stop a service','--c=hello.world']
 		]);
 		echo Stdout::get();
 		exit();

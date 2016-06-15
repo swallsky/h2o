@@ -116,4 +116,28 @@ class File
 			throw new \Exception("Failed to write file '$file': " . $e->getMessage(), $e->getCode(), $e);
 		}
 	}
+	/**
+	 * 返回文件信息
+	 * @param string $file 文件路径
+	 */
+	public static function read($file)
+	{
+	    try{
+	        return file_get_contents($file);
+	    } catch (\Exception $e) {
+	        throw new \Exception("Failed to read file '$file': " . $e->getMessage(), $e->getCode(), $e);
+	    }
+	}
+	/**
+	 * 删除文件
+	 * @param string $file 文件路径
+	 */
+	public static function remove($file)
+	{
+	    try{
+	        unlink($file); //删除文件
+	    } catch (\Exception $e) {
+	        throw new \Exception("Failed to read file '$file': " . $e->getMessage(), $e->getCode(), $e);
+	    }
+	}
 }
