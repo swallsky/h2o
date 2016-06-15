@@ -14,6 +14,10 @@ class Service
      * @var string 日志路径
      */
     private $_logpath = '';
+    /**
+     * @var string 停止信号
+     */
+    private $_stopsignal = 'STOP';
 	/**
 	 * 初始化
 	 */
@@ -104,18 +108,31 @@ class Service
 	    $logfile = $this->_logpath.$routep.'.log'; //记录日志信息
 	    $module = \H2O::getContainer('module');
 	    $route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
-	    //避免重复启动服务
-	    //TODO
+	    //循环业务处理
 	    while(true){
 	        $signal = $this->_getSignal($routep); //获取信号
-	        if($signal == 'stop'){
-	            $content = date('Y-m-d H:i:s').'　STOP SIGNAL' . PHP_EOL;
-	            H2O\helpers\File::write($logfile,$content);//写入日志信息
+	        if($signal == $this->_stopsignal){
+	            $histrdir = $this->_logpath.$routep; //备份日志
+	            H2O\helpers\File::createDirectory($histrdir);
+	            if(file_exists($logfile)){//有日志文件时
+	               copy($logfile,$histrdir.DS.date('YhdHis').'.log'); //复制已失效的日志
+	               H2O\helpers\File::remove($logfile); //删除运行时的日志
+	            }
 	            exit();
 	        }else{
-    	        $res = $module->runAction($route);
-    	        $content = date('Y-m-d H:i:s').'　' . $res . PHP_EOL;
-    	        H2O\helpers\File::write($logfile,$content);//写入日志信息
+	            $octr = $module->getController($route['controller']); //控制器对象
+	            $gwmethod = 'Gate'.ucfirst($route['action']); //方法网关
+	            if(method_exists($octr,$gwmethod)){//增加入口应用关口，可在此函数中处理业务逻辑，可实现定时任务等
+	                if($octr->$gwmethod()){//返回值只有为true时才执行相应的程序
+	                   $res = $octr->runAction(ucfirst($route['action'])); //执行操作
+	                   $content = date('Y-m-d H:i:s').'　'.$res .PHP_EOL;
+	                   H2O\helpers\File::write($logfile,$content);//写入日志信息
+	                }
+	            }else{
+	               $res = $octr->runAction(ucfirst($route['action'])); //执行操作
+	               $content = date('Y-m-d H:i:s').'　'.$res .PHP_EOL;
+	               H2O\helpers\File::write($logfile,$content);//写入日志信息
+	            }
 	        }
 	        sleep(1); //休眠时间 1秒
 	    }
@@ -145,7 +162,7 @@ class Service
 	public function actCat()
 	{
 	    $routep = $this->_getRoutePath(false);
-	    if(empty($routep)){
+	    if(empty($routep)){//显示所有服务程序运行况态
 	        $sers = $this->_getAllService();
 	        foreach($sers as $s){
 	            $this->_catOne($s,2);
@@ -160,13 +177,13 @@ class Service
 	public function actStop()
 	{
 	    $routep = $this->_getRoutePath(false);
-	    if(empty($routep)){
+	    if(empty($routep)){//关闭所有服务程序
 	        $sers = $this->_getAllService();
 	        foreach($sers as $s){
-	            $this->_setSignal('stop',$s);
+	            $this->_setSignal($this->_stopsignal,$s);
 	        }
 	    }else{
-	        $this->_setSignal('stop',$routep);
+	        $this->_setSignal($this->_stopsignal,$routep);
 	    }
 	}
 }

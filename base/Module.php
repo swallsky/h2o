@@ -99,6 +99,14 @@ class Module
 		return $this->_ctrnSpace;
 	}
 	/**
+	 * 返回当前模块的controller对象
+	 * @param string $ctr 控制器对象名称
+	 */
+	public function getController($ctr)
+	{
+	    return \H2O::createObject($this->_ctrnSpace.'\\'.$ctr);
+	}
+	/**
 	 * 执行动作
 	 * @param array $route 路由
 	 */
