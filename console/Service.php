@@ -60,11 +60,8 @@ class Service
 	private function _setSignal($data,$routep = '')
 	{
 	    $routep = empty($routep)?$this->_getRoutePath():$routep; //路由规则path
-	    $logfile = $this->_logpath.$routep.'.signal'; //当前的信号信息
-	    $runlog = $this->_logpath.$routep.'.log'; //日志信息
-	    if(file_exists($runlog) && time()-filemtime($runlog)<600){//运行文件存在，并且文件修改时间不能大于10分钟，否则视为程序退出
-	       H2O\helpers\File::write($logfile,$data);//写入日志信息
-	    }
+	    $slog = $this->_logpath.$routep.'.signal'; //当前的信号信息
+	    H2O\helpers\File::write($slog,$data);//写入信号量信息
 	}
 	/**
 	 * 读取信息号信息
@@ -75,10 +72,21 @@ class Service
 	    $logfile = $this->_logpath.$routep.'.signal'; //当前的信号信息
 	    if(file_exists($logfile)){
     	    $res = H2O\helpers\File::read($logfile); //读取信号量信息
-    	    H2O\helpers\File::remove($logfile); //信号量只作临时缓存作用，所以一旦读取到，就直接删除不作缓存
+    	    $this->_deleteSignal($routep); //信号量只作临时缓存作用，所以一旦读取到，就直接删除不作缓存
     	    return $res;
 	    }else{
 	        return '';
+	    }
+	}
+	/**
+	 * 删除信号源
+	 * @param string $routep 应用路由
+	 */
+	private function _deleteSignal($routep)
+	{
+	    $slog = $this->_logpath.$routep.'.signal'; //当前的信号信息
+	    if(file_exists($slog)){
+	        H2O\helpers\File::remove($slog);
 	    }
 	}
 	/**
@@ -111,6 +119,8 @@ class Service
 	    $logfile = $this->_logpath.$routep.'.log'; //记录日志信息
 	    $module = \H2O::getContainer('module');
 	    $route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
+	    //启动时，要删除已产生的停止信号，防止启动时就退出
+	    $this->_deleteSignal($routep);
 	    //循环业务处理
 	    while(true){
 	        $signal = $this->_getSignal($routep); //获取信号
