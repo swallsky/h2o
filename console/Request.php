@@ -56,8 +56,8 @@ class Request
 		Stdout::table([
 		    ['service','Background offline service','Params list'],
 		    ['@service.start','Start a service','--c=hello.world'],
-		    ['@service.cat','Cat a service','--c=hello.world'],
-		    ['@service.stop','Stop a service','--c=hello.world']
+		    ['@service.cat','Cat a service','--c=hello.world OR empty is all view all services'],
+		    ['@service.stop','Stop a service','--c=hello.world OR --c=hello.world --p=proid OR empty stop all services']
 		]);
 		echo Stdout::get();
 		exit();
