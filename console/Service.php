@@ -65,9 +65,8 @@ class Service
 	 * @param string $routep 应用路由
 	 * @param int $pid 进程编号
 	 */
-	private function _setSignal($data,$routep = '', $pid = '')
+	private function _setSignal($data,$routep, $pid = '')
 	{
-	    $routep = empty($routep)?$this->_getRoutePath():$routep; //路由规则path
 	    $slog = $this->_logpath.$routep.'.signal'; //当前的信号信息
 	    $new = empty($pid)?$data:$data.PHP_EOL.$pid;
 	    if(file_exists($slog)){
@@ -87,7 +86,9 @@ class Service
 	    $logfile = $this->_logpath.$routep.'.signal'; //当前的信号信息
 	    if(file_exists($logfile)){
     	    $res = file($logfile); //读取信号量信息
-    	    $res = array_filter($res); //过滤为空的
+    	    foreach($res as $k=>$s){
+    	        $res[$k] = trim($s); //过滤空格
+    	    }
     	    return $res;
 	    }else{
 	        return '';
@@ -131,7 +132,7 @@ class Service
 	public function actStart()
 	{
 	    $routep = $this->_getRoutePath(); //路由规则path
-	    $logfile = $this->_logpath.$routep.'.log'; //记录日志信息
+	    $logfile = $this->_logpath . $routep . DS . date('Ymd') . '.log'; //记录日志信息 按天记录
 	    $module = \H2O::getContainer('module');
 	    $route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
 	    //启动时，要删除已产生的停止信号，防止启动时就退出
@@ -143,16 +144,9 @@ class Service
 	    //循环业务处理
 	    while(true){
 	        $signal = $this->_getSignal($routep); //获取信号
-	        $slen = count($signal);
-	        if(($slen==1 && $signal[0] == $this->_stopsignal) || ($slen>1 && $signal[1]==$pid)){//如果只有一个参数，则全部退出，如果有两个参数，第二个则为进程号，关闭指定的程序
-	            $histrdir = $this->_logpath . 'trash'; //备份日志
-	            File::createDirectory($histrdir);
-	            if(file_exists($logfile)){//有日志文件时
-	               copy($logfile,$histrdir . DS . $routep . '_' . date('YhdHis').'.log'); //复制已失效的日志
-	               File::remove($logfile); //删除运行时的日志
-	            }
+	        if($signal[0] == $this->_stopsignal){//信号源为停止，并且是当前应用
 	            //清理进程信息
-	            if($slen>1 && $signal[1]==$pid){
+	            if($signal[1]==$pid){
 	                $apid = file($pidfile); //读取所有进程信息
 	                $apid = array_filter($apid); //过滤空格
 	                $tmpid = [];
