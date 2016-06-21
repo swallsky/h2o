@@ -235,6 +235,15 @@ class Request
 	{
 		if(empty($this->_routeTable)){
 			return $curoute;
+		}else if(is_string($this->_routeTable)){//通过API模块查寻真实URL
+		    if(strpos($this->_routeTable,'.') === false){//如果填写不存在方法名直接报错
+		        throw new \Exception('Configs of `request` params is error!');
+		    }else{//自定义路由
+		        $ao = explode('.',$this->_routeTable);
+		        $o = \H2O::createObject($ao[0]);
+		        $rroute = call_user_func([$o,'act'.ucfirst($ao[1])]);
+		        return empty($rroute)?$curoute:$rroute;
+		    }
 		}else{
 			$ecur = explode('/',$curoute);
 			$lecur = count($ecur);
