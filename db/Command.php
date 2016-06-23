@@ -101,7 +101,7 @@ class Command
 	 * @return 受影响的行数
 	 ~~~
 	 example 1: 单行插入
-	 $this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0]);
+	 $this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0])->exec();
 	 example 2: 多行插入
 	 $this->insert('sys_menu',
 	 	[
@@ -109,7 +109,7 @@ class Command
 	 		[2,'second menu',1],
 	 	],
 	 	['sm_id','sm_title,'sm_pid']
-	 );
+	 )->exec();
 	 ~~~
 	 */
 	public function insert($table, $data = [],$field = [])
@@ -179,19 +179,28 @@ class Command
 	{
 		$sql = $this->getSql();
 		$res = $this->pdo->exec($sql);
-		return $this->errorInfo($res, 'exec',$this->getRawSql());
+		return $this->_errorInfo($res, 'exec',$this->getRawSql());
 	}
 	/**
-	 * 变量参数预处理
+	 * 预处理
+	 * @param string $sql 预处理SQL
 	 */
-	public function execute()
+	public function prepare($sql = '')
 	{
-		$sql = $this->getSql();
-		$sth = $this->pdo->prepare($sql);
-		$this->errorInfo($sth, 'prepare',$this->getRawSql());
-		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
-		$this->errorInfo($res, 'execute',$this->getRawSql());
-		return $sth;
+	    $sql = empty($sql)?$this->getSql():$sql;
+	    $sth = $this->pdo->prepare($sql);
+	    return $this->_errorInfo($sth, 'prepare',$this->getRawSql());
+	}
+	/**
+	 * 执行一条预处理语句
+	 * @param object $sth 预处理对象 默认为空
+	 * @return bool 如果成功则返回true,失败则返回false
+	 */
+	public function execute($sth = '')
+	{
+	    $sth = empty($sth)?$this->prepare():$sth;
+    	$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+    	return $this->_errorInfo($res, 'execute',$this->getRawSql());
 	}
 	/**
 	 * 执行一条 SQL 语句,并返回结果集
@@ -200,14 +209,15 @@ class Command
 	{
 		$sql = $this->getSql();
 		$res = $this->pdo->query($sql);
-		return $this->errorInfo($res, 'query',$this->getRawSql());
+		return $this->_errorInfo($res, 'query',$this->getRawSql());
 	}
 	/**
 	 * 获取一行结果集
 	 */
 	public function fetch()
 	{
-		$sth = $this->execute();
+		$sth = $this->prepare();
+		$this->execute($sth);
 		return $sth->fetch(PDO::FETCH_ASSOC);
 	}
 	/**
@@ -215,7 +225,8 @@ class Command
 	 */
 	public function fetchAll()
 	{
-		$sth = $this->execute();
+		$sth = $this->prepare();
+		$this->execute($sth);
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	/**
@@ -223,7 +234,8 @@ class Command
 	 */
 	public function rowCount()
 	{
-		$sth = $this->execute();
+		$sth = $this->prepare();
+		$this->execute($sth);
 		return $sth->rowCount();
 	}
 	/**
@@ -344,7 +356,7 @@ class Command
 	 * @param string $sql 执行SQL
 	 * @return
 	 */
-	private function errorInfo($res,$tag,$sql = '')
+	private function _errorInfo($res,$tag,$sql = '')
 	{
 		$error = $this->pdo->errorInfo();
 		if($res===false && $error[0]!='00000'){//发生错误
