@@ -1,21 +1,24 @@
 H2O - As simple as water, as important as water
 ========================================
-…or create a new repository on the command line
+**H2O** -- Efforts to build the framework of a simple and easy to use.
 
-echo # H2O >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add h2o https://github.com/ybluesky/h2o.git
-git push -u h2o master
+Installation
+------------
+There are multiple ways to install H2O.
 
-…or push an existing repository from the command line
+**Github**
 
-git remote add h2o https://github.com/ybluesky/h2o.git
-git push -u h2o master
+- Clone to your machine
+```
+git clone https://github.com/ybluesky/h2o.git
+```
 
-…or import code from another repository
+**Composer**
 
-You can initialize this repository with code from a Subversion, Mercurial, or TFS project.
+```
+composer require "ybluesky/h2o=0.4.*"
+```
 
-composer require "ybluesky/h2o":"0.1.*@dev"
+License
+-------
+H2O is licensed under [MIT](http://opensource.org/licenses/MIT). 
