@@ -229,7 +229,8 @@ abstract class TableStrategy extends Command
 	public function fetch()
 	{
 	    $this->_unionSql();
-	    $sth = $this->execute();
+	    $sth = $this->prepare();
+	    $this->execute($sth);
 		return $sth->fetch(\PDO::FETCH_ASSOC);
 	}
 	/**
@@ -238,7 +239,8 @@ abstract class TableStrategy extends Command
 	public function fetchAll()
 	{
 	    $this->_unionSql();
-	    $sth = $this->execute();
+	    $sth = $this->prepare();
+	    $this->execute($sth);
 		return $sth->fetchAll(\PDO::FETCH_ASSOC);
 	}
 	/**
@@ -247,7 +249,8 @@ abstract class TableStrategy extends Command
 	public function rowCount()
 	{
 	    $this->_unionSql();
-	    $sth = $this->execute();
+	    $sth = $this->prepare();
+	    $this->execute($sth);
 		return $sth->rowCount();
 	}
 }
