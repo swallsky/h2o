@@ -50,13 +50,13 @@ class Validator
 		return preg_match($pattern,$str)?true:false;
 	}
 	/**
-	 * 邮箱手机
+	 * 手机验证
 	 * @param string $str 需要验证的值
 	 * @return 如果为手机号码，则返回true,否则返回false
 	 */
 	public static function isMobile($str)
 	{
-		$pattern = "/^13[0-9]{1}[0-9]{8}$|15[012356789]{1}[0-9]{8}$|18[012356789]{1}[0-9]{8}$|14[57]{1}[0-9]$/";
+		$pattern = "/^1[3578]{1}[0-9]{9}$/";
 		return preg_match($pattern,$str)?true:false;
 	}
 	/**
