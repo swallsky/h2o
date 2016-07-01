@@ -207,7 +207,7 @@ abstract class TableStrategy extends Command
 	    $tables = $this->getTablesName();
 	    $tsql = [];
 	    foreach ($tables as $s){
-	        $tsql[] = str_replace($this->_tablesql,$s,$sql);
+	        $tsql[] = '('.str_replace($this->_tablesql,$s,$sql).')';
 	    }
 	    $this->setSql(implode(' UNION ',$tsql));
 	}
