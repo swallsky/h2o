@@ -6,7 +6,7 @@
  * @author     Xujinzhang <xjz1688@163.com>
  * @version    0.1.0
  */
-namespace H2O\phpoffice;
+namespace H2O\office;
 //phpexcel的包目录
 define('PHPEXCEL_DIR',VENDOR_PATH.DS.'phpoffice'.DS.'phpexcel'.DS);
 //phpexcel cache 目录
