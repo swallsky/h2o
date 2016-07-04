@@ -33,10 +33,11 @@ class Phpexcel
      */
     private $_sheet = null;
     /**
+     * 导入初始化
      * @param $file 导入的excel文件路径
      * @param $sheetnum 读取工作表顺序
      */
-    public function GetObj($file,$sheetnum = 0)
+    public function Import($file,$sheetnum = 0)
     {
         $this->_oexcel = \PHPExcel_IOFactory::load($file);
         $this->_sheet = $this->_oexcel->getSheet($sheetnum); // 读取第一個工作表
