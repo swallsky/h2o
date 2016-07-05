@@ -39,7 +39,7 @@ use H2O\helpers\File;
         'B' =>  ['sex'],
         'C' =>  ['address'],
         'D' =>  ['job'],
-        'E' =>  ['rdate','time'] //第一个参数为字段名 第二个为字段类型默认为string
+        'E' =>  ['rdate','time','Y-m-d H:i:s'] //第一个参数为字段名 第二个为字段类型默认为string
     ]);
     //处理数据
     ~~~
@@ -65,7 +65,7 @@ use H2O\helpers\File;
         'B' =>  ['sex'],
         'C' =>  ['address'],
         'D' =>  ['job'],
-        'E' =>  ['rdate','time'] //第一个参数为字段名 第二个为字段类型默认为string
+        'E' =>  ['rdate','time','Y-m-d H:i:s'] //第一个参数为字段名 第二个为字段类型默认为string
     ],10000);
     //循环读取切片信息
     foreach($queue as $q){
@@ -127,7 +127,11 @@ class Phpexcel
     }
     /**
      * 解析单行数据
-     * @param $field 需要格式化的字段，例如 ['A'=>['name'],'B'=>['rdate'=>'time']]
+     * @param $field 需要格式化的字段，例如
+     * [
+     *      'A' =>  ['name'],
+     *      'B' =>  ['rdate','time','Y-m-d H:i:s']
+     * ]
      * @param $row 行号
      * @return array 单行数据
      */
@@ -142,15 +146,25 @@ class Phpexcel
                 $type = isset($field[$column][1])?$field[$column][1]:'string';
             }
             $val = $this->_sheet->getCell($column.$row)->getValue();
-            $tmp[$key] = $type=='time'?
-                \PHPExcel_Shared_Date::ExcelToPHP($val):
-                $val;
+            if($type=='time'){
+                if(isset($field[$column][2])){
+                    $tmp[$key] = date($field[$column][2],\PHPExcel_Shared_Date::ExcelToPHP($val));
+                }else{
+                    throw new \Exception('Field `'.$column.'` date format is undefined!');
+                }
+            }else{
+                $tmp[$key] = $val;
+            }
         }
         return $tmp;
     }
     /**
      * 返回excel数据 少量数据时，直接调用数据
-     * @param array $field 需要格式化的字段，例如 ['A'=>['name'],'B'=>['rdate'=>'time']]
+     * @param array $field 需要格式化的字段，例如
+     * [
+     *      'A' =>  ['name'],
+     *      'B' =>  ['rdate','time','Y-m-d H:i:s']
+     * ]
      * @return array
      */
     public function GetSimpleData($field)
