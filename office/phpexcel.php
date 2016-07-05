@@ -33,6 +33,7 @@ use H2O\helpers\File;
     if(!empty($error)){
         //格式错误信息提示
         print_r($error);
+        exit();
     }
     $data = $obj->GetSimpleData([
         'A' =>  ['name'],
@@ -59,6 +60,7 @@ use H2O\helpers\File;
     if(!empty($error)){
         //格式错误信息提示
         print_r($error);
+        exit();
     }
     $queue = $obj->QueueData([
         'A' =>  ['name'],
@@ -200,7 +202,7 @@ class Phpexcel
             }
         }
         //处理剩余的
-        if(!empt($data)){
+        if(!empty($data)){
             $file = $dirs.DS.$filei.'.swp.php';
             $filequeue[] = $file;//写入到文件队列中
             $content = "<?php\n return ".var_export($data,TRUE).";\n?>";
