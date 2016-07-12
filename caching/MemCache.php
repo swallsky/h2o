@@ -10,5 +10,5 @@ namespace H2O\caching;
 use H2O;
 class MemCache
 {
-    
+
 }
