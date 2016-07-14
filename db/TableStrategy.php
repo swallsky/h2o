@@ -22,6 +22,10 @@ abstract class TableStrategy extends Command
      */
     private $_tablepre = '';
 	/**
+	 * @var array 表对应的主键信息
+	 */
+	private $_keyPrCache = [];
+	/**
 	 * 初始化
 	 * @param string $tag 数据库标识 用户区分应用库
 	 */
@@ -30,6 +34,13 @@ abstract class TableStrategy extends Command
 		parent::__construct($tag);
 		$this->_obuild = new \H2O\db\Builder($tag);
 		$this->_tablepre = $this->_tablePre();
+	}
+	/**
+	 * @return Object build对象
+	 */
+	public function getBuild()
+	{
+		return $this->_obuild;
 	}
 	/**
 	 * 表名前缀固定部分 以当前类名为表名前缀
@@ -137,41 +148,51 @@ abstract class TableStrategy extends Command
 	/**
 	 * 插入记录
 	 * @access public
-	 * @param string $table  数据表名 如果表名为空，则自动按相应策略生成
 	 * @param array  $data  字段数组
 	 * @param array  $field  字段信息
+	 * @param string $ext 表名后缀信息 默认为空
 	 * @return 受影响的行数
 	 ~~~
 	 example 1: 单行插入
-	 $this->insert(['sm_id'=>1,'sm_title=>'test','sm_pid'=>0]);
+	 $this->insert([
+	 	'sm_id'=>1,
+	 	'sm_title=>'test',
+	 	'sm_pid'=>0
+	 ])->execute();
 	 example 2: 多行插入
 	 $this->insert(
-	 [
-    	 [1,'first menu',0],
-    	 [2,'second menu',1],
-	 ],
-	 ['sm_id','sm_title,'sm_pid']
-	 );
+		 [
+			 [1,'first menu',0],
+			 [2,'second menu',1],
+		 ],
+		 ['sm_id','sm_title,'sm_pid']
+	 )->execute();
 	 ~~~
 	 */
-	public function insert($data = [],$field = [])
+	public function insert($data = [],$field = [],$ext = '')
 	{
-	    $table = $this->getTableName();
+	    $table = $this->getTableName($ext);
 	    $fieldstu = $this->Structure();//表结构
 	    if(!$this->_obuild->existTable($table)){ //如果表不存在，则创建
 	        $this->_obuild->createTable($table,$fieldstu)->buildExec();
 	        $this->AUTO_INC_INIT(); //初始化策略
+			$this->_obuild->clearBuildSQL(); //清空
 	    }
 	    //主键查找逻辑
         $keyfield = '';
-        foreach($fieldstu as $fk=>$fv){
-            if(in_array($fv[0],['pk','bigpk','stringpk'])){//查找主键
-                $keyfield = $fk;
-                break;
-            }
-        }
+		if(isset($this->_keyPrCache[$table])){
+			$keyfield = $this->_keyPrCache[$table];
+		}else{
+			foreach($fieldstu as $fk=>$fv){
+				if(in_array($fv[0],['pk','bigpk','stringpk'])){//查找主键
+					$keyfield = $fk;
+					$this->_keyPrCache[$table] = $fk; //缓存主键
+					break;
+				}
+			}
+		}
         if(empty($keyfield)){//未找到主键时会报错
-            throw new \Exception("Current table not found pk/bigpk type field.");
+            throw new \Exception("Current table not found pk/bigpk/stringpk type field.");
         }
 	    
         $fields = [];$values = [];
