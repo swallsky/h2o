@@ -16,7 +16,7 @@ git clone https://github.com/ybluesky/h2o.git
 **Composer**
 
 ```
-composer require "ybluesky/h2o=0.4.*"
+composer require "ybluesky/h2o=0.6.*"
 ```
 
 License
