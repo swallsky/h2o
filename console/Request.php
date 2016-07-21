@@ -50,14 +50,25 @@ class Request
 			['@migrate.create','Create a new migrate','--name=test'],
 			['@migrate.up','Update a new migrate','--name=test'],
 			['@migrate.restore','Restore a new migrate','--name=test'],
-			['@migrate.all','Update/Restore all migrate','--type=up OR --type=restore'] //全量更新
+			['@migrate.all','Update/Restore all migrate','--type=up'], //全量更新
+			['','','--type=restore'], //全量更新
 		]);
 		//后台离线服务程序
 		Stdout::table([
 		    ['service','Background offline service','Params list'],
 		    ['@service.start','Start a service','--c=hello.world'],
-		    ['@service.cat','Cat a service','--c=hello.world OR empty is all view all services'],
-		    ['@service.stop','Stop a service','--c=hello.world OR --c=hello.world --p=proid OR empty stop all services']
+		    ['@service.cat','Cat a service','--c=hello.world'],
+		    ['','','empty is all view all services'],
+		    ['@service.stop','Stop a service','--c=hello.world'],
+		    ['','','--c=hello.world --p=proid'],
+		    ['','','empty stop all services']
+		]);
+		//自动化开发工具
+		Stdout::table([
+			['gii','Automation development tools'],
+			['@gii.web','Create web app'],
+			['@gii.cli','Create command line app'],
+			['@gii.model','Create model program ']
 		]);
 		echo Stdout::get();
 		exit();
