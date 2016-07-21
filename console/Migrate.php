@@ -23,6 +23,10 @@ class Migrate
 	 */
 	private $_runenv;
 	/**
+	 * @var string 模板目录
+	 */
+	private $_tpldir;
+	/**
 	 * 初始化
 	 */
 	public function __construct()
@@ -34,6 +38,7 @@ class Migrate
 		$nv = 'v'.str_replace('.','',$version); 
 		$this->_migratedir = \H2O::getAppRootPath().DS.'migrate'.DS.$nv;
 		$this->_namespace = \H2O::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
+		$this->_tpldir = H2O_PATH.DS.'tpls'.DS.'migrate'.DS; //迁移模块路径
 		file::createDirectory($this->_migratedir);//创建目录
 		$this->_runenv = \H2O::getRunEnv();
 	}
@@ -51,53 +56,19 @@ class Migrate
 			echo $mfile.' is exist!'.PHP_EOL;
 			exit();
 		}
+		$oimg = new \H2O\coding\Image();
 		if($name == 'All'){//全量模板
-		    $code =	'<?php
-namespace '.substr($this->_namespace,1).';
-class '.$name.'
-{
-    /**
-	 * Migrate total transfer
-	 */
-	public function Regtable()
-	{
-		return [
-            "module1",
-            "module2",
-            "module3"
-        ];
-	}
-}';
-		}else{
-		$code =	'<?php
-namespace '.substr($this->_namespace,1).';
-class '.$name.' extends \H2O\db\Builder
-{
-	/**
-	 * Initialization Migrate Applcation
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
-    /**
-	 * Migrate Applcation update
-	 */
-	public function actUp()
-	{
-		//TODO
-	}
-	/**
-	 * Migrate Applcation restore
-	 */
-	public function actRestore()
-	{
-		//TODO
-	}
-}';
+			$oimg->file('migrate/all.php',$mfile,[
+				'search'	=>	['T_NAMESPACE','T_CLASS'],
+				'replace'	=>	[substr($this->_namespace,1),$name]
+			]);
+		}else{//普通通用模型
+			$oimg->file('migrate/general.php',$mfile,[
+				'search'	=>	['T_NAMESPACE','T_CLASS'],
+				'replace'	=>	[substr($this->_namespace,1),$name]
+			]);
 		}
-		file::write($mfile,$code);
-		echo 'Migrate application to create success!';
+		echo 'Migrate application to create success!'.PHP_EOL;
 	}
 	/**
 	 * 需要执行的命令
@@ -109,7 +80,7 @@ class '.$name.' extends \H2O\db\Builder
 		$request = \H2O::getContainer('request'); //控制台请求
 		$params = $request->getParams();
 		if(empty($params['name'])){
-			echo 'Missing required parameter: name';
+			echo 'Missing required parameter: name'.PHP_EOL;
 			exit();
 		}
 		$class = $this->_namespace.'\\'.ucfirst($params['name']);
@@ -148,19 +119,19 @@ class '.$name.' extends \H2O\db\Builder
 	    $request = \H2O::getContainer('request'); //控制台请求
 	    $params = $request->getParams();
 	    if(empty($params['type'])){
-	        echo 'Missing required parameter: type';
+	        echo 'Missing required parameter: type'.PHP_EOL;
 	        exit();
 	    }
 	    $mtype = 'act'.ucfirst($params['type']); //更新类型 up/restore
 	    $all = $this->_namespace.'\All'; //全量数据列表
 	    $oall = new $all();
 	    if(!method_exists($oall,'Regtable')){
-	        echo $all.' is not found method: regtable';
+	        echo $all.' is not found method: regtable'.PHP_EOL;
 	        exit();
 	    }
 	    $regnames = $oall->Regtable(); //获取所有注册到全量的数据信息
 	    if(empty($regnames) || !is_array($regnames)){
-	        echo $all.':regtable return value is empty or is not array!';
+	        echo $all.':regtable return value is empty or is not array!'.PHP_EOL;
 	        exit();
 	    }
 	    try{
