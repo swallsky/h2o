@@ -197,11 +197,17 @@ class Gii
             $input[] = $i;
             $i++;
         }
-        echo "Enter your number：";
+        echo 'Enter your number:';
         $apn = $this->_getInputRangVal($input);
+        echo 'Please choose type:'.PHP_EOL;
+        echo '1:Command'.PHP_EOL;
+        echo '2:TableStrategy'.PHP_EOL;
+        echo "Enter your number：";
+        $tp = $this->_getInputRangVal([1,2]);
         echo 'Please input your model class name:';
         $class = $this->_getClassName('models',$app[$apn]);
-        $this->_copyImage('models','app/empty/dbc.php',$app[$apn],$class);
+        $type = [1=>'dbc',2=>'dbt'];
+        $this->_copyImage('models','app/empty/'.$type[$tp].'.php',$app[$apn],$class);
         echo 'Web app create success!'.PHP_EOL;
     }
 }
