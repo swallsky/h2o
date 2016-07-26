@@ -66,9 +66,10 @@ class Request
 		//自动化开发工具
 		Stdout::table([
 			['gii','Automation development tools'],
-			['@gii.web','Create web app'],
-			['@gii.cli','Create command line app'],
-			['@gii.model','Create model program ']
+			['@gii.web','Create web application'],
+			['@gii.cli','Create command line application'],
+			['@gii.model','Create model program '],
+			['@gii.simple','Create simple group application']
 		]);
 		echo Stdout::get();
 		exit();

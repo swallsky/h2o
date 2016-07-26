@@ -34,6 +34,14 @@ class Image
         ];
     }
     /**
+     * 返回系统模板代码目录
+     * @return string
+     */
+    public function getTplDir()
+    {
+        return $this->_tpldir;
+    }
+    /**
      * 复制单个镜相文件
      * @param $resource 原文件
      * @param $dest 目标文件

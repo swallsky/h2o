@@ -34,6 +34,31 @@ class File
 		return $result;
 	}
 	/**
+	 * 递归读取该目录
+	 * @param $dir
+	 * @return array|void
+	 */
+	public static function readDirectory($dir)
+	{
+		$names = [];
+		if (!($handle = opendir($dir))) {
+			return;
+		}
+		while (($file = readdir($handle)) !== false) {
+			if ($file === '.' || $file === '..') {
+				continue;
+			}
+			$path = rtrim($dir,DS).DS.$file;
+			if(is_dir($path)){//只读文件夹
+				$names[$path] = static::readDirectory($path);
+			}else{//读全部
+				$names[] = $file;
+			}
+		}
+		closedir($handle);
+		return $names;
+	}
+	/**
 	 * 复制整个目录,包含子目录和文件
 	 * @param string $src 源目录
 	 * @param string $dst 目标目录
