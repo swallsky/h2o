@@ -132,18 +132,7 @@ abstract class TableStrategy extends Command
 	 */
 	public function getTablesName()
 	{
-	    $field = 'Tables_in_'.$this->dbname;
-		parent::setSql('SHOW TABLES WHERE '.$field.' LIKE "'.$this->_tablepre.'%"');
-		$tmp = parent::fetchAll();
-	    if(empty($tmp)){
-	        return [];
-	    }else{
-	        $tables = [];
-	        foreach ($tmp as $v){
-	           $tables[] = $v[$field];
-	        }
-	        return $tables;
-	    }
+		return parent::getTables($this->_tablepre);
 	}
 	/**
 	 * 插入记录

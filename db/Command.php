@@ -303,6 +303,26 @@ class Command
 		return $this->pdo->lastInsertId();
 	}
 	/**
+	 * @param string $tbpre 表名前缀 如果为空，则查找所有表
+	 * @return array 返回当前库的表信息
+	 */
+	public function getTables($tbpre = '')
+	{
+		$field = 'Tables_in_'.$this->dbname;
+		$sql = empty($tbpre)?'SHOW TABLES':'SHOW TABLES WHERE '.$field.' LIKE "'.$tbpre.'%"';
+		$this->setSql($sql);
+		$tmp = $this->fetchAll();
+		if(empty($tmp)){
+			return [];
+		}else{
+			$tables = [];
+			foreach ($tmp as $v){
+				$tables[] = $v[$field];
+			}
+			return $tables;
+		}
+	}
+	/**
 	 * 事务处理 方便没有设置成功时 回滚 事务在mysql的表中只能为InnoDB引擎
 	 * @param  anonymous function 事务函数
 	 * 例如：
