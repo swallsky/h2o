@@ -281,7 +281,7 @@ class Phpexcel
         $deformat = [
             'name'      =>  '微软雅黑',
             'width'     =>  'auto', //设置宽度 ,默认为自动宽度
-            'bold'      =>  true,
+            'bold'      =>  0,
             'size'      =>  12
         ];
         if(!empty($format)){
