@@ -99,10 +99,15 @@ class Phpexcel
                     $type = 'string';
                 }
             }
-            $val = $this->_sheet->getCell($k.$row)->getValue();
+            $cell = $this->_sheet->getCell($k.$row);
+            $val = $cell->getValue();
             if($type=='time'){//时间格式
                 if(isset($field[$k][2])){
-                    $tmp[$key] = date($field[$k][2],\PHPExcel_Shared_Date::ExcelToPHP($val));
+                    if($cell->getDataType()==\PHPExcel_Cell_DataType::TYPE_NUMERIC){//如果为数字类型的时间字段，则进行转换
+                        $tmp[$key] = gmdate($field[$k][2],\PHPExcel_Shared_Date::ExcelToPHP($val));
+                    }else{
+                        $tmp[$key] = date($field[$k][2],strtotime($val));
+                    }
                 }else{
                     throw new \Exception('Field `'.$k.'` date format is undefined!');
                 }
