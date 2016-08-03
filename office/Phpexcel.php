@@ -15,67 +15,6 @@ define('PHPEXCEL_CACHE_DIR',APP_RUNTIME.DS.'phpexcel');
 require_once(PHPEXCEL_DIR .'Classes'.DS.'PHPExcel'.DS.'IOFactory.php');
 
 use H2O\helpers\File;
-
-/**
- * Example 1:
- * 小数据量导入处理
-~~~
-$file = '/d/s/test.xlsx';
-$obj = new \H2O\office\Phpexcel();
-$obj->Import($file,0);
-$error = $obj->VerHeader([
-'A' =>  '姓名',
-'B' =>  '性别',
-'C' =>  '地址',
-'D' =>  '职业',
-'E' =>  '入职日期'
-]);
-if(!empty($error)){
-//格式错误信息提示
-print_r($error);
-exit();
-}
-$data = $obj->GetSimpleData([
-'A' =>  ['name'],
-'B' =>  ['sex'],
-'C' =>  ['address'],
-'D' =>  ['job'],
-'E' =>  ['rdate','time','Y-m-d H:i:s'] //第一个参数为字段名 第二个为字段类型默认为string
-]);
-//处理数据
-~~~
- * Example 2:
- * 大数据的Excel导入切片处理办法
-~~~
-$file = '/d/s/test.xlsx';
-$obj = new \H2O\office\Phpexcel();
-$obj->Import($file,0);
-$error = $obj->VerHeader([
-'A' =>  '姓名',
-'B' =>  '性别',
-'C' =>  '地址',
-'D' =>  '职业',
-'E' =>  '入职日期'
-]);
-if(!empty($error)){
-//格式错误信息提示
-print_r($error);
-exit();
-}
-$queue = $obj->QueueData([
-'A' =>  ['name'],
-'B' =>  ['sex'],
-'C' =>  ['address'],
-'D' =>  ['job'],
-'E' =>  ['rdate','time','Y-m-d H:i:s'] //第一个参数为字段名 第二个为字段类型默认为string
-],10000);
-//循环读取切片信息
-foreach($queue as $q){
-$simpledata = $obj->GetSwpData($q);
-//处理切片数据
-}
-~~~
- */
 class Phpexcel
 {
     /**
@@ -272,32 +211,29 @@ class Phpexcel
     }
     /**
      * 设置单元格样式
-     * @param $key
+     * @param $key 列标识 例如 A1
+     * @param $val 需要设置的值
      * @param array $format
      */
-    private function _setCellFormat($key,$format = [])
+    private function _setCellValue($key,$val,$format = [])
     {
         $style = $this->_activeSheet->getStyle($key);
-        $deformat = [
-            'name'      =>  '微软雅黑',
+        $deformat = [//通用样式
+            'name'      =>  '微软雅黑',//字体
             'width'     =>  'auto', //设置宽度 ,默认为自动宽度
-            'bold'      =>  0,
+            'bold'      =>  0, //是否加粗，默认为否
             'size'      =>  12
         ];
-        if(!empty($format)){
-            foreach($format as $fk=>$fv){
-                if(isset($deformat[$fk])){
-                    $deformat[$fk] = $fv;
-                }
-            }
-        }
+        $deformat = array_merge($deformat,$format);
         $font = $style->getFont();
         foreach($deformat as $k=>$v){
             switch($k){
                 case 'name':
+                    $this->_activeSheet->setCellValue($key,$val); //设置值
                     $font->setName($v);
                     break;
                 case 'width'://宽度
+                    $this->_activeSheet->setCellValue($key,$val); //设置值
                     if($v == 'auto'){//自动宽度
                         $this->_activeSheet->getColumnDimension($key)->setAutoSize(true);
                     }else{//固定宽度
@@ -305,10 +241,16 @@ class Phpexcel
                     }
                     break;
                 case 'bold'://加粗
+                    $this->_activeSheet->setCellValue($key,$val); //设置值
                     $font->setBold($v);
                     break;
                 case 'size': //字段大小
+                    $this->_activeSheet->setCellValue($key,$val); //设置值
                     $font->setSize($v);
+                    break;
+                case 'datetime': //设置时间格式
+                    $this->_activeSheet->setCellValue($key,date($v,strtotime($val))); //设置值
+                    $this->_activeSheet->getStyle($key)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_DATE_YYYYMMDDSLASH);
                     break;
             }
         }
@@ -324,17 +266,16 @@ class Phpexcel
         $this->_activeSheet = $this->_excelObj->getActiveSheet(); //获取当前激活状态的sheet
         foreach($header as $k=>$v){
             if(is_array($v)){
-                $this->_activeSheet->setCellValue($k.'1',$v[0]); //设置单元格
-                $this->_setCellFormat($k.'1',$v[1]);
+                $ff = isset($v[1])?$v[1]:[];//格式化
+                $this->_setCellValue($k.'1',$v[0],$ff);
             }else{
-                $this->_activeSheet->setCellValue($k.'1',$v); //设置单元格
-                $this->_setCellFormat($k.'1');
+                $this->_setCellValue($k.'1',$v);
             }
         }
     }
     /**
      * 设置数据
-     * @param array $field 需要显示的字段信息，例如 ['A'=>'name','B'=>'rdate']
+     * @param array $field 需要显示的字段信息，例如 ['A'=>'name','B'=>['rdate',['datetime'=>'Y-m']]
      * @param $data
      */
     public function setData($field,$data)
@@ -342,8 +283,12 @@ class Phpexcel
         foreach($data as $k=>$v){
             foreach($field as $fk=>$fv){
                 $cellkey = $fk.($k+2);
-                $this->_activeSheet->setCellValue($cellkey,$v[$fv]); //设置单元格
-                $this->_setCellFormat($cellkey);
+                if(is_array($fv)){//有格式的数据
+                    $ff = isset($fv[1])?$fv[1]:[];//格式化
+                    $this->_setCellValue($cellkey,$v[$fv[0]],$ff);
+                }else{
+                    $this->_setCellValue($cellkey,$v[$fv]);
+                }
             }
         }
     }
