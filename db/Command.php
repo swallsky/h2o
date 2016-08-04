@@ -310,8 +310,8 @@ class Command
 	{
 		$field = 'Tables_in_'.$this->dbname;
 		$sql = empty($tbpre)?'SHOW TABLES':'SHOW TABLES WHERE '.$field.' LIKE "'.$tbpre.'%"';
-		$this->setSql($sql);
-		$tmp = $this->fetchAll();
+		self::setSql($sql);
+		$tmp = self::fetchAll();
 		if(empty($tmp)){
 			return [];
 		}else{
