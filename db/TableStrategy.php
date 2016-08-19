@@ -22,6 +22,10 @@ abstract class TableStrategy extends Command
      */
     private $_tablepre = '';
 	/**
+	 * @var int 插入的ID
+	 */
+	protected $_insertid = 0;
+	/**
 	 * @var array 表对应的主键信息
 	 */
 	private $_keyPrCache = [];
@@ -86,7 +90,17 @@ abstract class TableStrategy extends Command
 	 */
 	public function AUTO_INCREMENT()
 	{
-	    return 'UUID()'; //利用mysql uuid函数生成一个唯一ID
+		$uuid = $this->setSql('SELECT UUID() as uid')->fetch();//利用mysql uuid函数生成一个唯一ID
+		$this->_insertid = $this->quoteValue($uuid['uid']);
+		return $this->_insertid;
+	}
+	/**
+	 * 返回插入ID
+	 * @return mixed
+	 */
+	public function getInsertId()
+	{
+		return $this->_insertid;
 	}
 	/**
 	 * 定义表结构 
@@ -215,11 +229,17 @@ abstract class TableStrategy extends Command
 	{
 	    $sql = $this->getRawSql();//解析完参数后的SQL语句
 	    $tables = $this->getTablesName();
-	    $tsql = [];
-	    foreach ($tables as $s){
-	        $tsql[] = '('.str_replace($this->_tablesql,$s,$sql).')';
-	    }
-	    $this->setSql(implode(' UNION ',$tsql));
+		$sqls = '';
+		if(count($tables)>1){//多表
+			$tsql = [];
+			foreach ($tables as $s){
+				$tsql[] = '('.str_replace($this->_tablesql,$s,$sql).')';
+			}
+			$sqls = implode(' UNION ',$tsql);
+		}else{//单表
+			$sqls = str_replace($this->_tablesql,$tables[0],$sql);
+		}
+	    $this->setSql($sqls);
 	}
 	/**
 	 * 更改记录信息

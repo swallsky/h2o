@@ -74,8 +74,7 @@ class Model  implements IteratorAggregate,ArrayAccess
 	 */
 	public function setAttributes($values,$hpcfg = [])
 	{
-		if (is_array($values)) {
-			$attributes = $this->attributes();
+		if (is_array($values)){
 			foreach ($values as $name => $value) {
 				$this->$name = H2O\helpers\HTMLPurifier::filter($value,$hpcfg);
 			}
