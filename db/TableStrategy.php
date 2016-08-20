@@ -91,8 +91,8 @@ abstract class TableStrategy extends Command
 	public function AUTO_INCREMENT()
 	{
 		$uuid = $this->setSql('SELECT UUID() as uid')->fetch();//利用mysql uuid函数生成一个唯一ID
-		$this->_insertid = $this->quoteValue($uuid['uid']);
-		return $this->_insertid;
+		$this->_insertid = $uuid['uid'];
+		return $this->quoteValue($this->_insertid);
 	}
 	/**
 	 * 返回插入ID
