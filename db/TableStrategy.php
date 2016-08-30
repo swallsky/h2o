@@ -30,6 +30,10 @@ abstract class TableStrategy extends Command
 	 */
 	private $_keyPrCache = [];
 	/**
+	 * @var array UNION之后对结果再次进行排行，查询等操作
+	 */
+	private $_suffixsql = [];
+	/**
 	 * 初始化
 	 * @param string $tag 数据库标识 用户区分应用库
 	 */
@@ -229,15 +233,21 @@ abstract class TableStrategy extends Command
 	{
 	    $sql = $this->getRawSql();//解析完参数后的SQL语句
 	    $tables = $this->getTablesName();
-		$sqls = '';
+		$sqls = ''; //合并后SQL
 		if(count($tables)>1){//多表
 			$tsql = [];
 			foreach ($tables as $s){
-				$tsql[] = '('.str_replace($this->_tablesql,$s,$sql).')';
+				$tsql[] = str_replace($this->_tablesql,$s,$sql);
 			}
 			$sqls = implode(' UNION ',$tsql);
 		}else{//单表
 			$sqls = str_replace($this->_tablesql,$tables[0],$sql);
+		}
+		//对联表查询后的结果，进行排序筛选等操作
+		if(!empty($this->_suffixsql)){
+			foreach($this->_suffixsql as $s){
+				$sqls .= $s;
+			}
 		}
 	    $this->setSql($sqls);
 	}
@@ -252,6 +262,46 @@ abstract class TableStrategy extends Command
 	    parent::update($this->_tablesql,$fdata,$where);
 	    $this->_unionSql();
 	    return $this;
+	}
+	/**
+	 * 多表查询后再查找
+	 * @param $where
+	 * @return $this
+	 */
+	public function where($where)
+	{
+		$this->_suffixsql[] = ' WHERE '.$where.' ';
+		return $this;
+	}
+	/**
+	 * 多表查询后分组
+	 * @param string $field 分组字段
+	 * @return $this
+	 */
+	public function group($field)
+	{
+		$this->_suffixsql[] = ' GROUP BY '.$field.' ';
+		return $this;
+	}
+	/**
+	 * 多表查询后对结果进行筛选
+	 * @param string $having 查询信息
+	 * @return $this
+	 */
+	public function having($having)
+	{
+		$this->_suffixsql[] = ' HAVING '.$having.' ';
+		return $this;
+	}
+	/**
+	 * 多表查询后排序
+	 * @param string $field 排序字段信息 例如 date DESC,time ASC
+	 * @return $this
+	 */
+	public function order($field)
+	{
+		$this->_suffixsql[] = ' ORDER BY '.$field.' ';
+		return $this;
 	}
 	/**
 	 * 获取一行结果集
