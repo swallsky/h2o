@@ -69,7 +69,7 @@ class Mailer
 	 * @param array $toUser 接收邮箱  ['whoever@163.com' => 'Mr.Right', 'whoever@qq.com' => 'Mr.Wrong']
 	 * @param string $subject 标题
 	 * @param string $content 邮箱内容
-	 * @throws \Exception
+	 * @return int 返回成功的收件人数 0为发送失败
 	 */
 	public function send($toUser = [],$subject = '',$content = '')
 	{
@@ -79,7 +79,7 @@ class Mailer
 		$message->setSubject($subject);
 		$message->setBody($content, 'text/html', 'utf-8');
 		try{
-			$this->_transport->send($message);
+			return $this->_transport->send($message);
 		}catch (\Swift_ConnectionException $e){
 			throw new \Exception('There was a problem communicating with SMTP: ' . $e->getMessage());
 		}
