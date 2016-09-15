@@ -39,6 +39,7 @@ class Command
 		$connect = Connection::getInstance($tag);
 		$this->pdo = $connect->pdo;
 		$this->dbname = $connect->dbname;
+		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
 	/**
 	 * 返回SQL语句
@@ -187,9 +188,12 @@ class Command
 	 */
 	public function prepare($sql = '')
 	{
-	    $sql = empty($sql)?$this->getSql():$sql;
-	    $sth = $this->pdo->prepare($sql);
-	    return $this->_errorInfo($sth, 'prepare',$this->getRawSql());
+		try{
+			$sql = empty($sql)?$this->getSql():$sql;
+			return $this->pdo->prepare($sql);
+		} catch (\PDOException $e) {
+			throw new \ErrorException($e->getMessage().' SQL:'.$this->getRawSql());
+		}
 	}
 	/**
 	 * 执行一条预处理语句

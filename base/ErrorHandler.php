@@ -43,6 +43,9 @@ class ErrorHandler
     {
         //防止处理错误或异常出现递归错误
         $this->unregister();
+        if (PHP_SAPI !== 'cli') {
+            http_response_code(500);
+        }
         $this->logException($exception);
         exit(1);
     }
