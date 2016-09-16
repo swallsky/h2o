@@ -341,7 +341,6 @@ class Command
 	{
 		if(!empty($ansfun)){
 			try {
-				$this->pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);//显示报告和异常
 				$this->pdo->beginTransaction(); //开始事务
 				$ansfun($this); //业务事务
 				$this->pdo->commit(); //提交事务
@@ -369,7 +368,6 @@ class Command
 	 */
 	public function beginTransaction()
 	{
-		$this->pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);//显示报告和异常
 		$this->pdo->beginTransaction(); //开始事务
 	}
 	/**
