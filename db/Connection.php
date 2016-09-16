@@ -107,10 +107,12 @@ class Connection
 	{
 		try{//尝试连接
 			$this->pdo = new \PDO($this->dsn,$this->username,$this->password,$this->attributes);
+			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);//设置错误处理模式
 			$this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);//字符转义
 			$this->pdo->exec('SET NAMES '.$this->charset);
-		}catch (\Exception $e){//连接异常
-			throw new \Exception('Connect failure "'.$this->dsntag.'" :'.$e->getMessage());
+		}catch (\PDOException $e){//连接异常
+			echo 'PDOException:'.$e->getMessage();
+			exit(1);
 		}
 	}
 	/**

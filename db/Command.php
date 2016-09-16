@@ -39,7 +39,6 @@ class Command
 		$connect = Connection::getInstance($tag);
 		$this->pdo = $connect->pdo;
 		$this->dbname = $connect->dbname;
-		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
 	/**
 	 * 返回SQL语句
