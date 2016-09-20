@@ -270,6 +270,39 @@ class Command
 		return new H2O\data\Batch($this);
 	}
 	/**
+	 * 翻页数据
+	 * @param int $size  每页显示条数
+	 * @param string $param  翻页参数名
+	 * @return array
+	 */
+	public function pageData($size = 20,$param = 'page')
+	{
+		$total = $this->rowCount(); //总记录数
+		$request = \H2O::getContainer('request');
+		//获取当前页
+		$cpage = $request->get($param);
+		$cpage = empty($cpage)?1:intval($cpage);
+		$cpage = $cpage<1?1:$cpage;
+
+		$sql = $this->getSql();
+		$this->setSql($sql.' LIMIT '.(($cpage-1)*$size).','.$size);
+		//总页数
+		$ptotal = empty($total)?1:ceil($total/$size);
+		//下一页
+		$next = $cpage + 1; if($next > $ptotal) $next = $ptotal;
+		//上一页
+		$up = $cpage - 1; if($up<1) $up = 1;
+		return [
+			'param' => $param,        //翻页参数
+			'size' 	=> $size,         //每页条数，步长
+			'page' 	=> $cpage,        //当前页
+			'last' 	=> $ptotal,       //总页数，即最后一页
+			'next' 	=> $next,         //下一页
+			'prev' 	=> $up,           //上一页
+			'total' => $total         //总记录数
+		];
+	}
+	/**
 	 * 返回表所对应的字段列名
 	 * @param string $table 表名
 	 */

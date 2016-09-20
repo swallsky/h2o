@@ -172,7 +172,7 @@ class Request
 		if($name == ''){
 			return self::$getParams;
 		}else{
-			if(empty($value)){
+			if(!empty($value)){
 				self::$getParams[$name] = $value;
 			}else{
 				return isset(self::$getParams[$name])?self::$getParams[$name]:'';
