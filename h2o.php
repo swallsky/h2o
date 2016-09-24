@@ -220,3 +220,4 @@ abstract class H2O
  * 初始化自动加载器
  */
 H2O::$autoloader = require(VENDOR_PATH.DS.'autoload.php');
+
