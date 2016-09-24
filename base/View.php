@@ -43,11 +43,11 @@ class View
 		$this->_controller = $o;
 	}
 	/**
-	 * 返回模板目录
+	 * @return Object 返回当前的控制器对象
 	 */
-	public function getPath()
+	public function getController()
 	{
-		return rtrim($this->_templatePath,DS);
+		return $this->_controller;
 	}
 	/**
 	 * 设置模板目录
@@ -57,6 +57,13 @@ class View
 	{
 		$path = \H2O::getAlias($path);
 		$this->_templatePath = $path;
+	}
+	/**
+	 * 返回模板目录
+	 */
+	public function getPath()
+	{
+		return rtrim($this->_templatePath,DS);
 	}
 	/**
 	 * 检查文件是否存在
