@@ -284,15 +284,15 @@ class Command
 		$cpage = empty($cpage)?1:intval($cpage);
 		$cpage = $cpage<1?1:$cpage;
 
-		$sql = $this->getSql();
-		$this->setSql($sql.' LIMIT '.(($cpage-1)*$size).','.$size);
+		$sql = $this->getRawSql(); //获取解析后的SQL
+		$data = $this->setSql($sql.' LIMIT '.(($cpage-1)*$size).','.$size)->fetchAll(); //获取当前页数据
 		//总页数
 		$ptotal = empty($total)?1:ceil($total/$size);
 		//下一页
 		$next = $cpage + 1; if($next > $ptotal) $next = $ptotal;
 		//上一页
 		$up = $cpage - 1; if($up<1) $up = 1;
-		return [
+		$page = [
 			'param' => $param,        //翻页参数
 			'size' 	=> $size,         //每页条数，步长
 			'page' 	=> $cpage,        //当前页
@@ -301,6 +301,7 @@ class Command
 			'prev' 	=> $up,           //上一页
 			'total' => $total         //总记录数
 		];
+		return ['page'=>$page,'data'=>$data];
 	}
 	/**
 	 * 返回表所对应的字段列名
