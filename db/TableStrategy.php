@@ -304,6 +304,17 @@ abstract class TableStrategy extends Command
 		return $this;
 	}
 	/**
+	 * 多表查询后排序
+	 * @param int $s 开始记录
+	 * @param int $e 结束记录
+	 * @return $this
+	 */
+	public function limit($s,$e)
+	{
+		$this->_suffixsql[] = ' LIMIT '.$s.','.$e;
+		return $this;
+	}
+	/**
 	 * 获取一行结果集
 	 */
 	public function fetch()

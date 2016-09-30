@@ -134,22 +134,22 @@ class Migrate
 	        echo $all.':regtable return value is empty or is not array!'.PHP_EOL;
 	        exit();
 	    }
-	    try{
-            foreach ($regnames as $reg) //批量执行
-            {
-                $class = $this->_namespace.'\\'.ucfirst($reg);
-                $oc = new $class();
-                $oc->clearBuildSQL(); //清空上一个模块的SQL，防止重复写入
-                $oc->beginTransaction();
-                $oc->$mtype();
-                $oc->buildExec();//执行SQL
-                $oc->pdo->commit();
-            }
-    	   echo 'Executed successfully!'.PHP_EOL;
-    	   exit();
-	   }catch(\Exception $e){
-	       $oc->pdo->rollBack();//回滚
-	       throw new \ErrorException($e->getMessage());
-	   }
+		foreach ($regnames as $reg) //批量执行
+		{
+			try{
+				$class = $this->_namespace.'\\'.ucfirst($reg);
+				$oc = new $class();
+				$oc->clearBuildSQL(); //清空上一个模块的SQL，防止重复写入
+				$oc->beginTransaction();
+				$oc->$mtype();
+				$oc->buildExec();//执行SQL
+				$oc->pdo->commit();
+			}catch(\Exception $e){
+				$oc->pdo->rollBack();//回滚
+				throw new \ErrorException(PHP_EOL.'Class name:'.$class.','.$e->getMessage());
+			}
+		}
+		echo 'Executed successfully!'.PHP_EOL;
+		exit();
 	}
 }
