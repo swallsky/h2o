@@ -31,6 +31,14 @@ class Captcha
 		$this->_capobj->build($width,$height);
 	}
 	/**
+	 * 设置验证码信息
+	 * @param $val 验证码信息
+	 */
+	public function setValue($val)
+	{
+		$this->_capobj->setPhrase($val);
+	}
+	/**
 	 * 返回图像中的验证码文本值
 	 */
 	public function getValue()
