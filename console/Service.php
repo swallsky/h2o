@@ -232,4 +232,27 @@ class Service
 	        $this->_setSignal($this->_stopsignal,$routep,$pid);
 	    }
 	}
+	/**
+	 * 守护子进程
+	 */
+	public function actDaemon()
+	{
+		$routep = $this->_getRoutePath(); //路由规则path
+		$module = \H2O::getContainer('module');
+		$route = \H2O\base\Module::parseRoute($routep); //返回路由规则URL
+
+		$octr = $module->getController($route['controller']); //控制器对象
+		$gwmethod = 'Gate'.ucfirst($route['action']); //方法网关
+		$pid = getmypid(); //进程ID
+		if(method_exists($octr,$gwmethod)){//增加入口应用关口，可在此函数中处理业务逻辑，可实现定时任务等
+			if($octr->$gwmethod()){//返回值只有为true时才执行相应的程序
+				$res = $octr->runAction(ucfirst($route['action'])); //执行操作
+				$response = 'pid:' . $pid . ' datetime:' . date('Y-m-d H:i:s') . ' response:' . $res . PHP_EOL;
+			}
+		}else{
+			$res = $octr->runAction(ucfirst($route['action'])); //执行操作
+			$response = 'pid:' . $pid . ' datetime:' . date('Y-m-d H:i:s') . ' response:' . $res . PHP_EOL;
+		}
+		echo $response;
+	}
 }
