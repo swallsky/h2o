@@ -63,6 +63,16 @@ class Request
 		    ['','','--c=hello.world --p=proid'],
 		    ['','','empty stop all services']
 		]);
+		//后台开启守护进程服务程序
+		Stdout::table([
+			['daemon'],
+			['Summary:depend on crontab,windows no support'],
+			['@daemon.run'],
+			['crontab -e'],
+			['* * * * * '.Daemon::CmdBin().'@daemon.run'],
+			['@daemon.getTask'],
+			['Cat running task']
+		]);
 		//自动化开发工具
 		Stdout::table([
 			['gii','Automation development tools'],
