@@ -126,25 +126,17 @@ class Daemon
      */
     private function _checkSelfProc()
     {
-        $_cmd = "ps aux | grep -v 'grep' | grep '{$GLOBALS['argv'][0]} {$GLOBALS['argv'][1]}' | awk '{print $2,$8}'\n"; //查找守护进程执行状态和进程ID
+        $_cmd = "ps aux | grep -v 'grep' | grep '{$GLOBALS['argv'][0]} {$GLOBALS['argv'][1]}' | awk '{print $12,$13}'\n"; //查找守护进程执行状态和进程ID
         $_pp = popen($_cmd, 'r');
-        $_akill = [];//需要清理的进程
         $_ptotal = 0; //启动的进程数
         if($_pp){//查看命令行是否有结果
             while(!feof($_pp)) {
                 $_line = trim(fgets($_pp));
                 if(empty($_line)) continue;
-                list($_pid, $_status) = explode(' ', $_line);
-                if($_status != 'S+'){//不是正在执行的状态,将记录kill
-                    $_akill[] = $_pid;
-                }else{
+                list($_bin, $_cmd) = explode(' ', $_line);
+                if($_bin == $GLOBALS['argv'][0] && $_cmd == $GLOBALS['argv'][1]){
                     $_ptotal++; //当前运行进程加1
                 }
-            }
-        }
-        if(!empty($_akill)){
-            foreach($_akill as $_kid){ //清理异常进程
-                popen("kill -9 ".$_kid,'r');
             }
         }
         pclose($_pp);
