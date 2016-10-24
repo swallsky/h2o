@@ -54,9 +54,7 @@ class Command
 	public function setSql($sql)
 	{
 		$this->params = [];
-		if($sql !== $this->_sql){
-			$this->_sql = $sql;
-		}
+		$this->_sql = $sql;
 		return $this;
 	}
 	/**
@@ -73,7 +71,7 @@ class Command
 			if (is_string($name) && strncmp(':', $name, 1)) {
 				$name = ':' . $name;
 			}
-			if (is_string($value)) {
+			if (is_string($value)){
 				$params[$name] = $this->quoteValue($value);
 			} elseif (is_bool($value)) {
 				$params[$name] = ($value ? 'TRUE' : 'FALSE');
@@ -84,13 +82,33 @@ class Command
 			}
 		}
 		if (!isset($params[0])) { //非?号的直接替换
-			return strtr($this->_sql, $params);
+			if(is_array($this->_sql)){//读取多条SQL信息
+				$tmp = [];
+				foreach($this->_sql as $s){
+					$tmp[] = strtr($s, $params);
+				}
+				return $tmp;
+			}else{//单条
+				return strtr($this->_sql, $params);
+			}
 		}
-		$sql = '';
-		foreach (explode('?', $this->_sql) as $i => $part) {
-			$sql .=  $part . (isset($params[$i]) ? $params[$i] : '');
+		if(is_array($this->_sql)){//多条语句
+			$tmp = [];
+			foreach($this->_sql as $s){
+				$sql = '';
+				foreach (explode('?', $s) as $i => $part) {
+					$sql .=  $part . (isset($params[$i]) ? $params[$i] : '');
+				}
+				$tmp[] = $sql;
+			}
+			return $tmp;
+		}else{//单条语句
+			$sql = '';
+			foreach (explode('?', $this->_sql) as $i => $part) {
+				$sql .=  $part . (isset($params[$i]) ? $params[$i] : '');
+			}
+			return $sql;
 		}
-		return $sql;
 	}
 	/**
 	 * 插入记录
@@ -177,9 +195,17 @@ class Command
 	 */
 	public function exec()
 	{
-		$sql = $this->getSql();
-		$res = $this->pdo->exec($sql);
-		return $this->_errorInfo($res, 'exec',$this->getRawSql());
+		$sqls = $this->getSql();
+		if(is_array($sqls)){//执行多条语句
+			$res = [];
+			foreach($sqls as $s){
+				$res[] = $this->pdo->exec($s);
+			}
+			return $res;
+		}else{//执行单条
+			$res = $this->pdo->exec($sqls);
+			return $this->_errorInfo($res);
+		}
 	}
 	/**
 	 * 预处理
@@ -196,14 +222,23 @@ class Command
 	}
 	/**
 	 * 执行一条预处理语句
-	 * @param object $sth 预处理对象 默认为空
 	 * @return bool 如果成功则返回true,失败则返回false
 	 */
-	public function execute($sth = '')
+	public function execute()
 	{
-	    $sth = empty($sth)?$this->prepare():$sth;
-    	$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
-    	return $this->_errorInfo($res, 'execute',$this->getRawSql());
+		$sqls = $this->getSql();
+		if(is_array($sqls)){//执行多条SQL语句
+			$res = [];
+			foreach($sqls as $s){
+				$sth = $this->prepare($s);
+				$res[] = empty($this->params)?$sth->execute():$sth->execute($this->params);
+			}
+			return $res;
+		}else{//执行单条
+			$sth = $this->prepare($sqls);
+			$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+			return $this->_errorInfo($res);
+		}
 	}
 	/**
 	 * 执行一条 SQL 语句,并返回结果集
@@ -212,7 +247,7 @@ class Command
 	{
 		$sql = $this->getSql();
 		$res = $this->pdo->query($sql);
-		return $this->_errorInfo($res, 'query',$this->getRawSql());
+		return $this->_errorInfo($res);
 	}
 	/**
 	 * 获取一行结果集
@@ -220,7 +255,8 @@ class Command
 	public function fetch()
 	{
 		$sth = $this->prepare();
-		$this->execute($sth);
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+		$this->_errorInfo($res);
 		return $sth->fetch(PDO::FETCH_ASSOC);
 	}
 	/**
@@ -229,7 +265,8 @@ class Command
 	public function fetchAll()
 	{
 		$sth = $this->prepare();
-		$this->execute($sth);
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+		$this->_errorInfo($res);
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	/**
@@ -238,7 +275,8 @@ class Command
 	public function rowCount()
 	{
 		$sth = $this->prepare();
-		$this->execute($sth);
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+		$this->_errorInfo($res);
 		return $sth->rowCount();
 	}
 	/**
@@ -340,6 +378,16 @@ class Command
 		return $this->pdo->lastInsertId();
 	}
 	/**
+	 * 判断表是否存在
+	 * @param string $table 表名
+	 * @return false:为不存在,true:为存在
+	 */
+	public function existTable($table)
+	{
+		$tmp = $this->setSql('SHOW TABLES WHERE Tables_in_'.$this->dbname.'="'.$table.'"')->fetch();
+		return empty($tmp)?false:true;
+	}
+	/**
 	 * @param string $tbpre 表名前缀 如果为空，则查找所有表
 	 * @return array 返回当前库的表信息
 	 */
@@ -411,10 +459,11 @@ class Command
 	 * @param string $sql 执行SQL
 	 * @return
 	 */
-	private function _errorInfo($res,$tag,$sql = '')
+	public function _errorInfo($res)
 	{
 		$error = $this->pdo->errorInfo();
 		if($res===false && $error[0]!='00000'){//发生错误
+			$sql = $this->getRawSql();
 			$sql = empty($sql)?'':$sql.PHP_EOL;
 			throw new \ErrorException($sql."\tERROR:".$error[2]);
 		}

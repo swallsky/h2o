@@ -109,19 +109,6 @@ class Daemon
     }
     /**
      * 检测自身进程，同时只允许运行一个主进程
-     * stat 中的参数意义如下：
-    D 不可中断 Uninterruptible（usually IO）
-    R 正在运行，或在队列中的进程
-    S 处于休眠状态
-    T 停止或被追踪
-    Z 僵尸进程
-    W 进入内存交换（从内核2.6开始无效）
-    X   死掉的进程
-
-    < 高优先级
-    n   低优先级
-    s   包含子进程
-    +   位于后台的进程组
      * @return	NULL
      */
     private function _checkSelfProc()

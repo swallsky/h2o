@@ -10,10 +10,6 @@ namespace H2O\db;
 abstract class TableStrategy extends Command
 {
     /**
-     * @var object build Object
-     */
-    private $_obuild = null;
-    /**
      * @var string SQL语句中需要替换表名
      */
     private $_tablesql = '{TABLENAME}';
@@ -40,15 +36,7 @@ abstract class TableStrategy extends Command
 	public function __construct($tag = 'db')
 	{
 		parent::__construct($tag);
-		$this->_obuild = new \H2O\db\Builder($tag);
 		$this->_tablepre = $this->_tablePre();
-	}
-	/**
-	 * @return Object build对象
-	 */
-	public function getBuild()
-	{
-		return $this->_obuild;
 	}
 	/**
 	 * 表名前缀固定部分 以当前类名为表名前缀
@@ -106,6 +94,7 @@ abstract class TableStrategy extends Command
 	{
 		return $this->_insertid;
 	}
+
 	/**
 	 * 定义表结构 
 	 ~~~
@@ -180,10 +169,9 @@ abstract class TableStrategy extends Command
 	{
 	    $table = $this->getTableName($ext);
 	    $fieldstu = $this->Structure();//表结构
-	    if(!$this->_obuild->existTable($table)){ //如果表不存在，则创建
-	        $this->_obuild->createTable($table,$fieldstu)->buildExec();
+	    if(!$this->existTable($table)){ //如果表不存在，则创建
+	        $this->setSql(Builder::getCreateTableSql($table,$fieldstu))->execute();//自动创建表
 	        $this->AUTO_INC_INIT(); //初始化策略
-			$this->_obuild->clearBuildSQL(); //清空
 	    }
 	    //主键查找逻辑
         $keyfield = '';
@@ -237,7 +225,10 @@ abstract class TableStrategy extends Command
 		if(count($tables)>1){//多表
 			$tsql = [];
 			foreach ($tables as $s){
-				$tsql[] = str_replace($this->_tablesql,$s,$sql);
+				$tmpsql = str_replace($this->_tablesql,$s,$sql);
+				if(!in_array($tmpsql,$tsql)){//过滤相同的SQL语句
+					$tsql[] = $tmpsql;
+				}
 			}
 			$sqls = implode(' UNION ',$tsql);
 		}else{//单表
@@ -259,9 +250,19 @@ abstract class TableStrategy extends Command
 	 */
 	public function update($fdata = [], $where)
 	{
-	    parent::update($this->_tablesql,$fdata,$where);
-	    $this->_unionSql();
-	    return $this;
+		parent::update($this->_tablesql,$fdata,$where);
+		$sql = $this->getSql();//获取updatesql语句
+		$tables = $this->getTablesName();
+		$tsql = [];
+		if(count($tables)>1){//多表
+			foreach ($tables as $s){
+				$tsql[] = str_replace($this->_tablesql,$s,$sql);
+			}
+		}else{//单表
+			$tsql[] = str_replace($this->_tablesql,$tables[0],$sql);
+		}
+		$this->setSql($tsql); //执行多条查询
+		return $this;
 	}
 	/**
 	 * 多表查询后再查找
@@ -320,8 +321,9 @@ abstract class TableStrategy extends Command
 	public function fetch()
 	{
 	    $this->_unionSql();
-	    $sth = $this->prepare();
-	    $this->execute($sth);
+		$sth = $this->prepare();
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+		$this->_errorInfo($res);
 		return $sth->fetch(\PDO::FETCH_ASSOC);
 	}
 	/**
@@ -330,8 +332,9 @@ abstract class TableStrategy extends Command
 	public function fetchAll()
 	{
 	    $this->_unionSql();
-	    $sth = $this->prepare();
-	    $this->execute($sth);
+		$sth = $this->prepare();
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+		$this->_errorInfo($res);
 		return $sth->fetchAll(\PDO::FETCH_ASSOC);
 	}
 	/**
@@ -340,8 +343,9 @@ abstract class TableStrategy extends Command
 	public function rowCount()
 	{
 	    $this->_unionSql();
-	    $sth = $this->prepare();
-	    $this->execute($sth);
+		$sth = $this->prepare();
+		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
+		$this->_errorInfo($res);
 		return $sth->rowCount();
 	}
 }
