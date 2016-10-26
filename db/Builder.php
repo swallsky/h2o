@@ -60,7 +60,7 @@ class Builder extends Command
 			'timestamp'	=>	'timestamp', //时间戳
 			'time'		=>	'time', //时间
 			'date'		=>	'date', //时间
-			'money'		=>	'decimal(19,4)', //金钱类型
+			'money'		=>	'decimal(20,2)', //金钱类型
 			'binary'	=>	'blob' //二进制
 		];
 	}
