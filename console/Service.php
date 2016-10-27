@@ -171,7 +171,7 @@ class Service
 				$gwmethod = 'Gate'.ucfirst($route['action']); //方法网关
 				if(method_exists($octr,$gwmethod)){//增加入口应用关口，可在此函数中处理业务逻辑，可实现定时任务等
 					$gwm = $octr->$gwmethod();
-					if(empty($gwm) || $gwm){//返回值只有为true时才执行相应的程序
+					if($gwm===true){//返回值只有为true时才执行相应的程序
 						$res = $octr->runAction(ucfirst($route['action'])); //执行操作
 						$content = 'pid:' . $pid . ' datetime:' . date('Y-m-d H:i:s') . ' response:' . $res . PHP_EOL;
 						File::write($logfile,$content);//写入日志信息
@@ -247,7 +247,7 @@ class Service
 		$pid = getmypid(); //进程ID
 		if(method_exists($octr,$gwmethod)){//增加入口应用关口，可在此函数中处理业务逻辑，可实现定时任务等
 			$gwm = $octr->$gwmethod();
-			if(empty($gwm) || $gwm){//返回值只有为true时才执行相应的程序
+			if($gwm===true){//返回值只有为true时才执行相应的程序
 				$res = $octr->runAction(ucfirst($route['action'])); //执行操作
 				$response = 'pid:' . $pid . ' datetime:' . date('Y-m-d H:i:s') . ' response:' . $res . PHP_EOL;
 			}
