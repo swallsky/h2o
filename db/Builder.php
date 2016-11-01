@@ -334,6 +334,35 @@ class Builder extends Command
 		return $this;
 	}
 	/**
+	 * 批量插入记录
+	 * @access public
+	 * @param string $table  数据表名
+	 * @param array $data  批量数据
+	 * @param array $fields 插入的字段信息
+	 * @param int  $batchnum  批量处理数据个数
+	 * @return 受影响的行数
+	~~~
+	example: 多行插入
+	$this->insert('sys_menu',
+	[
+	['sm_id'=>1,'sm_title'=>'first menu','sm_pid'=>0],
+	['sm_id'=>2,'sm_title'=>'second menu','sm_pid'=>0],
+	],
+	['sm_id','sm_title','sm_pid'], //处理的字段信息
+	1000 //单批处理数量
+	);
+	~~~
+	 */
+	public function batchInsert($table,$data = [],$fields = [],$batchnum = 1000)
+	{
+		parent::batchInsert($table,$data,$fields,$batchnum);
+		$sql = parent::getSql(); //获取单条时的SQL语句
+		foreach($sql as $s){
+			self::setBuildSql($s); //写入批处理
+		}
+		return $this;
+	}
+	/**
 	 * 更改记录信息
 	 * @param string 	$table  	数据表名
 	 * @param array     $fdata  	字段数组

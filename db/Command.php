@@ -143,15 +143,61 @@ class Command
 			$fields = $field;
 			foreach($data as $dv){
 				if(is_array($dv)){//必须是二维数组
-					foreach($dv as $k=>$v){
-						$dv[$k] = $this->quoteValue($v);//字段对应的值
+					$tempval = []; //需要缓存的数据
+					foreach($fields as $fd){
+						$tempval[$fd] = $this->quoteValue($dv[$fd]);//字段对应的值
 					}
-					$values[] = '('.implode(',',$dv).')';
+					$values[] = '('.implode(',',$tempval).')';
 				}
 			}
 			$sval = implode(',',$values);
 		}
-		return $this->setSql('INSERT INTO '.$table.' ('.implode(',',$fields).') VALUES '.$sval);
+		$this->setSql('INSERT INTO '.$table.' ('.implode(',',$fields).') VALUES '.$sval);
+		return $this;
+	}
+	/**
+	 * 批量插入记录
+	 * @access public
+	 * @param string $table  数据表名
+	 * @param array $data  批量数据
+	 * @param array $fields 插入的字段信息
+	 * @param int  $batchnum  批量处理数据个数
+	 * @return 受影响的行数
+	~~~
+	example: 多行插入
+	$this->insert('sys_menu',
+	[
+		['sm_id'=>1,'sm_title'=>'first menu','sm_pid'=>0],
+		['sm_id'=>2,'sm_title'=>'second menu','sm_pid'=>0],
+	],
+	['sm_id','sm_title','sm_pid'], //处理的字段信息
+	1000 //单批处理数量
+	);
+	~~~
+	 */
+	public function batchInsert($table,$data = [],$fields = [],$batchnum = 1000)
+	{
+		$values = []; $sql = [];
+		$fieldimp = '('.implode(',',$fields).')'; //字段列
+		foreach($data as $dk=>$dv){
+			if(is_array($dv)){//二维数组
+				$ntmp = [];
+				foreach($fields as $fd){
+					$ntmp[$fd] = $this->quoteValue($dv[$fd]);//字段对应的值
+				}
+				$values[] = '('.implode(',',$ntmp).')';
+			}
+			//步长处理
+			if($dk%$batchnum==0 && $dk>0){
+				$sql[] = 'INSERT INTO '.$table.' '.$fieldimp.' VALUES '.implode(',',$values);
+				$values = []; //清空原有的
+			}
+		}
+		if(!empty($values)){//最后一批的数据
+			$sql[] = 'INSERT INTO '.$table.' '.$fieldimp.' VALUES '.implode(',',$values);
+		}
+		$this->setSql($sql);
+		return $this;
 	}
 	/**
 	 * 更改记录信息
@@ -165,7 +211,8 @@ class Command
 		$items = [];
 		foreach($fdata as $k=>$v)
 			$items[] = $k.'='.$this->quoteValue($v);
-		return $this->setSql('UPDATE '.$table.' SET '.implode(',',$items).' WHERE '.$where);
+		$this->setSql('UPDATE '.$table.' SET '.implode(',',$items).' WHERE '.$where);
+		return $this;
 	}
 	/**
 	 * 绑定一个参数到对应的SQL占位符上
@@ -361,6 +408,7 @@ class Command
 	 */
 	public function quoteValue($str)
 	{
+		if(is_null($str)) return "''"; //如果是null返回空值
 		if (!is_string($str)) {
 			return $str;
 		}
