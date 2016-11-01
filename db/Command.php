@@ -117,18 +117,18 @@ class Command
 	 * @param array  $data  字段数组
 	 * @param array  $field  字段信息
 	 * @return 受影响的行数
-	 ~~~
-	 example 1: 单行插入
-	 $this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0])->exec();
-	 example 2: 多行插入
-	 $this->insert('sys_menu',
-	 	[
-	 		[1,'first menu',0],
-	 		[2,'second menu',1],
-	 	],
-	 	['sm_id','sm_title,'sm_pid']
-	 )->exec();
-	 ~~~
+	~~~
+	example 1: 单行插入
+	$this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0])->exec();
+	example 2: 多行插入
+	$this->insert('sys_menu',
+	[
+		[1,'first menu',0],
+		[2,'second menu',1],
+	],
+	['sm_id','sm_title,'sm_pid']
+	)->execute();
+	~~~
 	 */
 	public function insert($table, $data = [],$field = [])
 	{
@@ -143,11 +143,10 @@ class Command
 			$fields = $field;
 			foreach($data as $dv){
 				if(is_array($dv)){//必须是二维数组
-					$tempval = []; //需要缓存的数据
-					foreach($fields as $fd){
-						$tempval[$fd] = $this->quoteValue($dv[$fd]);//字段对应的值
+					foreach($dv as $k=>$v){
+						$dv[$k] = $this->quoteValue($v);//字段对应的值
 					}
-					$values[] = '('.implode(',',$tempval).')';
+					$values[] = '('.implode(',',$dv).')';
 				}
 			}
 			$sval = implode(',',$values);
@@ -169,6 +168,7 @@ class Command
 	[
 		['sm_id'=>1,'sm_title'=>'first menu','sm_pid'=>0],
 		['sm_id'=>2,'sm_title'=>'second menu','sm_pid'=>0],
+	 	...
 	],
 	['sm_id','sm_title','sm_pid'], //处理的字段信息
 	1000 //单批处理数量
