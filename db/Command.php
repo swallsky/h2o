@@ -317,14 +317,18 @@ class Command
 		return $sth->fetchAll(PDO::FETCH_ASSOC);
 	}
 	/**
-	 * 返回结果集行数
+	 * 返回结果集行数 返回select的条数
+	 * @cite http://www.php.net/manual/zh/pdostatement.rowcount.php
+	 *
+	 * @param string $sql 需要查询条数的SQL
+	 * @return int 查询结果的条数
 	 */
-	public function rowCount()
+	public function rowCount($sql = '')
 	{
-		$sth = $this->prepare();
-		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
-		$this->_errorInfo($res);
-		return $sth->rowCount();
+		$sql = empty($sql)?$this->getRawSql():$sql;
+		$sql = preg_replace('/SELECT.+FROM/im','SELECT count(*) FROM',$sql); //替换为select count(*) from
+		$res = $this->pdo->query($sql);
+		return (int)$res->fetchColumn();
 	}
 	/**
 	 * 大数据批处理
@@ -362,7 +366,6 @@ class Command
 	 */
 	public function pageData($size = 20,$param = 'page')
 	{
-		$total = $this->rowCount(); //总记录数
 		$request = \H2O::getContainer('request');
 		//获取当前页
 		$cpage = $request->get($param);
@@ -370,6 +373,7 @@ class Command
 		$cpage = $cpage<1?1:$cpage;
 
 		$sql = $this->getRawSql(); //获取解析后的SQL
+		$total = $this->rowCount($sql); //总记录数
 		$data = $this->setSql($sql.' LIMIT '.(($cpage-1)*$size).','.$size)->fetchAll(); //获取当前页数据
 		//总页数
 		$ptotal = empty($total)?1:ceil($total/$size);

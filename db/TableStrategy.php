@@ -342,10 +342,31 @@ abstract class TableStrategy extends Command
 	 */
 	public function rowCount()
 	{
-	    $this->_unionSql();
-		$sth = $this->prepare();
-		$res = empty($this->params)?$sth->execute():$sth->execute($this->params);
-		$this->_errorInfo($res);
-		return $sth->rowCount();
+		$sql = $this->getRawSql();//解析完参数后的SQL语句
+		$tables = $this->getTablesName();
+		if(count($tables)>1){//多表
+			$total = 0;
+			foreach ($tables as $s){
+				$sqls = str_replace($this->_tablesql,$s,$sql);
+				//对联表查询后的结果，进行排序筛选等操作
+				if(!empty($this->_suffixsql)){
+					foreach($this->_suffixsql as $s){
+						$sqls .= $s;
+					}
+				}
+				$total = $total + parent::rowCount($sqls);
+			}
+			return $total;
+		}else{//单表
+			$sqls = str_replace($this->_tablesql,$tables[0],$sql);
+			//对联表查询后的结果，进行排序筛选等操作
+			if(!empty($this->_suffixsql)){
+				foreach($this->_suffixsql as $s){
+					$sqls .= $s;
+				}
+			}
+			return parent::rowCount($sqls);
+		}
+
 	}
 }
