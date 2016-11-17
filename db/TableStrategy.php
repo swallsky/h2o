@@ -13,6 +13,10 @@ abstract class TableStrategy extends Command
      * @var string SQL语句中需要替换表名
      */
     private $_tablesql = '{TABLENAME}';
+	/**
+	 * @var array 表缓存信息
+	 */
+	private $_tables = [];
     /**
      * @var string 表名前缀
      */
@@ -135,11 +139,23 @@ abstract class TableStrategy extends Command
         return empty($ext)?$this->_tablepre.$this->TableExt():$this->_tablepre.$ext;
 	}
 	/**
-	 * @return array 所有该规则的所有表
+	 * 设置要查询的表
+	 * @param $tbs 表名数组,例如:['table1','table2']
+	 */
+	public function setTablesName($tbs)
+	{
+		$this->_tables = $tbs;
+	}
+	/**
+	 * @return array 返回表信息
 	 */
 	public function getTablesName()
 	{
-		return parent::getTables($this->_tablepre);
+		if(!empty($this->_tables)){
+			return $this->_tables;
+		}else{
+			return parent::getTables($this->_tablepre);
+		}
 	}
 	/**
 	 * 插入记录
