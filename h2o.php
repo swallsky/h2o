@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.6.29';
+		return '0.6.30';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
@@ -77,10 +77,10 @@ abstract class H2O
 		}else{
 			$predata = isset($data[$pre])?$data[$pre]:'';
 			if(is_string($predata)){
-				return str_replace('/',DS,$predata);
+				return realpath(str_replace('/',DS,$predata));
 			}else if(is_array($predata)){
 				foreach($predata as $k=>$v){
-					$predata[$k] = str_replace('/',DS,$v);
+					$predata[$k] = realpath(str_replace('/',DS,$v));
 				}
 				return $predata;
 			}
