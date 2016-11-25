@@ -26,9 +26,9 @@ abstract class Application
 	public function setPreObject()
 	{
 		return [
-			'logger'			=>		'\H2O\base\Logger', // 日志记录器接口
+			'logger'		=>		'\H2O\base\Logger', // 日志记录器接口
 			'module'		=>		'\H2O\base\Module', //默认的模块类
-			'view'				=>		'\H2O\base\View' //默认的渲染层类
+			'view'			=>		'\H2O\base\View' //默认的渲染层类
 		];
 	}
 	/**

@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.6.30';
+		return '0.6.31';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
@@ -75,15 +75,14 @@ abstract class H2O
 		if(empty($pre)){
 			return $data;
 		}else{
-			$predata = isset($data[$pre])?$data[$pre]:'';
-			if(is_string($predata)){
-				return realpath(str_replace('/',DS,$predata));
-			}else if(is_array($predata)){
-				foreach($predata as $k=>$v){
-					$predata[$k] = realpath(str_replace('/',DS,$v));
+			$pre = ltrim($pre,'\\').'\\';//转换为composer格式
+			foreach($data as $k=>$v){
+				if($k==$pre){//返回对应命名空间的路径
+					$v = is_array($v)?$v[0]:$v;
+					return realpath(str_replace('/',DS,$v));
 				}
-				return $predata;
 			}
+			return '';
 		}
 	}
 	/**
@@ -91,10 +90,7 @@ abstract class H2O
 	 */
 	public static function getAppRootPath()
 	{
-		$app = str_replace('\\','',H2O::APP_ROOT_NAME).'\\';
-		$appath = \H2O::getPreNameSpace($app);
-		$real = is_array($appath)?$appath[0]:$appath;
-		return realpath($real); //返回规范化的绝对路径
+		return \H2O::getPreNameSpace(H2O::APP_ROOT_NAME);
 	}
 	/**
 	 * 设置运行环境
