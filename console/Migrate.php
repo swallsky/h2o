@@ -38,7 +38,7 @@ class Migrate
 		$nv = 'v'.str_replace('.','',$version);
 		$this->_namespace = \H2O::APP_ROOT_NAME.'\\migrate\\'.$nv;//命名空间
 		$this->_tpldir = H2O_PATH.DS.'tpls'.DS.'migrate'.DS; //迁移模块路径
-		$namepath = \H2O::getPreNameSpace('app\migrate\\');//读取定义的app\migrate的路径
+		$namepath = \H2O::getPreNameSpace('app\\migrate\\');//读取定义的app\migrate的路径
 		$this->_migratedir = empty($namepath)?\H2O::getAppRootPath().DS.'migrate'.DS.$nv:$namepath.DS.$nv;
 		file::createDirectory($this->_migratedir);//创建目录
 		$this->_runenv = \H2O::getRunEnv();

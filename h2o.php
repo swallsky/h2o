@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.6.31';
+		return '0.6.32';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
@@ -75,7 +75,7 @@ abstract class H2O
 		if(empty($pre)){
 			return $data;
 		}else{
-			$pre = ltrim($pre,'\\').'\\';//转换为composer格式
+			$pre = trim($pre,'\\').'\\';//转换为composer格式
 			foreach($data as $k=>$v){
 				if($k==$pre){//返回对应命名空间的路径
 					$v = is_array($v)?$v[0]:$v;
