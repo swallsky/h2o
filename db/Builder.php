@@ -106,11 +106,19 @@ class Builder extends Command
 		self::$_buildsqls[] = $sql;
 	}
 	/**
-	 * 返回SQL语句
+	 * 返回SQL语句字符串
 	 */
 	public function getBuildSql()
 	{
 		return implode(';'.PHP_EOL,self::$_buildsqls).';'.PHP_EOL;
+	}
+	/**
+	 * 返回sql语句数组
+	 * @return array
+	 */
+	public function getBuildArray()
+	{
+		return self::$_buildsqls;
 	}
 	/**
 	 * 清空已存的SQL信息
