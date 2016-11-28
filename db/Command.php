@@ -326,7 +326,7 @@ class Command
 	public function rowCount($sql = '')
 	{
 		$sql = empty($sql)?$this->getRawSql():$sql;
-		$sql = preg_replace('/SELECT.+FROM/im','SELECT count(*) FROM',$sql); //替换为select count(*) from
+		$sql = preg_replace('/SELECT.+FROM\s+/im','SELECT count(*) FROM ',$sql); //替换为select count(*) from
 		$res = $this->pdo->query($sql);
 		return (int)$res->fetchColumn();
 	}
