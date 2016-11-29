@@ -229,6 +229,15 @@ class Request
 		}
 	}
 	/**
+	 * 返回未过滤xss的原始数据
+	 * @param string $name post字段名
+	 * @return string
+	 */
+	public function getOrgPost($name)
+	{
+		return isset(self::$postData[$name])?self::$postData[$name]:'';
+	}
+	/**
 	 * @param $curoute 当前路由名称
 	 */
 	private function getRealPath($curoute)
