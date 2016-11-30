@@ -28,8 +28,7 @@
         "foolz/sphinxql-query-builder":">=1.1.0"
     },
     "autoload": {
-    	"psr-4": {"H2O\\": ""},
-    	"files": ["ali/sms/api.php"]
+    	"psr-4": {"H2O\\": ""}
     },
     "config": {
         "secure-http": false
