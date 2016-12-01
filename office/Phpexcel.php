@@ -101,6 +101,8 @@ class Phpexcel
             }
             $cell = $this->_sheet->getCell($k.$row);
             $val = $cell->getValue();
+            $val = ($val instanceof \PHPExcel_RichText)?$val->getPlainText():$val; //如果是富文本,则转换为普通文本信息
+
             if($type=='time'){//时间格式
                 if(isset($field[$k][2])){
                     if($cell->getDataType()==\PHPExcel_Cell_DataType::TYPE_NUMERIC){//如果为数字类型的时间字段，则进行转换
