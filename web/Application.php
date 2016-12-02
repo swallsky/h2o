@@ -39,6 +39,7 @@ class Application extends H2O\base\Application
 		$request = \H2O::getContainer('request'); //获取HTTP请求组件
 		$route = $request->getRoute();
 		$module = \H2O::getContainer('module');
+		header("X-Powered-By:".$_SERVER['SERVER_NAME']);//隐藏php信息
 		return $module->runAction($route);
 	}
 }
