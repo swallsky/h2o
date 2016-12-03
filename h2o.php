@@ -13,7 +13,7 @@ defined('H2O_BEGIN_TIME') or define('H2O_BEGIN_TIME', microtime(true));
 /**
  * 路径分隔符
  */
-define('DS',DIRECTORY_SEPARATOR);
+defined('DS') or define('DS', DIRECTORY_SEPARATOR);
 /**
  * 框架根目录
  */
@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.6.41';
+		return '0.6.42';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
