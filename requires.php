@@ -142,7 +142,7 @@ class Requires
             $this->_iswrite();
             if(empty($this->_errorMsg)){//验证成功
                 $tag = $this->_getFilePath();
-                file_put_contents($tag,filemtime($tag)); //写入缓存信息
+                file_put_contents($tag,time()); //写入缓存信息
                 return true;
             }else{//否则显示运行环境错误
                 return false;
