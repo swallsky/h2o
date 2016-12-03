@@ -99,7 +99,6 @@ class Requires
             }
         }
     }
-
     /**
      * @param $tag 添加缓存标识
      */
@@ -108,12 +107,20 @@ class Requires
         $this->_cacheTag = $tag;
     }
     /**
+     * @return string 获取存储路径
+     */
+    private function _getFilePath()
+    {
+        //加入PHP版本信息,更换php版本时,则重新较验
+        return APP_RUNTIME.DS.'requires_'.md5($this->_cacheTag.PHP_VERSION);
+    }
+    /**
      * 缓存信息验证,防止重复检测运行环境,默认情况是需要重新检测环境
      * @return bool
      */
     private function _cacheVerify()
     {
-        $tag = APP_RUNTIME.DS.'requires_'.$this->_cacheTag;
+        $tag = $this->_getFilePath();
         if(file_exists($tag)){
             $filet = filemtime($tag);//读取缓存时间
             return $filet == file_get_contents($tag);
@@ -134,7 +141,7 @@ class Requires
             //读写验证
             $this->_iswrite();
             if(empty($this->_errorMsg)){//验证成功
-                $tag = APP_RUNTIME.DS.'requires_'.$this->_cacheTag;
+                $tag = $this->_getFilePath();
                 file_put_contents($tag,filemtime($tag)); //写入缓存信息
                 return true;
             }else{//否则显示运行环境错误
