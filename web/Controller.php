@@ -42,7 +42,7 @@ abstract class Controller extends H2O\base\Controller
 	}
 	/**
 	 * 返回请求信息
-	 * @return 返回请求句柄
+	 * @return Request
 	 */
 	public function request()
 	{
