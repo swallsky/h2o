@@ -113,6 +113,15 @@ class Module
 	public function runAction($route)
 	{
 		$o = \H2O::createObject($this->_ctrnSpace.'\\'.$route['controller']);
-		return $o->runAction(ucfirst($route['action']));
+		if(method_exists($o,'runAction')){//继承控制器类
+			return $o->runAction(ucfirst($route['action']));
+		}else{//其他非系统控制器类执行
+			$action = 'act'.ucfirst($route['action']);//与基类控制器方法一致,只能以act开头的方法可以执行
+			if(method_exists($o,$action)){
+				return call_user_func([$o,$action]);
+			}else{
+				throw new \Exception(get_class($o).' no method:'.$action);
+			}
+		}
 	}
 }

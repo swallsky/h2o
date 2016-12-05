@@ -11,26 +11,39 @@ use H2O\helpers\File;
 class Gii
 {
     /**
-     * @var 应用根目录
-     */
-    private $_apppath;
-    /**
      * 构造函数
      */
     public function __construct()
     {
-        $this->_apppath = \H2O::getAppRootPath();
+        //TODO
+    }
+
+    /**
+     * 读取命名空间目录信息
+     * @return array
+     */
+    private function _readNsDir()
+    {
+        $nps = \H2O::getPreNameSpace();//读取composer的命名空间
+        $names = [];
+        foreach($nps as $k=>$v){
+            if(substr($k,0,4)=='app\\' && $k!='app\\' && $k!='app\\migrate\\'){
+                $np = substr(rtrim($k,'\\'),4);
+                $names[$np] = realpath($v[0]);
+            }
+        }
+        return $names;
     }
     /**
      * 读取当前目录下的一级目录
      * @return array|void
      */
-    private function _readDir($cdir)
+    private function _readDir()
     {
+        $cdir = \H2O::getAppRootPath();
         if (!($handle = opendir($cdir))){
             return;
         }
-        $names = [];
         while (($dir = readdir($handle)) !== false) {
             if ($dir === '.' || $dir === '..') {
                 continue;
@@ -146,7 +159,8 @@ class Gii
      */
     private function _chooseApps()
     {
-        $apps = $this->_readDir($this->_apppath);
+        $apps = $this->_readNsDir();
+        $apps = empty($apps)?$this->_readDir():$apps;
         echo 'Please choose your application:'.PHP_EOL;
         $i=1;$app = [];$input = [];
         foreach($apps as $k=>$p){
