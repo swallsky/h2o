@@ -50,6 +50,7 @@ class Command
 	/**
 	 * 设置SQL
 	 * @param string $sql
+	 * @return Command
 	 */
 	public function setSql($sql)
 	{
@@ -116,7 +117,7 @@ class Command
 	 * @param string $table  数据表名
 	 * @param array  $data  字段数组
 	 * @param array  $field  字段信息
-	 * @return 受影响的行数
+	 * @return Command
 	~~~
 	example 1: 单行插入
 	$this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0])->exec();
@@ -161,7 +162,7 @@ class Command
 	 * @param array $data  批量数据
 	 * @param array $fields 插入的字段信息
 	 * @param int  $batchnum  批量处理数据个数
-	 * @return 受影响的行数
+	 * @return Command
 	~~~
 	example: 多行插入
 	$this->insert('sys_menu',
@@ -204,7 +205,7 @@ class Command
 	 * @param string 	$table  	数据表名
 	 * @param array     $fdata  	字段数组
 	 * @param string 	$where  	条件
-	 * @return 成功返回true 否则返回false
+	 * @return Command
 	 */
 	public function update($table, $fdata = [], $where)
 	{
@@ -218,6 +219,7 @@ class Command
 	 * 绑定一个参数到对应的SQL占位符上
 	 * @param string $name
 	 * @param mixed $value
+	 * @return Command
 	 */
 	public function bindValue($name,$value)
 	{
@@ -227,6 +229,7 @@ class Command
 	/**
 	 * 绑定多个参数到对应的SQL占位符上
 	 * @param array $values
+	 * @return Command
 	 */
 	public function bindValues($values)
 	{

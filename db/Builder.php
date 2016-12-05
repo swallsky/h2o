@@ -191,7 +191,7 @@ class Builder extends Command
 	 * @param array $columns 字段定义
 	 * @param string $charset 字符集类型，默认为utf8
 	 * @param string $engine 引擎类型，默认为InnoDB
-	 * @return object 返回当前对象
+	 * @return Builder
 	 */
 	public function createTable($table, $columns, $charset = 'utf8',$engine = 'InnoDB')
 	{
@@ -203,7 +203,7 @@ class Builder extends Command
 	 * 修改数据库表名
 	 * @param string $oldName 旧表名
 	 * @param string $newName 新表名
-	 * @return string 修改表名SQL语句
+	 * @return Builder
 	 */
 	public function renameTable($oldName, $newName)
 	{
@@ -213,7 +213,7 @@ class Builder extends Command
 	/**
 	 * 删除数据库表
 	 * @param string $table 表名
-	 * @return string 删除SQL语句
+	 * @return Builder
 	 */
 	public function dropTable($table)
 	{
@@ -223,7 +223,7 @@ class Builder extends Command
 	/**
 	 * 清空数据库表所有数据
 	 * @param string $table 表名
-	 * @return string 清空数据SQL语句
+	 * @return Builder
 	 */
 	public function truncateTable($table)
 	{
@@ -235,7 +235,7 @@ class Builder extends Command
 	 * @param string $table 表名
 	 * @param string $column 字段名称
 	 * @param string $type 字段属性
-	 * @return string 增加表字段SQL语句
+	 * @return Builder
 	 */
 	public function addColumn($table, $column, $type)
 	{
@@ -247,7 +247,7 @@ class Builder extends Command
 	 * 删除数据库表的列字段
 	 * @param string $table 表名
 	 * @param string $column 字段名
-	 * @return string 删除数据库表的列SQL语句
+	 * @return Builder
 	 */
 	public function dropColumn($table, $column)
 	{
@@ -260,7 +260,7 @@ class Builder extends Command
 	 * @param string $oldName 旧的字段名
 	 * @param string $newName 新的字段名
 	 * @param string $type 字段属性
-	 * @return string 修改字段属性SQL语句
+	 * @return Builder
 	 */
 	public function alterColumn($table, $oldName, $newName, $type)
 	{
@@ -271,7 +271,7 @@ class Builder extends Command
 	 * 构建一个SQL语句添加到现有表主键
 	 * @param string $table 表名
 	 * @param string $name 主键字段
-	 * @return string 创建索引SQL语句
+	 * @return Builder
 	 */
 	public function addPrimaryKey($table,$name)
 	{
@@ -282,7 +282,7 @@ class Builder extends Command
 	/**
 	 * 构建一个SQL语句删除现有表的主键
 	 * @param string $table 表名
-	 * @return string 创建索引SQL语句
+	 * @return Builder
 	 */
 	public function dropPrimaryKey($table)
 	{
@@ -295,7 +295,7 @@ class Builder extends Command
 	 * @param string $table 创建索引的表名
 	 * @param string $columns 需要创建索引的字段名称，多个字段，以逗号分隔
 	 * @param boolean $unique 是否需要创建一个唯一不重复的索引值 默认为false
-	 * @return string 创建索引SQL语句
+	 * @return Builder
 	 */
 	public function createIndex($name, $table, $columns, $unique = false)
 	{
@@ -307,7 +307,7 @@ class Builder extends Command
 	 * 删除索引
 	 * @param string $name 需要删除的索引名称
 	 * @param string $table 表名
-	 * @return string 删除索引的SQL语句
+	 * @return Builder
 	 */
 	public function dropIndex($name, $table)
 	{
@@ -320,7 +320,7 @@ class Builder extends Command
 	 * @param string $table  数据表名
 	 * @param array  $data  字段数组
 	 * @param array  $field  字段信息
-	 * @return 受影响的行数
+	 * @return Builder
 	 ~~~
 	 example 1: 单行插入
 	 $this->insert('sys_menu',['sm_id'=>1,'sm_title=>'test','sm_pid'=>0]);
@@ -348,7 +348,7 @@ class Builder extends Command
 	 * @param array $data  批量数据
 	 * @param array $fields 插入的字段信息
 	 * @param int  $batchnum  批量处理数据个数
-	 * @return 受影响的行数
+	 * @return Builder
 	~~~
 	example: 多行插入
 	$this->insert('sys_menu',
@@ -375,7 +375,7 @@ class Builder extends Command
 	 * @param string 	$table  	数据表名
 	 * @param array     $fdata  	字段数组
 	 * @param string 	$where  	条件
-	 * @return 成功返回true 否则返回false
+	 * @return Builder
 	 */
 	public function update($table, $fdata = [], $where)
 	{

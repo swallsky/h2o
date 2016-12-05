@@ -163,7 +163,7 @@ abstract class TableStrategy extends Command
 	 * @param array  $data  字段数组
 	 * @param array  $field  字段信息
 	 * @param string $ext 表名后缀信息 默认为空
-	 * @return 受影响的行数
+	 * @return TableStrategy
 	 ~~~
 	 example 1: 单行插入
 	 $this->insert([
@@ -262,7 +262,7 @@ abstract class TableStrategy extends Command
 	 * 更改记录信息
 	 * @param array        $fdata  	字段数组
 	 * @param string 	 $where  	条件
-	 * @return 成功返回true 否则返回false
+	 * @return TableStrategy
 	 */
 	public function update($fdata = [], $where)
 	{
@@ -282,8 +282,8 @@ abstract class TableStrategy extends Command
 	}
 	/**
 	 * 多表查询后再查找
-	 * @param $where
-	 * @return $this
+	 * @param string $where 查询条件
+	 * @return TableStrategy
 	 */
 	public function where($where)
 	{
@@ -293,7 +293,7 @@ abstract class TableStrategy extends Command
 	/**
 	 * 多表查询后分组
 	 * @param string $field 分组字段
-	 * @return $this
+	 * @return TableStrategy
 	 */
 	public function group($field)
 	{
@@ -303,7 +303,7 @@ abstract class TableStrategy extends Command
 	/**
 	 * 多表查询后对结果进行筛选
 	 * @param string $having 查询信息
-	 * @return $this
+	 * @return TableStrategy
 	 */
 	public function having($having)
 	{
@@ -313,7 +313,7 @@ abstract class TableStrategy extends Command
 	/**
 	 * 多表查询后排序
 	 * @param string $field 排序字段信息 例如 date DESC,time ASC
-	 * @return $this
+	 * @return TableStrategy
 	 */
 	public function order($field)
 	{
@@ -324,7 +324,7 @@ abstract class TableStrategy extends Command
 	 * 多表查询后排序
 	 * @param int $s 开始记录
 	 * @param int $e 结束记录
-	 * @return $this
+	 * @return TableStrategy
 	 */
 	public function limit($s,$e)
 	{

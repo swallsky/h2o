@@ -45,7 +45,7 @@ class Logger implements H2O\base\Logger
 		if(count($stackfile)>1){
 			Stdout::table($stackfile);//相关文件
 		}
-		return Stdout::get();; //内容
+		return Stdout::get(); //内容
 	}
 	/**
 	 * 写入日志
