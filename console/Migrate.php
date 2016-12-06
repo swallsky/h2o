@@ -137,9 +137,9 @@ class Migrate
 	    }
 		foreach ($regnames as $reg) //批量执行
 		{
+			$class = $this->_namespace.'\\'.ucfirst($reg);
+			$oc = new $class();
 			try{
-				$class = $this->_namespace.'\\'.ucfirst($reg);
-				$oc = new $class();
 				$oc->clearBuildSQL(); //清空上一个模块的SQL，防止重复写入
 				$oc->beginTransaction();
 				$oc->$mtype();
