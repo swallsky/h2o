@@ -10,7 +10,7 @@ H2O是一个轻框架，只留下常用的功能，让开发变成一件轻松�
 
 H2O是一个全新的框架，肯定存在一些不足的地方，期待大家一起来完善它，让他更清澈、更美味，github地址为：[https://github.com/ybluesky/h2o](https://github.com/ybluesky/h2o)
 
-wiki文档地址 [https://ybluesky.gitbooks.io/h2o-api/content/](https://ybluesky.gitbooks.io/h2o-api/content/)
+wiki文档地址 [https://ybluesky.gitbooks.io/h2o-api/content/](https://ybluesky.gitbooks.io/h2o/content/)
 
 
 
