@@ -1,24 +1,22 @@
-H2O - As simple as water, as important as water
-========================================
-**H2O** -- Efforts to build the framework of a simple and easy to use.
+# H2O - As simple as water, as important as water
 
-Installation
-------------
-There are multiple ways to install H2O.
+---
 
-**Github**
+H2O -- Efforts to build the framework of a simple and easy to use.
 
-- Clone to your machine
-```
-git clone https://github.com/ybluesky/h2o.git
-```
+H2O是一个简单易用高性能的MVC框架，我们与别的框架的区别是，我们不堆砌功能，把专业的事，交给专业的团队去做，我们不集成bootstrap,jquery等，我们只把一件事做到极致，我们的宗旨是：做像水一样简单，一样重要的框架！
 
-**Composer**
+H2O是一个轻框架，只留下常用的功能，让开发变成一件轻松的事，作为高手的您只需要5分钟就能掌握此框架!
 
-```
-composer require "ybluesky/h2o=0.6.*"
-```
+H2O是一个全新的框架，肯定存在一些不足的地方，期待大家一起来完善它，让他更清澈、更美味，github地址为：[https://github.com/ybluesky/h2o](https://github.com/ybluesky/h2o)
 
-License
--------
-H2O is licensed under [MIT](http://opensource.org/licenses/MIT). 
+
+
+
+
+
+
+作者：燕蓝天
+
+Email:xjz1688@163.com
+
