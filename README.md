@@ -1,7 +1,5 @@
 # H2O - As simple as water, as important as water
 
----
-
 H2O -- Efforts to build the framework of a simple and easy to use.
 
 H2O是一个简单易用高性能的MVC框架，我们与别的框架的区别是，我们不堆砌功能，把专业的事，交给专业的团队去做，我们不集成bootstrap,jquery等，我们只把一件事做到极致，我们的宗旨是：做像水一样简单，一样重要的框架！
