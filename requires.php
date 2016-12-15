@@ -79,11 +79,11 @@ class Requires
     public function addIsWrite($dir)
     {
         if(is_string($dir)){
-            $this->_defWriteDir[] = APP_PATH.DS.trim(DS,$dir).DS;
+            $this->_defWriteDir[] = APP_PATH.DS.trim($dir,DS).DS;
         }
         if(is_array($dir)){
             foreach($dir as $d){
-                $this->_defWriteDir[] = APP_PATH.DS.trim(DS,$d).DS;
+                $this->_defWriteDir[] = APP_PATH.DS.trim($d,DS).DS;
             }
         }
     }
