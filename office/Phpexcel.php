@@ -300,6 +300,23 @@ class Phpexcel
         }
     }
     /**
+     * 导出excel
+     * @param string $file 导出的文件名
+     * @param string $ext 导出的后缀名 xls|xlsx
+     */
+    public function output($file,$ext = 'xlsx')
+    {
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$file.'.'.$ext.'"');
+        header('Cache-Control: max-age=0');
+        if($ext == 'xlsx'){
+            $write = new \PHPExcel_Writer_Excel2007($this->_excelObj);
+        }else{
+            $write = new \PHPExcel_Writer_Excel5($this->_excelObj);
+        }
+        $write->save('php://output');
+    }
+    /**
      * 保存excel
      * @param $file
      * @param string $ext
@@ -308,10 +325,9 @@ class Phpexcel
     {
         if($ext == 'xlsx'){
             $write = new \PHPExcel_Writer_Excel2007($this->_excelObj);
-            $write->save($file.'.xlsx');
         }else{
             $write = new \PHPExcel_Writer_Excel5($this->_excelObj);
-            $write->save($file.'.xls');
         }
+        $write->save($file.'.xlsx');
     }
 }
