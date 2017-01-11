@@ -25,10 +25,10 @@ class Application extends H2O\base\Application
 	public function setPreObject()
 	{
 		return [
-			'logger'			=>		'\H2O\web\Logger', // 日志记录
+			'logger'		=>		'\H2O\web\Logger', // 日志记录
 			'request'		=>		'\H2O\web\Request', //HTTP请求组件
 			'module'		=>		'\H2O\base\Module', //默认的模块类
-			'view'				=>		'\H2O\web\View' //渲染层类
+			'view'			=>		'\H2O\web\View' //渲染层类
 		];
 	}
 	/**
@@ -40,6 +40,19 @@ class Application extends H2O\base\Application
 		$route = $request->getRoute();
 		$module = \H2O::getContainer('module');
 		header("X-Powered-By:".$_SERVER['SERVER_NAME']);//隐藏php信息
-		return $module->runAction($route);
+		$ctrClass = $module->getCtrNameSpace().'\\'.$route['controller'];
+		$ctrFile = H2O::getClassPath($ctrClass);
+		//生产环境下,如果类文件不存在或者类方法不存在,则直接跳转到404页面
+		if(H2O::getRunEnv()=='prod' && (!$ctrFile || !method_exists($ctrClass,'act'.ucfirst($route['action'])))){
+			$page = H2O::getAppConfigs('page');
+			if(!empty($page) && isset($page['404'])){//跳转到404页面
+				header("Location:".$page['404']);
+				exit();
+			}else{
+				http_response_code(404);
+			}
+		}else{
+			return $module->runAction($route);
+		}
 	}
 }

@@ -41,11 +41,18 @@ class Module
 		}
 	}
 	/**
-	 * 返回当前模块的命名空间
+	 * @return string 当前模块的命名空间
 	 */
 	public function getNameSpace()
 	{
 		return str_replace('\\controllers','',$this->_ctrnSpace);
+	}
+	/**
+	 * @return string 控制器的命名空间
+	 */
+	public function getCtrNameSpace()
+	{
+		return $this->_ctrnSpace;
 	}
 	/**
 	 * 将URL转换为标准的路由数组
@@ -92,19 +99,12 @@ class Module
 		}
 	}
 	/**
-	 * 返回控制器的命名空间
-	 */
-	public function getCtrNameSpace()
-	{
-		return $this->_ctrnSpace;
-	}
-	/**
 	 * 返回当前模块的controller对象
 	 * @param string $ctr 控制器对象名称
 	 */
 	public function getController($ctr)
 	{
-	    return \H2O::createObject($this->_ctrnSpace.'\\'.$ctr);
+		return \H2O::createObject($this->_ctrnSpace.'\\'.$ctr);
 	}
 	/**
 	 * 执行动作

@@ -63,7 +63,7 @@ abstract class H2O
 	 */
 	public static function getVersion()
 	{
-		return '0.6.49';
+		return '0.6.50';
 	}
 	/**
 	 * 获取自动加载器命名空间的前缀
@@ -84,6 +84,15 @@ abstract class H2O
 			}
 			return '';
 		}
+	}
+	/**
+	 * 查找类对应的文件路径,如果未找到对应的路径,则返回false
+	 * @param string $class 类名
+	 * @return false|string
+	 */
+	public static function getClassPath($class)
+	{
+		return self::$autoloader->findFile($class);
 	}
 	/**
 	 * 返回应用根空间的对应的目录
@@ -202,7 +211,6 @@ abstract class H2O
 			throw new \Exception("Class create failure: $class");
 		}
 	}
-	
 	/**
 	 * 框架初始化
 	 */
