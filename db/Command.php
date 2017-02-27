@@ -397,17 +397,21 @@ class Command
 	}
 	/**
 	 * 返回表所对应的字段列名
+     * fields column sql
+     * DESCRIBE $table
+     * SHOW COLUMNS FROM $table
+     * SELECT COLUMN_NAME FROM information_schema.columns where table_name="$table"
 	 * @param string $table 表名
 	 */
 	public function getColumnName($table)
 	{
-		$sth = $this->pdo->query('SELECT * FROM '.$table);
-		$colcount = $sth->columnCount();
-		$fields = [];
-		for($i=0;$i<$colcount;$i++){
-			$fields[] = $sth->getColumnMeta($i)['name'];
-		}
-		return $fields;
+        $temp = $this->setSql('DESCRIBE '.$table)->fetchAll();
+        $fields = [];
+        foreach ($temp as $fd){
+            $fields[] = $fd['Field'];
+        }
+        return $fields;
+
 	}
 	/**
 	 * 返回安全有效的数据
