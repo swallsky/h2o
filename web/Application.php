@@ -41,15 +41,15 @@ class Application extends H2O\base\Application
 		$module = \H2O::getContainer('module');
 		header("X-Powered-By:".$_SERVER['SERVER_NAME']);//隐藏php信息
 		$ctrClass = $module->getCtrNameSpace().'\\'.$route['controller'];
-		$ctrFile = H2O::getClassPath($ctrClass);
-		//生产环境下,如果类文件不存在或者类方法不存在,则直接跳转到404页面
-		if(H2O::getRunEnv()=='prod' && (!$ctrFile || !method_exists($ctrClass,'act'.ucfirst($route['action'])))){
+		//类方法不存在,则直接跳转到404页面
+		if(!method_exists($ctrClass,'act'.ucfirst($route['action']))){
 			$page = H2O::getAppConfigs('page');
 			if(!empty($page) && isset($page['404'])){//跳转到404页面
 				header("Location:".$page['404']);
 				exit();
 			}else{
-				http_response_code(404);
+                //http_response_code(404);
+			    exit('404:Unable to display this page');
 			}
 		}else{
 			return $module->runAction($route);
