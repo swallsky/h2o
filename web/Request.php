@@ -296,19 +296,24 @@ class Request
 	 */
 	private function getScriptUrl()
 	{
-		$scriptName = basename($_SERVER['SCRIPT_FILENAME']);
-		if(basename($_SERVER['SCRIPT_NAME'])===$scriptName)
-			$scriptUrl = $_SERVER['SCRIPT_NAME'];
-		elseif(basename($_SERVER['PHP_SELF'])===$scriptName)
-			$scriptUrl = $_SERVER['PHP_SELF'];
-		elseif(isset($_SERVER['ORIG_SCRIPT_NAME']) && basename($_SERVER['ORIG_SCRIPT_NAME'])===$scriptName)
-			$scriptUrl = $_SERVER['ORIG_SCRIPT_NAME'];
-		elseif(($pos=strpos($_SERVER['PHP_SELF'],'/'.$scriptName))!==false)
-			$scriptUrl = substr($_SERVER['SCRIPT_NAME'],0,$pos).'/'.$scriptName;
-		elseif(isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'],$_SERVER['DOCUMENT_ROOT'])===0)
-			$scriptUrl = str_replace('\\','/',str_replace($_SERVER['DOCUMENT_ROOT'],'',$_SERVER['SCRIPT_FILENAME']));
-		else
-			throw new \Exception('It is unable to determine the entry script URL.');
+        $sUrl = \H2O::getAppConfigs('indexScriptFile');//引导文件路径
+        if(empty($sUrl)) {
+            $scriptName = basename($_SERVER['SCRIPT_FILENAME']);
+            if (basename($_SERVER['SCRIPT_NAME']) === $scriptName)
+                $scriptUrl = $_SERVER['SCRIPT_NAME'];
+            elseif (basename($_SERVER['PHP_SELF']) === $scriptName)
+                $scriptUrl = $_SERVER['PHP_SELF'];
+            elseif (isset($_SERVER['ORIG_SCRIPT_NAME']) && basename($_SERVER['ORIG_SCRIPT_NAME']) === $scriptName)
+                $scriptUrl = $_SERVER['ORIG_SCRIPT_NAME'];
+            elseif (($pos = strpos($_SERVER['PHP_SELF'], '/' . $scriptName)) !== false)
+                $scriptUrl = substr($_SERVER['SCRIPT_NAME'], 0, $pos) . '/' . $scriptName;
+            elseif (isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']) === 0)
+                $scriptUrl = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME']));
+            else
+                throw new \Exception('It is unable to determine the entry script URL.');
+        }else{
+            $scriptUrl = $sUrl;
+        }
 		return $scriptUrl;
 	}
 }
