@@ -107,7 +107,7 @@ abstract class Controller
 	{
 		$namespace = empty($namespace)?$this->_namespace:$namespace;
 		$route = Module::parseRoute($url);
-		$o = \H2O::createObject($namespace.'\\'.strtolower($route['controller']));
+		$o = \H2O::createObject($namespace.'\\'.$route['controller']);
 		if(method_exists($o,'runAction')){//继承控制器类
 			return $o->runAction(ucfirst($route['action']));
 		}else{//其他非系统控制器类执行
