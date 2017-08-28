@@ -10,6 +10,8 @@ H2O是一个全新的框架，肯定存在一些不足的地方，期待大家�
 
 wiki文档地址 [https://ybluesky.gitbooks.io/h2o/content/](https://ybluesky.gitbooks.io/h2o/content/)
 
+测试更新。
+
 
 
 
