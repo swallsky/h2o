@@ -7,7 +7,7 @@
  * @version    0.1.0
  */
 namespace H2O\helpers;
-class String
+class Cstring
 {
     /**
      * 去掉UTF8 BOM头

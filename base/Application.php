@@ -68,7 +68,7 @@ abstract class Application
 			$this->_boot($configs['boot']);
 		}
 		$res = $this->handleRequest();
-		$res = \H2O\helpers\String::removeUTF8Bom($res);//移除utf8 bom
+		$res = \H2O\helpers\Cstring::removeUTF8Bom($res);//移除utf8 bom
 		$debug = $configs['debug'];
 		if($debug===true){//debug
 			$logger = \H2O::getContainer('logger');
